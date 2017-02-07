@@ -1,0 +1,6 @@
+parameters:
+    pusher.app_id: ~
+    pusher.key: ~
+    pusher.secret: ~
+    pusher.cluster: us-east-1
+    secret: ThisTokenIsNotSoSecretChangeIt

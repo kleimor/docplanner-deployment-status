@@ -1,0 +1,6 @@
+imports:
+    - { resource: "security.yml" }
+    - { resource: "shared/" }
+
+parameters:
+    locale: en

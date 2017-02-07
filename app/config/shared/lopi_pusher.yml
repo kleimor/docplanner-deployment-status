@@ -1,0 +1,8 @@
+lopi_pusher:
+    app_id: "%pusher.app_id%"
+    key: "%pusher.key%"
+    secret: "%pusher.secret%"
+    debug: "%kernel.debug%"
+    cluster: "%pusher.cluster%"
+    host: ~
+    timeout: 5

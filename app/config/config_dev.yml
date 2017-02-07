@@ -1,0 +1,30 @@
+imports:
+    - { resource: "parameters.yml" }
+    - { resource: "config.yml" }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+monolog:
+    handlers:
+        rotating_file:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            max_files: 1
+            level: "debug"
+            channels:
+                - "!event"
+        console:
+            type: "console"
+            channels:
+                - "!event"
+        chromephp:
+            type:   chromephp
+            level:  info
