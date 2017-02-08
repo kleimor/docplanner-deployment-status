@@ -15,6 +15,18 @@
 			</vendor>
 		</column>
 		<column name="name" type="LONGVARCHAR" required="true"/>
+		<column name="repository_owner" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
+		<column name="repository_name" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
 		<column name="repository_uri" type="VARCHAR" size="255" required="true"/>
 
 		<unique name="key">
