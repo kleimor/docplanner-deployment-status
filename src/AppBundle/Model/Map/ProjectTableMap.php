@@ -59,7 +59,7 @@ class ProjectTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,17 +69,12 @@ class ProjectTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
      */
     const COL_ID = 'project.id';
-
-    /**
-     * the column name for the key field
-     */
-    const COL_KEY = 'project.key';
 
     /**
      * the column name for the name field
@@ -113,11 +108,11 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Key', 'Name', 'RepositoryOwner', 'RepositoryName', 'RepositoryUri', ),
-        self::TYPE_CAMELNAME     => array('id', 'key', 'name', 'repositoryOwner', 'repositoryName', 'repositoryUri', ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_KEY, ProjectTableMap::COL_NAME, ProjectTableMap::COL_REPOSITORY_OWNER, ProjectTableMap::COL_REPOSITORY_NAME, ProjectTableMap::COL_REPOSITORY_URI, ),
-        self::TYPE_FIELDNAME     => array('id', 'key', 'name', 'repository_owner', 'repository_name', 'repository_uri', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'RepositoryOwner', 'RepositoryName', 'RepositoryUri', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'repositoryOwner', 'repositoryName', 'repositoryUri', ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_NAME, ProjectTableMap::COL_REPOSITORY_OWNER, ProjectTableMap::COL_REPOSITORY_NAME, ProjectTableMap::COL_REPOSITORY_URI, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'repository_owner', 'repository_name', 'repository_uri', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -127,11 +122,11 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Key' => 1, 'Name' => 2, 'RepositoryOwner' => 3, 'RepositoryName' => 4, 'RepositoryUri' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'key' => 1, 'name' => 2, 'repositoryOwner' => 3, 'repositoryName' => 4, 'repositoryUri' => 5, ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_KEY => 1, ProjectTableMap::COL_NAME => 2, ProjectTableMap::COL_REPOSITORY_OWNER => 3, ProjectTableMap::COL_REPOSITORY_NAME => 4, ProjectTableMap::COL_REPOSITORY_URI => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'key' => 1, 'name' => 2, 'repository_owner' => 3, 'repository_name' => 4, 'repository_uri' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'RepositoryOwner' => 2, 'RepositoryName' => 3, 'RepositoryUri' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'repositoryOwner' => 2, 'repositoryName' => 3, 'repositoryUri' => 4, ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_NAME => 1, ProjectTableMap::COL_REPOSITORY_OWNER => 2, ProjectTableMap::COL_REPOSITORY_NAME => 3, ProjectTableMap::COL_REPOSITORY_URI => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'repository_owner' => 2, 'repository_name' => 3, 'repository_uri' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -152,7 +147,6 @@ class ProjectTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('key', 'Key', 'VARCHAR', true, 255, null);
         $this->addColumn('name', 'Name', 'LONGVARCHAR', true, null, null);
         $this->addColumn('repository_owner', 'RepositoryOwner', 'VARCHAR', true, 255, null);
         $this->addColumn('repository_name', 'RepositoryName', 'VARCHAR', true, 255, null);
@@ -315,14 +309,12 @@ class ProjectTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ProjectTableMap::COL_ID);
-            $criteria->addSelectColumn(ProjectTableMap::COL_KEY);
             $criteria->addSelectColumn(ProjectTableMap::COL_NAME);
             $criteria->addSelectColumn(ProjectTableMap::COL_REPOSITORY_OWNER);
             $criteria->addSelectColumn(ProjectTableMap::COL_REPOSITORY_NAME);
             $criteria->addSelectColumn(ProjectTableMap::COL_REPOSITORY_URI);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.key');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.repository_owner');
             $criteria->addSelectColumn($alias . '.repository_name');

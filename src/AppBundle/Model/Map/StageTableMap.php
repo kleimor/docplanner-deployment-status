@@ -59,7 +59,7 @@ class StageTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class StageTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -80,11 +80,6 @@ class StageTableMap extends TableMap
      * the column name for the project_id field
      */
     const COL_PROJECT_ID = 'stage.project_id';
-
-    /**
-     * the column name for the key field
-     */
-    const COL_KEY = 'stage.key';
 
     /**
      * the column name for the name field
@@ -108,11 +103,11 @@ class StageTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'Key', 'Name', 'TrackedBranch', ),
-        self::TYPE_CAMELNAME     => array('id', 'projectId', 'key', 'name', 'trackedBranch', ),
-        self::TYPE_COLNAME       => array(StageTableMap::COL_ID, StageTableMap::COL_PROJECT_ID, StageTableMap::COL_KEY, StageTableMap::COL_NAME, StageTableMap::COL_TRACKED_BRANCH, ),
-        self::TYPE_FIELDNAME     => array('id', 'project_id', 'key', 'name', 'tracked_branch', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'Name', 'TrackedBranch', ),
+        self::TYPE_CAMELNAME     => array('id', 'projectId', 'name', 'trackedBranch', ),
+        self::TYPE_COLNAME       => array(StageTableMap::COL_ID, StageTableMap::COL_PROJECT_ID, StageTableMap::COL_NAME, StageTableMap::COL_TRACKED_BRANCH, ),
+        self::TYPE_FIELDNAME     => array('id', 'project_id', 'name', 'tracked_branch', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -122,11 +117,11 @@ class StageTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'Key' => 2, 'Name' => 3, 'TrackedBranch' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'key' => 2, 'name' => 3, 'trackedBranch' => 4, ),
-        self::TYPE_COLNAME       => array(StageTableMap::COL_ID => 0, StageTableMap::COL_PROJECT_ID => 1, StageTableMap::COL_KEY => 2, StageTableMap::COL_NAME => 3, StageTableMap::COL_TRACKED_BRANCH => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'key' => 2, 'name' => 3, 'tracked_branch' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'Name' => 2, 'TrackedBranch' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'name' => 2, 'trackedBranch' => 3, ),
+        self::TYPE_COLNAME       => array(StageTableMap::COL_ID => 0, StageTableMap::COL_PROJECT_ID => 1, StageTableMap::COL_NAME => 2, StageTableMap::COL_TRACKED_BRANCH => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'name' => 2, 'tracked_branch' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -148,8 +143,7 @@ class StageTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('project_id', 'ProjectId', 'INTEGER', 'project', 'id', true, null, null);
-        $this->addColumn('key', 'Key', 'VARCHAR', true, 255, null);
-        $this->addColumn('name', 'Name', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('tracked_branch', 'TrackedBranch', 'VARCHAR', true, 255, null);
     } // initialize()
 
@@ -310,13 +304,11 @@ class StageTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(StageTableMap::COL_ID);
             $criteria->addSelectColumn(StageTableMap::COL_PROJECT_ID);
-            $criteria->addSelectColumn(StageTableMap::COL_KEY);
             $criteria->addSelectColumn(StageTableMap::COL_NAME);
             $criteria->addSelectColumn(StageTableMap::COL_TRACKED_BRANCH);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.project_id');
-            $criteria->addSelectColumn($alias . '.key');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.tracked_branch');
         }

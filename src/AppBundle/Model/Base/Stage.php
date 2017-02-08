@@ -76,13 +76,6 @@ abstract class Stage implements ActiveRecordInterface
     protected $project_id;
 
     /**
-     * The value for the key field.
-     *
-     * @var        string
-     */
-    protected $key;
-
-    /**
      * The value for the name field.
      *
      * @var        string
@@ -355,16 +348,6 @@ abstract class Stage implements ActiveRecordInterface
     }
 
     /**
-     * Get the [key] column value.
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
      * Get the [name] column value.
      *
      * @return string
@@ -427,26 +410,6 @@ abstract class Stage implements ActiveRecordInterface
 
         return $this;
     } // setProjectId()
-
-    /**
-     * Set the value of [key] column.
-     *
-     * @param string $v new value
-     * @return $this|\AppBundle\Model\Stage The current object (for fluent API support)
-     */
-    public function setKey($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->key !== $v) {
-            $this->key = $v;
-            $this->modifiedColumns[StageTableMap::COL_KEY] = true;
-        }
-
-        return $this;
-    } // setKey()
 
     /**
      * Set the value of [name] column.
@@ -530,13 +493,10 @@ abstract class Stage implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : StageTableMap::translateFieldName('ProjectId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->project_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : StageTableMap::translateFieldName('Key', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->key = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : StageTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : StageTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : StageTableMap::translateFieldName('TrackedBranch', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : StageTableMap::translateFieldName('TrackedBranch', TableMap::TYPE_PHPNAME, $indexType)];
             $this->tracked_branch = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -546,7 +506,7 @@ abstract class Stage implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = StageTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = StageTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\Stage'), 0, $e);
@@ -765,9 +725,6 @@ abstract class Stage implements ActiveRecordInterface
         if ($this->isColumnModified(StageTableMap::COL_PROJECT_ID)) {
             $modifiedColumns[':p' . $index++]  = '`project_id`';
         }
-        if ($this->isColumnModified(StageTableMap::COL_KEY)) {
-            $modifiedColumns[':p' . $index++]  = '`key`';
-        }
         if ($this->isColumnModified(StageTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = '`name`';
         }
@@ -790,9 +747,6 @@ abstract class Stage implements ActiveRecordInterface
                         break;
                     case '`project_id`':
                         $stmt->bindValue($identifier, $this->project_id, PDO::PARAM_INT);
-                        break;
-                    case '`key`':
-                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
                     case '`name`':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
@@ -869,12 +823,9 @@ abstract class Stage implements ActiveRecordInterface
                 return $this->getProjectId();
                 break;
             case 2:
-                return $this->getKey();
-                break;
-            case 3:
                 return $this->getName();
                 break;
-            case 4:
+            case 3:
                 return $this->getTrackedBranch();
                 break;
             default:
@@ -909,9 +860,8 @@ abstract class Stage implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getProjectId(),
-            $keys[2] => $this->getKey(),
-            $keys[3] => $this->getName(),
-            $keys[4] => $this->getTrackedBranch(),
+            $keys[2] => $this->getName(),
+            $keys[3] => $this->getTrackedBranch(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -975,12 +925,9 @@ abstract class Stage implements ActiveRecordInterface
                 $this->setProjectId($value);
                 break;
             case 2:
-                $this->setKey($value);
-                break;
-            case 3:
                 $this->setName($value);
                 break;
-            case 4:
+            case 3:
                 $this->setTrackedBranch($value);
                 break;
         } // switch()
@@ -1016,13 +963,10 @@ abstract class Stage implements ActiveRecordInterface
             $this->setProjectId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setKey($arr[$keys[2]]);
+            $this->setName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setName($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setTrackedBranch($arr[$keys[4]]);
+            $this->setTrackedBranch($arr[$keys[3]]);
         }
     }
 
@@ -1070,9 +1014,6 @@ abstract class Stage implements ActiveRecordInterface
         }
         if ($this->isColumnModified(StageTableMap::COL_PROJECT_ID)) {
             $criteria->add(StageTableMap::COL_PROJECT_ID, $this->project_id);
-        }
-        if ($this->isColumnModified(StageTableMap::COL_KEY)) {
-            $criteria->add(StageTableMap::COL_KEY, $this->key);
         }
         if ($this->isColumnModified(StageTableMap::COL_NAME)) {
             $criteria->add(StageTableMap::COL_NAME, $this->name);
@@ -1167,7 +1108,6 @@ abstract class Stage implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setProjectId($this->getProjectId());
-        $copyObj->setKey($this->getKey());
         $copyObj->setName($this->getName());
         $copyObj->setTrackedBranch($this->getTrackedBranch());
         if ($makeNew) {
@@ -1261,7 +1201,6 @@ abstract class Stage implements ActiveRecordInterface
         }
         $this->id = null;
         $this->project_id = null;
-        $this->key = null;
         $this->name = null;
         $this->tracked_branch = null;
         $this->alreadyInSave = false;
