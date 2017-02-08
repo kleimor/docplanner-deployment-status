@@ -8,12 +8,6 @@
 >
 	<table name="project" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-		<column name="key" type="VARCHAR" size="255" required="true">
-			<vendor type="mysql">
-				<parameter name="Charset" value="ascii"/>
-				<parameter name="Collate" value="ascii_general_ci"/>
-			</vendor>
-		</column>
 		<column name="name" type="LONGVARCHAR" required="true"/>
 		<column name="repository_owner" type="VARCHAR" size="255" required="true">
 			<vendor type="mysql">
@@ -29,20 +23,15 @@
 		</column>
 		<column name="repository_uri" type="VARCHAR" size="255" required="true"/>
 
-		<unique name="key">
-			<unique-column name="key"/>
+		<unique name="repository_owner_repository_name">
+			<unique-column name="repository_owner"/>
+			<unique-column name="repository_name"/>
 		</unique>
 	</table>
 
 	<table name="stage" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
 		<column name="project_id" type="INTEGER" required="true"/>
-		<column name="key" type="VARCHAR" size="255" required="true">
-			<vendor type="mysql">
-				<parameter name="Charset" value="ascii"/>
-				<parameter name="Collate" value="ascii_general_ci"/>
-			</vendor>
-		</column>
 		<column name="name" type="LONGVARCHAR" required="true"/>
 		<column name="tracked_branch" type="VARCHAR" size="255" required="true">
 			<vendor type="mysql">
@@ -55,10 +44,9 @@
 			<reference local="project_id" foreign="id"/>
 		</foreign-key>
 
-		<unique name="project_id_key">
-			<unique-column name="project_id"/>
-			<unique-column name="key"/>
-		</unique>
+		<index name="project_id">
+			<index-column name="project_id"/>
+		</index>
 	</table>
 
 	<vendor type="mysql">
