@@ -32,7 +32,7 @@
 	<table name="stage" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
 		<column name="project_id" type="INTEGER" required="true"/>
-		<column name="name" type="LONGVARCHAR" required="true"/>
+		<column name="name" type="VARCHAR" size="255" required="true"/>
 		<column name="tracked_branch" type="VARCHAR" size="255" required="true">
 			<vendor type="mysql">
 				<parameter name="Charset" value="ascii"/>
@@ -47,6 +47,11 @@
 		<index name="project_id">
 			<index-column name="project_id"/>
 		</index>
+
+		<unique name="project_id_name">
+			<unique-column name="project_id"/>
+			<unique-column name="name"/>
+		</unique>
 	</table>
 
 	<vendor type="mysql">
