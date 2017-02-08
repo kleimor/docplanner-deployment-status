@@ -1,0 +1,12 @@
+app:
+  repositories:
+    - name: znanylekarz
+      owner: ZnanyLekarz
+      repository:
+        type: https
+        uri: https://github.com/ZnanyLekarz/znanylekarz.git
+      stages:
+        - name: staging
+          tracked_branch: staging
+        - name: production
+          tracked_branch: prod
