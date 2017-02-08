@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE database SYSTEM "../../../../../vendor/propel/propel/resources/dtd/database.dtd">
+<database name="default"
+		  namespace="AppBundle\Model"
+		  package="src.AppBundle.Model"
+		  defaultIdMethod="native"
+		  identifierQuoting="true"
+>
+	<table name="project" idMethod="native">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+		<column name="key" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
+		<column name="name" type="LONGVARCHAR" required="true"/>
+		<column name="repository_uri" type="VARCHAR" size="255" required="true"/>
+
+		<unique name="key">
+			<unique-column name="key"/>
+		</unique>
+	</table>
+
+	<table name="stage" idMethod="native">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+		<column name="project_id" type="INTEGER" required="true"/>
+		<column name="key" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
+		<column name="name" type="LONGVARCHAR" required="true"/>
+		<column name="tracked_branch" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
+
+		<foreign-key foreignTable="project" name="stage_FK1" onUpdate="CASCADE">
+			<reference local="project_id" foreign="id"/>
+		</foreign-key>
+
+		<unique name="project_id_key">
+			<unique-column name="project_id"/>
+			<unique-column name="key"/>
+		</unique>
+	</table>
+
+	<vendor type="mysql">
+		<parameter name="Engine" value="InnoDB"/>
+		<parameter name="Charset" value="utf8mb4"/>
+		<parameter name="Collate" value="utf8mb4_general_ci"/>
+	</vendor>
+</database>

@@ -1,4 +1,8 @@
 parameters:
+    db_driver: mysql
+    db_user: root
+    db_password: password
+    db_dsn: "%db_driver%:host=localhost;dbname=deployment_status"
     pusher.app_id: ~
     pusher.key: ~
     pusher.secret: ~

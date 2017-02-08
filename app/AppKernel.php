@@ -17,6 +17,7 @@ class AppKernel extends Kernel
 			new Symfony\Bundle\MonologBundle\MonologBundle(),
 			new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 			new Lopi\Bundle\PusherBundle\LopiPusherBundle(),
+			new Propel\Bundle\PropelBundle\PropelBundle(),
 			new AppBundle\AppBundle(),
 		];
 

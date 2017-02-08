@@ -1,0 +1,17 @@
+propel:
+    runtime:
+        defaultConnection: default
+        connections: [default]
+    database:
+        connections:
+            default:
+                adapter:    "%db_driver%"
+                user:       "%db_user%"
+                password:   "%db_password%"
+                dsn:        "%db_dsn%"
+                settings:
+                    charset: "utf8mb4"
+                    queries:
+                        utf8: "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, COLLATION_CONNECTION = utf8mb4_unicode_ci, COLLATION_DATABASE = utf8mb4_unicode_ci, COLLATION_SERVER = utf8mb4_unicode_ci"
+                        timezone: "SET time_zone = 'UTC'"
+
