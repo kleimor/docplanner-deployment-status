@@ -1,3 +1,13 @@
+services:
+    propel.connection.default:
+        class: 'Propel\Runtime\Connection\ConnectionInterface'
+        factory:
+            - Propel\Runtime\Propel
+            - getConnection
+        arguments:
+            - default
+        lazy: true
+
 propel:
     runtime:
         defaultConnection: default
