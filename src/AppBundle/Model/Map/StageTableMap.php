@@ -59,7 +59,7 @@ class StageTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class StageTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -92,6 +92,16 @@ class StageTableMap extends TableMap
     const COL_TRACKED_BRANCH = 'stage.tracked_branch';
 
     /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'stage.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'stage.updated_at';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -103,11 +113,11 @@ class StageTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'Name', 'TrackedBranch', ),
-        self::TYPE_CAMELNAME     => array('id', 'projectId', 'name', 'trackedBranch', ),
-        self::TYPE_COLNAME       => array(StageTableMap::COL_ID, StageTableMap::COL_PROJECT_ID, StageTableMap::COL_NAME, StageTableMap::COL_TRACKED_BRANCH, ),
-        self::TYPE_FIELDNAME     => array('id', 'project_id', 'name', 'tracked_branch', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'Name', 'TrackedBranch', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'projectId', 'name', 'trackedBranch', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(StageTableMap::COL_ID, StageTableMap::COL_PROJECT_ID, StageTableMap::COL_NAME, StageTableMap::COL_TRACKED_BRANCH, StageTableMap::COL_CREATED_AT, StageTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'project_id', 'name', 'tracked_branch', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -117,11 +127,11 @@ class StageTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'Name' => 2, 'TrackedBranch' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'name' => 2, 'trackedBranch' => 3, ),
-        self::TYPE_COLNAME       => array(StageTableMap::COL_ID => 0, StageTableMap::COL_PROJECT_ID => 1, StageTableMap::COL_NAME => 2, StageTableMap::COL_TRACKED_BRANCH => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'name' => 2, 'tracked_branch' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'Name' => 2, 'TrackedBranch' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'name' => 2, 'trackedBranch' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(StageTableMap::COL_ID => 0, StageTableMap::COL_PROJECT_ID => 1, StageTableMap::COL_NAME => 2, StageTableMap::COL_TRACKED_BRANCH => 3, StageTableMap::COL_CREATED_AT => 4, StageTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'name' => 2, 'tracked_branch' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -145,6 +155,8 @@ class StageTableMap extends TableMap
         $this->addForeignKey('project_id', 'ProjectId', 'INTEGER', 'project', 'id', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('tracked_branch', 'TrackedBranch', 'VARCHAR', true, 255, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -160,6 +172,19 @@ class StageTableMap extends TableMap
   ),
 ), null, 'CASCADE', null, false);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -306,11 +331,15 @@ class StageTableMap extends TableMap
             $criteria->addSelectColumn(StageTableMap::COL_PROJECT_ID);
             $criteria->addSelectColumn(StageTableMap::COL_NAME);
             $criteria->addSelectColumn(StageTableMap::COL_TRACKED_BRANCH);
+            $criteria->addSelectColumn(StageTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(StageTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.project_id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.tracked_branch');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Model\Base;
 
+use \DateTime;
 use \Exception;
 use \PDO;
 use AppBundle\Model\Project as ChildProject;
@@ -22,6 +23,7 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'project' table.
@@ -98,6 +100,20 @@ abstract class Project implements ActiveRecordInterface
      * @var        string
      */
     protected $repository_uri;
+
+    /**
+     * The value for the created_at field.
+     *
+     * @var        DateTime
+     */
+    protected $created_at;
+
+    /**
+     * The value for the updated_at field.
+     *
+     * @var        DateTime
+     */
+    protected $updated_at;
 
     /**
      * @var        ObjectCollection|ChildStage[] Collection to store aggregation of ChildStage objects.
@@ -395,6 +411,46 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [created_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getCreatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->created_at;
+        } else {
+            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [updated_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getUpdatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
+        }
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -495,6 +551,46 @@ abstract class Project implements ActiveRecordInterface
     } // setRepositoryUri()
 
     /**
+     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     */
+    public function setCreatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->created_at !== null || $dt !== null) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
+                $this->created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ProjectTableMap::COL_CREATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setCreatedAt()
+
+    /**
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     */
+    public function setUpdatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
+                $this->updated_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ProjectTableMap::COL_UPDATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setUpdatedAt()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -544,6 +640,18 @@ abstract class Project implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('RepositoryUri', TableMap::TYPE_PHPNAME, $indexType)];
             $this->repository_uri = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -552,7 +660,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\Project'), 0, $e);
@@ -677,8 +785,20 @@ abstract class Project implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+
+                if (!$this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
+                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
+                if (!$this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -783,6 +903,12 @@ abstract class Project implements ActiveRecordInterface
         if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_URI)) {
             $modifiedColumns[':p' . $index++]  = '`repository_uri`';
         }
+        if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = '`created_at`';
+        }
+        if ($this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = '`updated_at`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `project` (%s) VALUES (%s)',
@@ -808,6 +934,12 @@ abstract class Project implements ActiveRecordInterface
                         break;
                     case '`repository_uri`':
                         $stmt->bindValue($identifier, $this->repository_uri, PDO::PARAM_STR);
+                        break;
+                    case '`created_at`':
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                        break;
+                    case '`updated_at`':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -886,6 +1018,12 @@ abstract class Project implements ActiveRecordInterface
             case 4:
                 return $this->getRepositoryUri();
                 break;
+            case 5:
+                return $this->getCreatedAt();
+                break;
+            case 6:
+                return $this->getUpdatedAt();
+                break;
             default:
                 return null;
                 break;
@@ -921,7 +1059,17 @@ abstract class Project implements ActiveRecordInterface
             $keys[2] => $this->getRepositoryOwner(),
             $keys[3] => $this->getRepositoryName(),
             $keys[4] => $this->getRepositoryUri(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
         );
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        }
+
+        if ($result[$keys[6]] instanceof \DateTime) {
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -992,6 +1140,12 @@ abstract class Project implements ActiveRecordInterface
             case 4:
                 $this->setRepositoryUri($value);
                 break;
+            case 5:
+                $this->setCreatedAt($value);
+                break;
+            case 6:
+                $this->setUpdatedAt($value);
+                break;
         } // switch()
 
         return $this;
@@ -1032,6 +1186,12 @@ abstract class Project implements ActiveRecordInterface
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setRepositoryUri($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setCreatedAt($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setUpdatedAt($arr[$keys[6]]);
         }
     }
 
@@ -1088,6 +1248,12 @@ abstract class Project implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_URI)) {
             $criteria->add(ProjectTableMap::COL_REPOSITORY_URI, $this->repository_uri);
+        }
+        if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
+            $criteria->add(ProjectTableMap::COL_CREATED_AT, $this->created_at);
+        }
+        if ($this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+            $criteria->add(ProjectTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1179,6 +1345,8 @@ abstract class Project implements ActiveRecordInterface
         $copyObj->setRepositoryOwner($this->getRepositoryOwner());
         $copyObj->setRepositoryName($this->getRepositoryName());
         $copyObj->setRepositoryUri($this->getRepositoryUri());
+        $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1474,6 +1642,8 @@ abstract class Project implements ActiveRecordInterface
         $this->repository_owner = null;
         $this->repository_name = null;
         $this->repository_uri = null;
+        $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1510,6 +1680,20 @@ abstract class Project implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(ProjectTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildProject The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[ProjectTableMap::COL_UPDATED_AT] = true;
+
+        return $this;
     }
 
     /**

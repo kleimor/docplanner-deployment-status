@@ -24,11 +24,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStageQuery orderByProjectId($order = Criteria::ASC) Order by the project_id column
  * @method     ChildStageQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildStageQuery orderByTrackedBranch($order = Criteria::ASC) Order by the tracked_branch column
+ * @method     ChildStageQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildStageQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildStageQuery groupById() Group by the id column
  * @method     ChildStageQuery groupByProjectId() Group by the project_id column
  * @method     ChildStageQuery groupByName() Group by the name column
  * @method     ChildStageQuery groupByTrackedBranch() Group by the tracked_branch column
+ * @method     ChildStageQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildStageQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildStageQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildStageQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -56,7 +60,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStage findOneById(int $id) Return the first ChildStage filtered by the id column
  * @method     ChildStage findOneByProjectId(int $project_id) Return the first ChildStage filtered by the project_id column
  * @method     ChildStage findOneByName(string $name) Return the first ChildStage filtered by the name column
- * @method     ChildStage findOneByTrackedBranch(string $tracked_branch) Return the first ChildStage filtered by the tracked_branch column *
+ * @method     ChildStage findOneByTrackedBranch(string $tracked_branch) Return the first ChildStage filtered by the tracked_branch column
+ * @method     ChildStage findOneByCreatedAt(string $created_at) Return the first ChildStage filtered by the created_at column
+ * @method     ChildStage findOneByUpdatedAt(string $updated_at) Return the first ChildStage filtered by the updated_at column *
 
  * @method     ChildStage requirePk($key, ConnectionInterface $con = null) Return the ChildStage by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOne(ConnectionInterface $con = null) Return the first ChildStage matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -65,12 +71,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStage requireOneByProjectId(int $project_id) Return the first ChildStage filtered by the project_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOneByName(string $name) Return the first ChildStage filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOneByTrackedBranch(string $tracked_branch) Return the first ChildStage filtered by the tracked_branch column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildStage requireOneByCreatedAt(string $created_at) Return the first ChildStage filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildStage requireOneByUpdatedAt(string $updated_at) Return the first ChildStage filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildStage[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildStage objects based on current ModelCriteria
  * @method     ChildStage[]|ObjectCollection findById(int $id) Return ChildStage objects filtered by the id column
  * @method     ChildStage[]|ObjectCollection findByProjectId(int $project_id) Return ChildStage objects filtered by the project_id column
  * @method     ChildStage[]|ObjectCollection findByName(string $name) Return ChildStage objects filtered by the name column
  * @method     ChildStage[]|ObjectCollection findByTrackedBranch(string $tracked_branch) Return ChildStage objects filtered by the tracked_branch column
+ * @method     ChildStage[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildStage objects filtered by the created_at column
+ * @method     ChildStage[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildStage objects filtered by the updated_at column
  * @method     ChildStage[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -169,7 +179,7 @@ abstract class StageQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `project_id`, `name`, `tracked_branch` FROM `stage` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `project_id`, `name`, `tracked_branch`, `created_at`, `updated_at` FROM `stage` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -394,6 +404,92 @@ abstract class StageQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(StageTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(StageTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(StageTableMap::COL_CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(StageTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(StageTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(StageTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
      * Filter the query by a related \AppBundle\Model\Project object
      *
      * @param \AppBundle\Model\Project|ObjectCollection $project The related object(s) to use as filter
@@ -545,6 +641,72 @@ abstract class StageQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(StageTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(StageTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(StageTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(StageTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(StageTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(StageTableMap::COL_CREATED_AT);
     }
 
 } // StageQuery
