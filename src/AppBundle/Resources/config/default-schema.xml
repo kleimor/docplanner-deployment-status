@@ -6,7 +6,6 @@
 		  defaultIdMethod="native"
 		  identifierQuoting="true"
 >
-	<behavior name="timestampable"/>
 
 	<table name="project" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
@@ -55,6 +54,8 @@
 			<unique-column name="name"/>
 		</unique>
 	</table>
+
+	<behavior name="timestampable"/>
 
 	<vendor type="mysql">
 		<parameter name="Engine" value="InnoDB"/>
