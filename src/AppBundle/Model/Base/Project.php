@@ -74,32 +74,18 @@ abstract class Project implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the name field.
+     * The value for the owner field.
      *
      * @var        string
      */
-    protected $name;
+    protected $owner;
 
     /**
-     * The value for the repository_owner field.
+     * The value for the repo field.
      *
      * @var        string
      */
-    protected $repository_owner;
-
-    /**
-     * The value for the repository_name field.
-     *
-     * @var        string
-     */
-    protected $repository_name;
-
-    /**
-     * The value for the repository_uri field.
-     *
-     * @var        string
-     */
-    protected $repository_uri;
+    protected $repo;
 
     /**
      * The value for the created_at field.
@@ -371,43 +357,23 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
-     * Get the [name] column value.
+     * Get the [owner] column value.
      *
      * @return string
      */
-    public function getName()
+    public function getOwner()
     {
-        return $this->name;
+        return $this->owner;
     }
 
     /**
-     * Get the [repository_owner] column value.
+     * Get the [repo] column value.
      *
      * @return string
      */
-    public function getRepositoryOwner()
+    public function getRepo()
     {
-        return $this->repository_owner;
-    }
-
-    /**
-     * Get the [repository_name] column value.
-     *
-     * @return string
-     */
-    public function getRepositoryName()
-    {
-        return $this->repository_name;
-    }
-
-    /**
-     * Get the [repository_uri] column value.
-     *
-     * @return string
-     */
-    public function getRepositoryUri()
-    {
-        return $this->repository_uri;
+        return $this->repo;
     }
 
     /**
@@ -471,84 +437,44 @@ abstract class Project implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [name] column.
+     * Set the value of [owner] column.
      *
      * @param string $v new value
      * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
      */
-    public function setName($v)
+    public function setOwner($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_NAME] = true;
+        if ($this->owner !== $v) {
+            $this->owner = $v;
+            $this->modifiedColumns[ProjectTableMap::COL_OWNER] = true;
         }
 
         return $this;
-    } // setName()
+    } // setOwner()
 
     /**
-     * Set the value of [repository_owner] column.
+     * Set the value of [repo] column.
      *
      * @param string $v new value
      * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
      */
-    public function setRepositoryOwner($v)
+    public function setRepo($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->repository_owner !== $v) {
-            $this->repository_owner = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_REPOSITORY_OWNER] = true;
+        if ($this->repo !== $v) {
+            $this->repo = $v;
+            $this->modifiedColumns[ProjectTableMap::COL_REPO] = true;
         }
 
         return $this;
-    } // setRepositoryOwner()
-
-    /**
-     * Set the value of [repository_name] column.
-     *
-     * @param string $v new value
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
-     */
-    public function setRepositoryName($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->repository_name !== $v) {
-            $this->repository_name = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_REPOSITORY_NAME] = true;
-        }
-
-        return $this;
-    } // setRepositoryName()
-
-    /**
-     * Set the value of [repository_uri] column.
-     *
-     * @param string $v new value
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
-     */
-    public function setRepositoryUri($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->repository_uri !== $v) {
-            $this->repository_uri = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_REPOSITORY_URI] = true;
-        }
-
-        return $this;
-    } // setRepositoryUri()
+    } // setRepo()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -629,25 +555,19 @@ abstract class Project implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ProjectTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectTableMap::translateFieldName('Owner', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->owner = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('RepositoryOwner', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->repository_owner = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('Repo', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->repo = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('RepositoryName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->repository_name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('RepositoryUri', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->repository_uri = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -660,7 +580,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\Project'), 0, $e);
@@ -891,17 +811,11 @@ abstract class Project implements ActiveRecordInterface
         if ($this->isColumnModified(ProjectTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = '`name`';
+        if ($this->isColumnModified(ProjectTableMap::COL_OWNER)) {
+            $modifiedColumns[':p' . $index++]  = '`owner`';
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_OWNER)) {
-            $modifiedColumns[':p' . $index++]  = '`repository_owner`';
-        }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_NAME)) {
-            $modifiedColumns[':p' . $index++]  = '`repository_name`';
-        }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_URI)) {
-            $modifiedColumns[':p' . $index++]  = '`repository_uri`';
+        if ($this->isColumnModified(ProjectTableMap::COL_REPO)) {
+            $modifiedColumns[':p' . $index++]  = '`repo`';
         }
         if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`created_at`';
@@ -923,17 +837,11 @@ abstract class Project implements ActiveRecordInterface
                     case '`id`':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case '`name`':
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                    case '`owner`':
+                        $stmt->bindValue($identifier, $this->owner, PDO::PARAM_STR);
                         break;
-                    case '`repository_owner`':
-                        $stmt->bindValue($identifier, $this->repository_owner, PDO::PARAM_STR);
-                        break;
-                    case '`repository_name`':
-                        $stmt->bindValue($identifier, $this->repository_name, PDO::PARAM_STR);
-                        break;
-                    case '`repository_uri`':
-                        $stmt->bindValue($identifier, $this->repository_uri, PDO::PARAM_STR);
+                    case '`repo`':
+                        $stmt->bindValue($identifier, $this->repo, PDO::PARAM_STR);
                         break;
                     case '`created_at`':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1007,21 +915,15 @@ abstract class Project implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getName();
+                return $this->getOwner();
                 break;
             case 2:
-                return $this->getRepositoryOwner();
+                return $this->getRepo();
                 break;
             case 3:
-                return $this->getRepositoryName();
-                break;
-            case 4:
-                return $this->getRepositoryUri();
-                break;
-            case 5:
                 return $this->getCreatedAt();
                 break;
-            case 6:
+            case 4:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1055,19 +957,17 @@ abstract class Project implements ActiveRecordInterface
         $keys = ProjectTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getName(),
-            $keys[2] => $this->getRepositoryOwner(),
-            $keys[3] => $this->getRepositoryName(),
-            $keys[4] => $this->getRepositoryUri(),
-            $keys[5] => $this->getCreatedAt(),
-            $keys[6] => $this->getUpdatedAt(),
+            $keys[1] => $this->getOwner(),
+            $keys[2] => $this->getRepo(),
+            $keys[3] => $this->getCreatedAt(),
+            $keys[4] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[5]] instanceof \DateTime) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        if ($result[$keys[3]] instanceof \DateTime) {
+            $result[$keys[3]] = $result[$keys[3]]->format('c');
         }
 
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1129,21 +1029,15 @@ abstract class Project implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setName($value);
+                $this->setOwner($value);
                 break;
             case 2:
-                $this->setRepositoryOwner($value);
+                $this->setRepo($value);
                 break;
             case 3:
-                $this->setRepositoryName($value);
-                break;
-            case 4:
-                $this->setRepositoryUri($value);
-                break;
-            case 5:
                 $this->setCreatedAt($value);
                 break;
-            case 6:
+            case 4:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1176,22 +1070,16 @@ abstract class Project implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setName($arr[$keys[1]]);
+            $this->setOwner($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setRepositoryOwner($arr[$keys[2]]);
+            $this->setRepo($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setRepositoryName($arr[$keys[3]]);
+            $this->setCreatedAt($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setRepositoryUri($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setCreatedAt($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setUpdatedAt($arr[$keys[6]]);
+            $this->setUpdatedAt($arr[$keys[4]]);
         }
     }
 
@@ -1237,17 +1125,11 @@ abstract class Project implements ActiveRecordInterface
         if ($this->isColumnModified(ProjectTableMap::COL_ID)) {
             $criteria->add(ProjectTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_NAME)) {
-            $criteria->add(ProjectTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(ProjectTableMap::COL_OWNER)) {
+            $criteria->add(ProjectTableMap::COL_OWNER, $this->owner);
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_OWNER)) {
-            $criteria->add(ProjectTableMap::COL_REPOSITORY_OWNER, $this->repository_owner);
-        }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_NAME)) {
-            $criteria->add(ProjectTableMap::COL_REPOSITORY_NAME, $this->repository_name);
-        }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPOSITORY_URI)) {
-            $criteria->add(ProjectTableMap::COL_REPOSITORY_URI, $this->repository_uri);
+        if ($this->isColumnModified(ProjectTableMap::COL_REPO)) {
+            $criteria->add(ProjectTableMap::COL_REPO, $this->repo);
         }
         if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
             $criteria->add(ProjectTableMap::COL_CREATED_AT, $this->created_at);
@@ -1341,10 +1223,8 @@ abstract class Project implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setName($this->getName());
-        $copyObj->setRepositoryOwner($this->getRepositoryOwner());
-        $copyObj->setRepositoryName($this->getRepositoryName());
-        $copyObj->setRepositoryUri($this->getRepositoryUri());
+        $copyObj->setOwner($this->getOwner());
+        $copyObj->setRepo($this->getRepo());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -1638,10 +1518,8 @@ abstract class Project implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->name = null;
-        $this->repository_owner = null;
-        $this->repository_name = null;
-        $this->repository_uri = null;
+        $this->owner = null;
+        $this->repo = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

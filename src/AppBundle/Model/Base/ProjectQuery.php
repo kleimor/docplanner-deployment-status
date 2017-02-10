@@ -21,18 +21,14 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildProjectQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildProjectQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ChildProjectQuery orderByRepositoryOwner($order = Criteria::ASC) Order by the repository_owner column
- * @method     ChildProjectQuery orderByRepositoryName($order = Criteria::ASC) Order by the repository_name column
- * @method     ChildProjectQuery orderByRepositoryUri($order = Criteria::ASC) Order by the repository_uri column
+ * @method     ChildProjectQuery orderByOwner($order = Criteria::ASC) Order by the owner column
+ * @method     ChildProjectQuery orderByRepo($order = Criteria::ASC) Order by the repo column
  * @method     ChildProjectQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildProjectQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildProjectQuery groupById() Group by the id column
- * @method     ChildProjectQuery groupByName() Group by the name column
- * @method     ChildProjectQuery groupByRepositoryOwner() Group by the repository_owner column
- * @method     ChildProjectQuery groupByRepositoryName() Group by the repository_name column
- * @method     ChildProjectQuery groupByRepositoryUri() Group by the repository_uri column
+ * @method     ChildProjectQuery groupByOwner() Group by the owner column
+ * @method     ChildProjectQuery groupByRepo() Group by the repo column
  * @method     ChildProjectQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildProjectQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -60,10 +56,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProject findOneOrCreate(ConnectionInterface $con = null) Return the first ChildProject matching the query, or a new ChildProject object populated from the query conditions when no match is found
  *
  * @method     ChildProject findOneById(int $id) Return the first ChildProject filtered by the id column
- * @method     ChildProject findOneByName(string $name) Return the first ChildProject filtered by the name column
- * @method     ChildProject findOneByRepositoryOwner(string $repository_owner) Return the first ChildProject filtered by the repository_owner column
- * @method     ChildProject findOneByRepositoryName(string $repository_name) Return the first ChildProject filtered by the repository_name column
- * @method     ChildProject findOneByRepositoryUri(string $repository_uri) Return the first ChildProject filtered by the repository_uri column
+ * @method     ChildProject findOneByOwner(string $owner) Return the first ChildProject filtered by the owner column
+ * @method     ChildProject findOneByRepo(string $repo) Return the first ChildProject filtered by the repo column
  * @method     ChildProject findOneByCreatedAt(string $created_at) Return the first ChildProject filtered by the created_at column
  * @method     ChildProject findOneByUpdatedAt(string $updated_at) Return the first ChildProject filtered by the updated_at column *
 
@@ -71,19 +65,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProject requireOne(ConnectionInterface $con = null) Return the first ChildProject matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildProject requireOneById(int $id) Return the first ChildProject filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildProject requireOneByName(string $name) Return the first ChildProject filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildProject requireOneByRepositoryOwner(string $repository_owner) Return the first ChildProject filtered by the repository_owner column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildProject requireOneByRepositoryName(string $repository_name) Return the first ChildProject filtered by the repository_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildProject requireOneByRepositoryUri(string $repository_uri) Return the first ChildProject filtered by the repository_uri column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildProject requireOneByOwner(string $owner) Return the first ChildProject filtered by the owner column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildProject requireOneByRepo(string $repo) Return the first ChildProject filtered by the repo column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildProject requireOneByCreatedAt(string $created_at) Return the first ChildProject filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildProject requireOneByUpdatedAt(string $updated_at) Return the first ChildProject filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildProject[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildProject objects based on current ModelCriteria
  * @method     ChildProject[]|ObjectCollection findById(int $id) Return ChildProject objects filtered by the id column
- * @method     ChildProject[]|ObjectCollection findByName(string $name) Return ChildProject objects filtered by the name column
- * @method     ChildProject[]|ObjectCollection findByRepositoryOwner(string $repository_owner) Return ChildProject objects filtered by the repository_owner column
- * @method     ChildProject[]|ObjectCollection findByRepositoryName(string $repository_name) Return ChildProject objects filtered by the repository_name column
- * @method     ChildProject[]|ObjectCollection findByRepositoryUri(string $repository_uri) Return ChildProject objects filtered by the repository_uri column
+ * @method     ChildProject[]|ObjectCollection findByOwner(string $owner) Return ChildProject objects filtered by the owner column
+ * @method     ChildProject[]|ObjectCollection findByRepo(string $repo) Return ChildProject objects filtered by the repo column
  * @method     ChildProject[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildProject objects filtered by the created_at column
  * @method     ChildProject[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildProject objects filtered by the updated_at column
  * @method     ChildProject[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -184,7 +174,7 @@ abstract class ProjectQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `name`, `repository_owner`, `repository_name`, `repository_uri`, `created_at`, `updated_at` FROM `project` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `owner`, `repo`, `created_at`, `updated_at` FROM `project` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -316,103 +306,53 @@ abstract class ProjectQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the name column
+     * Filter the query on the owner column
      *
      * Example usage:
      * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
+     * $query->filterByOwner('fooValue');   // WHERE owner = 'fooValue'
+     * $query->filterByOwner('%fooValue%', Criteria::LIKE); // WHERE owner LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $name The value to use as filter.
+     * @param     string $owner The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildProjectQuery The current query, for fluid interface
      */
-    public function filterByName($name = null, $comparison = null)
+    public function filterByOwner($owner = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($name)) {
+            if (is_array($owner)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(ProjectTableMap::COL_OWNER, $owner, $comparison);
     }
 
     /**
-     * Filter the query on the repository_owner column
+     * Filter the query on the repo column
      *
      * Example usage:
      * <code>
-     * $query->filterByRepositoryOwner('fooValue');   // WHERE repository_owner = 'fooValue'
-     * $query->filterByRepositoryOwner('%fooValue%', Criteria::LIKE); // WHERE repository_owner LIKE '%fooValue%'
+     * $query->filterByRepo('fooValue');   // WHERE repo = 'fooValue'
+     * $query->filterByRepo('%fooValue%', Criteria::LIKE); // WHERE repo LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $repositoryOwner The value to use as filter.
+     * @param     string $repo The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildProjectQuery The current query, for fluid interface
      */
-    public function filterByRepositoryOwner($repositoryOwner = null, $comparison = null)
+    public function filterByRepo($repo = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($repositoryOwner)) {
+            if (is_array($repo)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::COL_REPOSITORY_OWNER, $repositoryOwner, $comparison);
-    }
-
-    /**
-     * Filter the query on the repository_name column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByRepositoryName('fooValue');   // WHERE repository_name = 'fooValue'
-     * $query->filterByRepositoryName('%fooValue%', Criteria::LIKE); // WHERE repository_name LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $repositoryName The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildProjectQuery The current query, for fluid interface
-     */
-    public function filterByRepositoryName($repositoryName = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($repositoryName)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ProjectTableMap::COL_REPOSITORY_NAME, $repositoryName, $comparison);
-    }
-
-    /**
-     * Filter the query on the repository_uri column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByRepositoryUri('fooValue');   // WHERE repository_uri = 'fooValue'
-     * $query->filterByRepositoryUri('%fooValue%', Criteria::LIKE); // WHERE repository_uri LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $repositoryUri The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildProjectQuery The current query, for fluid interface
-     */
-    public function filterByRepositoryUri($repositoryUri = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($repositoryUri)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ProjectTableMap::COL_REPOSITORY_URI, $repositoryUri, $comparison);
+        return $this->addUsingAlias(ProjectTableMap::COL_REPO, $repo, $comparison);
     }
 
     /**

@@ -59,7 +59,7 @@ class ProjectTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ProjectTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -77,24 +77,14 @@ class ProjectTableMap extends TableMap
     const COL_ID = 'project.id';
 
     /**
-     * the column name for the name field
+     * the column name for the owner field
      */
-    const COL_NAME = 'project.name';
+    const COL_OWNER = 'project.owner';
 
     /**
-     * the column name for the repository_owner field
+     * the column name for the repo field
      */
-    const COL_REPOSITORY_OWNER = 'project.repository_owner';
-
-    /**
-     * the column name for the repository_name field
-     */
-    const COL_REPOSITORY_NAME = 'project.repository_name';
-
-    /**
-     * the column name for the repository_uri field
-     */
-    const COL_REPOSITORY_URI = 'project.repository_uri';
+    const COL_REPO = 'project.repo';
 
     /**
      * the column name for the created_at field
@@ -118,11 +108,11 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'RepositoryOwner', 'RepositoryName', 'RepositoryUri', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'repositoryOwner', 'repositoryName', 'repositoryUri', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_NAME, ProjectTableMap::COL_REPOSITORY_OWNER, ProjectTableMap::COL_REPOSITORY_NAME, ProjectTableMap::COL_REPOSITORY_URI, ProjectTableMap::COL_CREATED_AT, ProjectTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'repository_owner', 'repository_name', 'repository_uri', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id', 'Owner', 'Repo', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'owner', 'repo', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_OWNER, ProjectTableMap::COL_REPO, ProjectTableMap::COL_CREATED_AT, ProjectTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'owner', 'repo', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -132,11 +122,11 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'RepositoryOwner' => 2, 'RepositoryName' => 3, 'RepositoryUri' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'repositoryOwner' => 2, 'repositoryName' => 3, 'repositoryUri' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_NAME => 1, ProjectTableMap::COL_REPOSITORY_OWNER => 2, ProjectTableMap::COL_REPOSITORY_NAME => 3, ProjectTableMap::COL_REPOSITORY_URI => 4, ProjectTableMap::COL_CREATED_AT => 5, ProjectTableMap::COL_UPDATED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'repository_owner' => 2, 'repository_name' => 3, 'repository_uri' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Owner' => 1, 'Repo' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_OWNER => 1, ProjectTableMap::COL_REPO => 2, ProjectTableMap::COL_CREATED_AT => 3, ProjectTableMap::COL_UPDATED_AT => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'created_at' => 3, 'updated_at' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -157,10 +147,8 @@ class ProjectTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'LONGVARCHAR', true, null, null);
-        $this->addColumn('repository_owner', 'RepositoryOwner', 'VARCHAR', true, 255, null);
-        $this->addColumn('repository_name', 'RepositoryName', 'VARCHAR', true, 255, null);
-        $this->addColumn('repository_uri', 'RepositoryUri', 'VARCHAR', true, 255, null);
+        $this->addColumn('owner', 'Owner', 'VARCHAR', true, 255, null);
+        $this->addColumn('repo', 'Repo', 'VARCHAR', true, 255, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -334,18 +322,14 @@ class ProjectTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ProjectTableMap::COL_ID);
-            $criteria->addSelectColumn(ProjectTableMap::COL_NAME);
-            $criteria->addSelectColumn(ProjectTableMap::COL_REPOSITORY_OWNER);
-            $criteria->addSelectColumn(ProjectTableMap::COL_REPOSITORY_NAME);
-            $criteria->addSelectColumn(ProjectTableMap::COL_REPOSITORY_URI);
+            $criteria->addSelectColumn(ProjectTableMap::COL_OWNER);
+            $criteria->addSelectColumn(ProjectTableMap::COL_REPO);
             $criteria->addSelectColumn(ProjectTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(ProjectTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.repository_owner');
-            $criteria->addSelectColumn($alias . '.repository_name');
-            $criteria->addSelectColumn($alias . '.repository_uri');
+            $criteria->addSelectColumn($alias . '.owner');
+            $criteria->addSelectColumn($alias . '.repo');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

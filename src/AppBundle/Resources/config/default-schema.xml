@@ -9,24 +9,22 @@
 
 	<table name="project" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-		<column name="name" type="LONGVARCHAR" required="true"/>
-		<column name="repository_owner" type="VARCHAR" size="255" required="true">
+		<column name="owner" type="VARCHAR" size="255" required="true">
 			<vendor type="mysql">
 				<parameter name="Charset" value="ascii"/>
 				<parameter name="Collate" value="ascii_general_ci"/>
 			</vendor>
 		</column>
-		<column name="repository_name" type="VARCHAR" size="255" required="true">
+		<column name="repo" type="VARCHAR" size="255" required="true">
 			<vendor type="mysql">
 				<parameter name="Charset" value="ascii"/>
 				<parameter name="Collate" value="ascii_general_ci"/>
 			</vendor>
 		</column>
-		<column name="repository_uri" type="VARCHAR" size="255" required="true"/>
 
-		<unique name="repository_owner_repository_name">
-			<unique-column name="repository_owner"/>
-			<unique-column name="repository_name"/>
+		<unique name="owner_repo">
+			<unique-column name="owner"/>
+			<unique-column name="repo"/>
 		</unique>
 	</table>
 
