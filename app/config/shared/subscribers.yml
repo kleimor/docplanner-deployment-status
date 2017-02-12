@@ -1,20 +1,12 @@
 services:
-    subscriber.project.creating:
-        class: AppBundle\Subscriber\ProjectCreatedSubscriber
+    subscriber.project:
+        class: AppBundle\Subscriber\ProjectSubscriber
         arguments:
             - "@github.client"
             - "%app.github.subscribed_events%"
+            - "@lopi_pusher.pusher"
         tags:
-            - name: kernel.event_listener
-              event: project.creating
-              method: onProjectCreating
-
-    subscriber.project.deleting:
-        class: AppBundle\Subscriber\ProjectDeletingSubscriber
-        arguments:
-            - "@github.client"
-            - "%app.github.subscribed_events%"
-        tags:
-            - name: kernel.event_listener
-              event: project.deleting
-              method: onProjectDeleting
+            - { name: kernel.event_listener, event: project.creating, method: onProjectCreating }
+            - { name: kernel.event_listener, event: project.created, method: onProjectCreated }
+            - { name: kernel.event_listener, event: project.deleting, method: onProjectDeleting }
+            - { name: kernel.event_listener, event: project.deleted, method: onProjectDeleted }
