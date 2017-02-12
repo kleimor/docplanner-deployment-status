@@ -141,13 +141,7 @@ class Client implements LoggerAwareInterface
 					':page'    => $page,
 				]));
 		};
-		$generateRequests = function (int $maxPage, int $minPage = 2) use (
-			$generateRequest,
-			$owner,
-			$repo,
-			$ref,
-			$daysBack
-		): \Generator
+		$generateRequests = function (int $maxPage, int $minPage = 2) use ($generateRequest): \Generator
 		{
 			while ($maxPage-- >= $minPage)
 			{
@@ -222,27 +216,20 @@ class Client implements LoggerAwareInterface
 		return $data;
 	}
 
-	public function getStatuses(string $owner, string $repo, string $ref, int $daysBack): array
+	public function getStatuses(string $owner, string $repo, string $ref): array
 	{
-		$generateRequest  = function (int $page) use ($owner, $repo, $ref, $daysBack): RequestInterface
+		$generateRequest  = function (int $page) use ($owner, $repo, $ref): RequestInterface
 		{
 			return new Request('GET',
 				strtr('/repos/:owner/:repo/commits/:ref/statuses?since=:since&per_page=:perPage&page=:page', [
 					':owner'   => $owner,
 					':repo'    => $repo,
 					':ref'     => $ref,
-					':since'   => (new \DateTime("-{$daysBack} days 00:00:00"))->format(\DateTime::ISO8601),
 					':perPage' => 100,
 					':page'    => $page,
 				]));
 		};
-		$generateRequests = function (int $maxPage, int $minPage = 2) use (
-			$generateRequest,
-			$owner,
-			$repo,
-			$ref,
-			$daysBack
-		): \Generator
+		$generateRequests = function (int $maxPage, int $minPage = 2) use ($generateRequest): \Generator
 		{
 			while ($maxPage-- >= $minPage)
 			{

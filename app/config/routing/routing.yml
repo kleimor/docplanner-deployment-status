@@ -8,7 +8,6 @@ _github:
     prefix: /
     resource: github_routing.yml
 
-
 dashboard:
     path: /
     defaults:

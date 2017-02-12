@@ -134,19 +134,12 @@ class StagesController extends Controller
 	/**
 	 * @ApiDoc(
 	 *     description="Get stage statuses",
-	 *     views={"default", "v1"},
-	 *     parameters={
-	 *         {
-	 *             "name": "days_back",
-	 *             "dataType": "integer",
-	 *             "required": false
-	 *         }
-	 *     }
+	 *     views={"default", "v1"}
 	 * )
 	 *
 	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
 	 */
-	public function statusesAction(Project $project, string $stage, Request $request)
+	public function statusesAction(Project $project, string $stage)
 	{
 		$stageModel = (new StageQuery)
 			->filterByProject($project)
@@ -160,9 +153,8 @@ class StagesController extends Controller
 
 		$owner    = $project->getOwner();
 		$repo     = $project->getRepo();
-		$daysBack = $request->query->get('daysBack', 7);
 
-		$statuses = $this->get('github.client')->getStatuses($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
+		$statuses = $this->get('github.client')->getStatuses($owner, $repo, $stageModel->getTrackedBranch());
 
 		return new JsonResponse($statuses);
 	}

@@ -68,11 +68,9 @@ class ProjectsController extends Controller
 		foreach ($projects as $project)
 		{
 			$projectData = [
-				'project' => [
-					'owner' => $project->getOwner(),
-					'repo'  => $project->getRepo(),
-				],
-				'stages'  => [],
+				'owner'  => $project->getOwner(),
+				'repo'   => $project->getRepo(),
+				'stages' => [],
 			];
 
 			foreach ($project->getStages() as $stage)
