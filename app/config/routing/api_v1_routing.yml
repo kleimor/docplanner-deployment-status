@@ -1,0 +1,71 @@
+api_v1_github_callback:
+    path: /github/callback
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Api/GitHub/Callback:callback
+
+api_v1_list_projects:
+    path: /projects
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Api/Projects:list
+
+api_v1_create_project:
+    path: /projects/{owner}/{repo}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Api/Projects:create
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+
+api_v1_delete_project:
+    path: /projects/{owner}/{repo}
+    methods: [DELETE]
+    defaults:
+        _controller: AppBundle:Api/Projects:delete
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+
+api_v1_create_stage:
+    path: /projects/{owner}/{repo}/{stage}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Api/Stages:create
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+        stage: "[a-zA-Z0-9_-]+"
+
+api_v1_delete_stage:
+    path: /projects/{owner}/{repo}/{stage}
+    methods: [DELETE]
+    defaults:
+        _controller: AppBundle:Api/Stages:delete
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+        stage: "[a-zA-Z0-9_-]+"
+
+api_v1_get_stage_commits:
+    path: /projects/{owner}/{repo}/{stage}/commits
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Api/Stages:commits
+        days_back: 1
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+        stage: "[a-zA-Z0-9_-]+"
+
+api_v1_get_stage_statuses:
+    path: /projects/{owner}/{repo}/{stage}/statuses
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Api/Stages:statuses
+        days_back: 1
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+        stage: "[a-zA-Z0-9_-]+"

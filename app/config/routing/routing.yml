@@ -1,0 +1,15 @@
+_api:
+    prefix: /api
+    resource: api_routing.yml
+
+_github:
+    host: github.com
+    schemes: [https]
+    prefix: /
+    resource: github_routing.yml
+
+
+dashboard:
+    path: /
+    defaults:
+        _controller: AppBundle:Main:dashboard

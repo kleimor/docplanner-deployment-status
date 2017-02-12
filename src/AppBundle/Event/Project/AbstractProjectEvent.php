@@ -8,7 +8,7 @@ use AppBundle\Event\AppEvent;
 use AppBundle\Model\Project;
 use Symfony\Component\EventDispatcher\Event;
 
-abstract class ProjectEvent extends Event implements AppEvent
+abstract class AbstractProjectEvent extends Event implements AppEvent
 {
 	/** @var Project */
 	protected $project;

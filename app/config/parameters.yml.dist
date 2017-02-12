@@ -7,4 +7,8 @@ parameters:
     pusher.key: ~
     pusher.secret: ~
     pusher.cluster: us-east-1
+    github.credentials:
+        - username: username
+          password: some-token|password
+    github.hub.secret: some-secret
     secret: ThisTokenIsNotSoSecretChangeIt

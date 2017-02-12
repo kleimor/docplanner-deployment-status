@@ -1,0 +1,6 @@
+nelmio_api_doc:
+    name: Deployment status API documentation
+    sandbox:
+        authentication:
+            delivery: http
+            type: basic

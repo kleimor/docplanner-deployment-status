@@ -1,0 +1,5 @@
+github_repo:
+    path: /{owner}/{repo}.git
+
+github_hub_topic:
+    path: /{owner}/{repo}/events/{event}.json

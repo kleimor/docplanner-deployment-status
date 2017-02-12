@@ -1,0 +1,10 @@
+app:
+    github:
+        credentials: "%github.credentials%"
+        subscribed_events:
+            - "delete"
+            - "deployment"
+            - "deployment_status"
+            - "ping"
+            - "push"
+            - "status"

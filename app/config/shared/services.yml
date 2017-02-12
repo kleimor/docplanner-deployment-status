@@ -1,0 +1,12 @@
+services:
+    github.client:
+        class: AppBundle\GitHub\Client
+        arguments:
+            - "@router"
+            - "%github.hub.secret%"
+        calls:
+            - ["setCredentials", ["%app.github.credentials%"]]
+            - ["setLogger", ["@logger"]]
+        tags:
+            - name: monolog.logger
+              channel: github

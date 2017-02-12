@@ -13,6 +13,16 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        api_doc:
+            pattern: ^/api/documentation(?:/|$)
+            security: false
+
+#        api:
+#            pattern: ^/api/
+#            http_basic:
+#                provider: in_memory
+#                realm: "Deployment Status API"
+
         main:
             anonymous: ~
             # activate different ways to authenticate

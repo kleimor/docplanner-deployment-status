@@ -1,5 +1,4 @@
 imports:
-    - { resource: "repositories.yml" }
     - { resource: "security.yml" }
     - { resource: "shared/" }
 

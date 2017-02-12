@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace AppBundle\Event\Project;
 
-class ProjectCreatingEvent extends AbstractProjectEvent
+class ProjectDeletedEvent extends AbstractProjectEvent
 {
 	/** {@inheritdoc} */
 	public static function getEventName(): string
 	{
-		return 'project.creating';
+		return 'project.deleted';
 	}
 }

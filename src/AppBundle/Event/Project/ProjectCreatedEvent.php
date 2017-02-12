@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Event\Project;
 
-class ProjectCreatedEvent extends ProjectEvent
+class ProjectCreatedEvent extends AbstractProjectEvent
 {
 	/** {@inheritdoc} */
 	public static function getEventName(): string

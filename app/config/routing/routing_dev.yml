@@ -10,11 +10,5 @@ _errors:
     resource: "@TwigBundle/Resources/config/routing/errors.xml"
     prefix:   /_error
 
-_welcome:
-    path: /
-    defaults:
-        _controller: FrameworkBundle:Template:template
-        template: default/index.json.twig
-
 _main:
     resource: "routing.yml"
