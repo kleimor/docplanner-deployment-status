@@ -61,7 +61,7 @@ class ProjectsController extends Controller
 	public function listAction(): JsonResponse
 	{
 		$projects = (new ProjectQuery)
-			->innerJoinWith('Stage')
+			->leftJoinWith('Stage')
 			->find();
 
 		$data = [];
@@ -72,6 +72,7 @@ class ProjectsController extends Controller
 					'owner' => $project->getOwner(),
 					'repo'  => $project->getRepo(),
 				],
+				'stages'  => [],
 			];
 
 			foreach ($project->getStages() as $stage)
