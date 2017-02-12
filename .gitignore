@@ -1,5 +1,7 @@
 web/index.php
 /public_html
+node_modules/
+npm-debug.log
 
 ### Symfony template
 # Cache and logs (Symfony2)
