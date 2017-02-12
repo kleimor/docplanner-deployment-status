@@ -23,12 +23,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGithubWebhookQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildGithubWebhookQuery orderByProjectId($order = Criteria::ASC) Order by the project_id column
  * @method     ChildGithubWebhookQuery orderByGithubId($order = Criteria::ASC) Order by the github_id column
+ * @method     ChildGithubWebhookQuery orderByEvents($order = Criteria::ASC) Order by the events column
  * @method     ChildGithubWebhookQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildGithubWebhookQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildGithubWebhookQuery groupById() Group by the id column
  * @method     ChildGithubWebhookQuery groupByProjectId() Group by the project_id column
  * @method     ChildGithubWebhookQuery groupByGithubId() Group by the github_id column
+ * @method     ChildGithubWebhookQuery groupByEvents() Group by the events column
  * @method     ChildGithubWebhookQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildGithubWebhookQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -58,6 +60,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGithubWebhook findOneById(int $id) Return the first ChildGithubWebhook filtered by the id column
  * @method     ChildGithubWebhook findOneByProjectId(int $project_id) Return the first ChildGithubWebhook filtered by the project_id column
  * @method     ChildGithubWebhook findOneByGithubId(int $github_id) Return the first ChildGithubWebhook filtered by the github_id column
+ * @method     ChildGithubWebhook findOneByEvents(array $events) Return the first ChildGithubWebhook filtered by the events column
  * @method     ChildGithubWebhook findOneByCreatedAt(string $created_at) Return the first ChildGithubWebhook filtered by the created_at column
  * @method     ChildGithubWebhook findOneByUpdatedAt(string $updated_at) Return the first ChildGithubWebhook filtered by the updated_at column *
 
@@ -67,6 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGithubWebhook requireOneById(int $id) Return the first ChildGithubWebhook filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGithubWebhook requireOneByProjectId(int $project_id) Return the first ChildGithubWebhook filtered by the project_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGithubWebhook requireOneByGithubId(int $github_id) Return the first ChildGithubWebhook filtered by the github_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildGithubWebhook requireOneByEvents(array $events) Return the first ChildGithubWebhook filtered by the events column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGithubWebhook requireOneByCreatedAt(string $created_at) Return the first ChildGithubWebhook filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGithubWebhook requireOneByUpdatedAt(string $updated_at) Return the first ChildGithubWebhook filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -74,6 +78,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGithubWebhook[]|ObjectCollection findById(int $id) Return ChildGithubWebhook objects filtered by the id column
  * @method     ChildGithubWebhook[]|ObjectCollection findByProjectId(int $project_id) Return ChildGithubWebhook objects filtered by the project_id column
  * @method     ChildGithubWebhook[]|ObjectCollection findByGithubId(int $github_id) Return ChildGithubWebhook objects filtered by the github_id column
+ * @method     ChildGithubWebhook[]|ObjectCollection findByEvents(array $events) Return ChildGithubWebhook objects filtered by the events column
  * @method     ChildGithubWebhook[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildGithubWebhook objects filtered by the created_at column
  * @method     ChildGithubWebhook[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildGithubWebhook objects filtered by the updated_at column
  * @method     ChildGithubWebhook[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -174,7 +179,7 @@ abstract class GithubWebhookQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `project_id`, `github_id`, `created_at`, `updated_at` FROM `github_webhook` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `project_id`, `github_id`, `events`, `created_at`, `updated_at` FROM `github_webhook` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -387,6 +392,87 @@ abstract class GithubWebhookQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(GithubWebhookTableMap::COL_GITHUB_ID, $githubId, $comparison);
+    }
+
+    /**
+     * Filter the query on the events column
+     *
+     * @param     array $events The values to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildGithubWebhookQuery The current query, for fluid interface
+     */
+    public function filterByEvents($events = null, $comparison = null)
+    {
+        $key = $this->getAliasedColName(GithubWebhookTableMap::COL_EVENTS);
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            foreach ($events as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_SOME) {
+            foreach ($events as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addOr($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            foreach ($events as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::NOT_LIKE);
+                }
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(GithubWebhookTableMap::COL_EVENTS, $events, $comparison);
+    }
+
+    /**
+     * Filter the query on the events column
+     * @param     mixed $events The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return $this|ChildGithubWebhookQuery The current query, for fluid interface
+     */
+    public function filterByEvent($events = null, $comparison = null)
+    {
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            if (is_scalar($events)) {
+                $events = '%| ' . $events . ' |%';
+                $comparison = Criteria::LIKE;
+            }
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            $events = '%| ' . $events . ' |%';
+            $comparison = Criteria::NOT_LIKE;
+            $key = $this->getAliasedColName(GithubWebhookTableMap::COL_EVENTS);
+            if ($this->containsKey($key)) {
+                $this->addAnd($key, $events, $comparison);
+            } else {
+                $this->addAnd($key, $events, $comparison);
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(GithubWebhookTableMap::COL_EVENTS, $events, $comparison);
     }
 
     /**

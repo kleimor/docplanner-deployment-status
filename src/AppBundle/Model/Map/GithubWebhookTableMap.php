@@ -59,7 +59,7 @@ class GithubWebhookTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class GithubWebhookTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -85,6 +85,11 @@ class GithubWebhookTableMap extends TableMap
      * the column name for the github_id field
      */
     const COL_GITHUB_ID = 'github_webhook.github_id';
+
+    /**
+     * the column name for the events field
+     */
+    const COL_EVENTS = 'github_webhook.events';
 
     /**
      * the column name for the created_at field
@@ -108,11 +113,11 @@ class GithubWebhookTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'GithubId', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'projectId', 'githubId', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(GithubWebhookTableMap::COL_ID, GithubWebhookTableMap::COL_PROJECT_ID, GithubWebhookTableMap::COL_GITHUB_ID, GithubWebhookTableMap::COL_CREATED_AT, GithubWebhookTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'project_id', 'github_id', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'GithubId', 'Events', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'projectId', 'githubId', 'events', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(GithubWebhookTableMap::COL_ID, GithubWebhookTableMap::COL_PROJECT_ID, GithubWebhookTableMap::COL_GITHUB_ID, GithubWebhookTableMap::COL_EVENTS, GithubWebhookTableMap::COL_CREATED_AT, GithubWebhookTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'project_id', 'github_id', 'events', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -122,11 +127,11 @@ class GithubWebhookTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'GithubId' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'githubId' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
-        self::TYPE_COLNAME       => array(GithubWebhookTableMap::COL_ID => 0, GithubWebhookTableMap::COL_PROJECT_ID => 1, GithubWebhookTableMap::COL_GITHUB_ID => 2, GithubWebhookTableMap::COL_CREATED_AT => 3, GithubWebhookTableMap::COL_UPDATED_AT => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'github_id' => 2, 'created_at' => 3, 'updated_at' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'GithubId' => 2, 'Events' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'githubId' => 2, 'events' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(GithubWebhookTableMap::COL_ID => 0, GithubWebhookTableMap::COL_PROJECT_ID => 1, GithubWebhookTableMap::COL_GITHUB_ID => 2, GithubWebhookTableMap::COL_EVENTS => 3, GithubWebhookTableMap::COL_CREATED_AT => 4, GithubWebhookTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'github_id' => 2, 'events' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -149,6 +154,7 @@ class GithubWebhookTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('project_id', 'ProjectId', 'INTEGER', 'project', 'id', true, null, null);
         $this->addColumn('github_id', 'GithubId', 'INTEGER', true, null, null);
+        $this->addColumn('events', 'Events', 'ARRAY', true, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -324,12 +330,14 @@ class GithubWebhookTableMap extends TableMap
             $criteria->addSelectColumn(GithubWebhookTableMap::COL_ID);
             $criteria->addSelectColumn(GithubWebhookTableMap::COL_PROJECT_ID);
             $criteria->addSelectColumn(GithubWebhookTableMap::COL_GITHUB_ID);
+            $criteria->addSelectColumn(GithubWebhookTableMap::COL_EVENTS);
             $criteria->addSelectColumn(GithubWebhookTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(GithubWebhookTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.project_id');
             $criteria->addSelectColumn($alias . '.github_id');
+            $criteria->addSelectColumn($alias . '.events');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

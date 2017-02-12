@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\GitHub;
 
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
@@ -104,6 +105,17 @@ class Client implements LoggerAwareInterface
 			]));
 
 			return 204 === $response->getStatusCode();
+		}
+		catch (BadResponseException $badResponseException)
+		{
+			$badRequestResponse = $badResponseException->getResponse();
+
+			if (404 === $badRequestResponse->getStatusCode())
+			{
+				return true;
+			}
+
+			throw $badResponseException;
 		}
 		catch (RequestException $exception)
 		{

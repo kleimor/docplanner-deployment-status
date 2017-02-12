@@ -86,6 +86,20 @@ abstract class GithubWebhook implements ActiveRecordInterface
     protected $github_id;
 
     /**
+     * The value for the events field.
+     *
+     * @var        array
+     */
+    protected $events;
+
+    /**
+     * The unserialized $events value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var object
+     */
+    protected $events_unserialized;
+
+    /**
      * The value for the created_at field.
      *
      * @var        DateTime
@@ -368,6 +382,35 @@ abstract class GithubWebhook implements ActiveRecordInterface
     }
 
     /**
+     * Get the [events] column value.
+     *
+     * @return array
+     */
+    public function getEvents()
+    {
+        if (null === $this->events_unserialized) {
+            $this->events_unserialized = array();
+        }
+        if (!$this->events_unserialized && null !== $this->events) {
+            $events_unserialized = substr($this->events, 2, -2);
+            $this->events_unserialized = $events_unserialized ? explode(' | ', $events_unserialized) : array();
+        }
+
+        return $this->events_unserialized;
+    }
+
+    /**
+     * Test the presence of a value in the [events] array column value.
+     * @param      mixed $value
+     *
+     * @return boolean
+     */
+    public function hasEvent($value)
+    {
+        return in_array($value, $this->getEvents());
+    } // hasEvent()
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -472,6 +515,57 @@ abstract class GithubWebhook implements ActiveRecordInterface
     } // setGithubId()
 
     /**
+     * Set the value of [events] column.
+     *
+     * @param array $v new value
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
+     */
+    public function setEvents($v)
+    {
+        if ($this->events_unserialized !== $v) {
+            $this->events_unserialized = $v;
+            $this->events = '| ' . implode(' | ', $v) . ' |';
+            $this->modifiedColumns[GithubWebhookTableMap::COL_EVENTS] = true;
+        }
+
+        return $this;
+    } // setEvents()
+
+    /**
+     * Adds a value to the [events] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
+     */
+    public function addEvent($value)
+    {
+        $currentArray = $this->getEvents();
+        $currentArray []= $value;
+        $this->setEvents($currentArray);
+
+        return $this;
+    } // addEvent()
+
+    /**
+     * Removes a value from the [events] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
+     */
+    public function removeEvent($value)
+    {
+        $targetArray = array();
+        foreach ($this->getEvents() as $element) {
+            if ($element != $value) {
+                $targetArray []= $element;
+            }
+        }
+        $this->setEvents($targetArray);
+
+        return $this;
+    } // removeEvent()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -556,13 +650,17 @@ abstract class GithubWebhook implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : GithubWebhookTableMap::translateFieldName('GithubId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->github_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GithubWebhookTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GithubWebhookTableMap::translateFieldName('Events', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->events = $col;
+            $this->events_unserialized = null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GithubWebhookTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GithubWebhookTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : GithubWebhookTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -575,7 +673,7 @@ abstract class GithubWebhook implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = GithubWebhookTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = GithubWebhookTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\GithubWebhook'), 0, $e);
@@ -809,6 +907,9 @@ abstract class GithubWebhook implements ActiveRecordInterface
         if ($this->isColumnModified(GithubWebhookTableMap::COL_GITHUB_ID)) {
             $modifiedColumns[':p' . $index++]  = '`github_id`';
         }
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_EVENTS)) {
+            $modifiedColumns[':p' . $index++]  = '`events`';
+        }
         if ($this->isColumnModified(GithubWebhookTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`created_at`';
         }
@@ -834,6 +935,9 @@ abstract class GithubWebhook implements ActiveRecordInterface
                         break;
                     case '`github_id`':
                         $stmt->bindValue($identifier, $this->github_id, PDO::PARAM_INT);
+                        break;
+                    case '`events`':
+                        $stmt->bindValue($identifier, $this->events, PDO::PARAM_STR);
                         break;
                     case '`created_at`':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -913,9 +1017,12 @@ abstract class GithubWebhook implements ActiveRecordInterface
                 return $this->getGithubId();
                 break;
             case 3:
-                return $this->getCreatedAt();
+                return $this->getEvents();
                 break;
             case 4:
+                return $this->getCreatedAt();
+                break;
+            case 5:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -951,15 +1058,16 @@ abstract class GithubWebhook implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getProjectId(),
             $keys[2] => $this->getGithubId(),
-            $keys[3] => $this->getCreatedAt(),
-            $keys[4] => $this->getUpdatedAt(),
+            $keys[3] => $this->getEvents(),
+            $keys[4] => $this->getCreatedAt(),
+            $keys[5] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[3]] instanceof \DateTime) {
-            $result[$keys[3]] = $result[$keys[3]]->format('c');
-        }
-
         if ($result[$keys[4]] instanceof \DateTime) {
             $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1027,9 +1135,16 @@ abstract class GithubWebhook implements ActiveRecordInterface
                 $this->setGithubId($value);
                 break;
             case 3:
-                $this->setCreatedAt($value);
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setEvents($value);
                 break;
             case 4:
+                $this->setCreatedAt($value);
+                break;
+            case 5:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1068,10 +1183,13 @@ abstract class GithubWebhook implements ActiveRecordInterface
             $this->setGithubId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setCreatedAt($arr[$keys[3]]);
+            $this->setEvents($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUpdatedAt($arr[$keys[4]]);
+            $this->setCreatedAt($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setUpdatedAt($arr[$keys[5]]);
         }
     }
 
@@ -1122,6 +1240,9 @@ abstract class GithubWebhook implements ActiveRecordInterface
         }
         if ($this->isColumnModified(GithubWebhookTableMap::COL_GITHUB_ID)) {
             $criteria->add(GithubWebhookTableMap::COL_GITHUB_ID, $this->github_id);
+        }
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_EVENTS)) {
+            $criteria->add(GithubWebhookTableMap::COL_EVENTS, $this->events);
         }
         if ($this->isColumnModified(GithubWebhookTableMap::COL_CREATED_AT)) {
             $criteria->add(GithubWebhookTableMap::COL_CREATED_AT, $this->created_at);
@@ -1217,6 +1338,7 @@ abstract class GithubWebhook implements ActiveRecordInterface
     {
         $copyObj->setProjectId($this->getProjectId());
         $copyObj->setGithubId($this->getGithubId());
+        $copyObj->setEvents($this->getEvents());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1311,6 +1433,8 @@ abstract class GithubWebhook implements ActiveRecordInterface
         $this->id = null;
         $this->project_id = null;
         $this->github_id = null;
+        $this->events = null;
+        $this->events_unserialized = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;
