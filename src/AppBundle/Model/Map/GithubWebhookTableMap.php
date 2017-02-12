@@ -2,8 +2,8 @@
 
 namespace AppBundle\Model\Map;
 
-use AppBundle\Model\Project;
-use AppBundle\Model\ProjectQuery;
+use AppBundle\Model\GithubWebhook;
+use AppBundle\Model\GithubWebhookQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'project' table.
+ * This class defines the structure of the 'github_webhook' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ProjectTableMap extends TableMap
+class GithubWebhookTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class ProjectTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'src.AppBundle.Model.Map.ProjectTableMap';
+    const CLASS_NAME = 'src.AppBundle.Model.Map.GithubWebhookTableMap';
 
     /**
      * The default database name for this class
@@ -44,17 +44,17 @@ class ProjectTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'project';
+    const TABLE_NAME = 'github_webhook';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\AppBundle\\Model\\Project';
+    const OM_CLASS = '\\AppBundle\\Model\\GithubWebhook';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'src.AppBundle.Model.Project';
+    const CLASS_DEFAULT = 'src.AppBundle.Model.GithubWebhook';
 
     /**
      * The total number of columns
@@ -74,27 +74,27 @@ class ProjectTableMap extends TableMap
     /**
      * the column name for the id field
      */
-    const COL_ID = 'project.id';
+    const COL_ID = 'github_webhook.id';
 
     /**
-     * the column name for the owner field
+     * the column name for the project_id field
      */
-    const COL_OWNER = 'project.owner';
+    const COL_PROJECT_ID = 'github_webhook.project_id';
 
     /**
-     * the column name for the repo field
+     * the column name for the github_id field
      */
-    const COL_REPO = 'project.repo';
+    const COL_GITHUB_ID = 'github_webhook.github_id';
 
     /**
      * the column name for the created_at field
      */
-    const COL_CREATED_AT = 'project.created_at';
+    const COL_CREATED_AT = 'github_webhook.created_at';
 
     /**
      * the column name for the updated_at field
      */
-    const COL_UPDATED_AT = 'project.updated_at';
+    const COL_UPDATED_AT = 'github_webhook.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -108,10 +108,10 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Owner', 'Repo', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'owner', 'repo', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_OWNER, ProjectTableMap::COL_REPO, ProjectTableMap::COL_CREATED_AT, ProjectTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'owner', 'repo', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'GithubId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'projectId', 'githubId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(GithubWebhookTableMap::COL_ID, GithubWebhookTableMap::COL_PROJECT_ID, GithubWebhookTableMap::COL_GITHUB_ID, GithubWebhookTableMap::COL_CREATED_AT, GithubWebhookTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'project_id', 'github_id', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
@@ -122,10 +122,10 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Owner' => 1, 'Repo' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_OWNER => 1, ProjectTableMap::COL_REPO => 2, ProjectTableMap::COL_CREATED_AT => 3, ProjectTableMap::COL_UPDATED_AT => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'created_at' => 3, 'updated_at' => 4, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'GithubId' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'projectId' => 1, 'githubId' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
+        self::TYPE_COLNAME       => array(GithubWebhookTableMap::COL_ID => 0, GithubWebhookTableMap::COL_PROJECT_ID => 1, GithubWebhookTableMap::COL_GITHUB_ID => 2, GithubWebhookTableMap::COL_CREATED_AT => 3, GithubWebhookTableMap::COL_UPDATED_AT => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'github_id' => 2, 'created_at' => 3, 'updated_at' => 4, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
@@ -139,16 +139,16 @@ class ProjectTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('project');
-        $this->setPhpName('Project');
+        $this->setName('github_webhook');
+        $this->setPhpName('GithubWebhook');
         $this->setIdentifierQuoting(true);
-        $this->setClassName('\\AppBundle\\Model\\Project');
+        $this->setClassName('\\AppBundle\\Model\\GithubWebhook');
         $this->setPackage('src.AppBundle.Model');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('owner', 'Owner', 'VARCHAR', true, 255, null);
-        $this->addColumn('repo', 'Repo', 'VARCHAR', true, 255, null);
+        $this->addForeignKey('project_id', 'ProjectId', 'INTEGER', 'project', 'id', true, null, null);
+        $this->addColumn('github_id', 'GithubId', 'INTEGER', true, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -158,20 +158,13 @@ class ProjectTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('GithubWebhook', '\\AppBundle\\Model\\GithubWebhook', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Project', '\\AppBundle\\Model\\Project', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':project_id',
     1 => ':id',
   ),
-), null, 'CASCADE', 'GithubWebhooks', false);
-        $this->addRelation('Stage', '\\AppBundle\\Model\\Stage', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':project_id',
-    1 => ':id',
-  ),
-), null, 'CASCADE', 'Stages', false);
+), null, 'CASCADE', null, false);
     } // buildRelations()
 
     /**
@@ -244,7 +237,7 @@ class ProjectTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ProjectTableMap::CLASS_DEFAULT : ProjectTableMap::OM_CLASS;
+        return $withPrefix ? GithubWebhookTableMap::CLASS_DEFAULT : GithubWebhookTableMap::OM_CLASS;
     }
 
     /**
@@ -258,22 +251,22 @@ class ProjectTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Project object, last column rank)
+     * @return array           (GithubWebhook object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ProjectTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ProjectTableMap::getInstanceFromPool($key))) {
+        $key = GithubWebhookTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = GithubWebhookTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ProjectTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + GithubWebhookTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ProjectTableMap::OM_CLASS;
-            /** @var Project $obj */
+            $cls = GithubWebhookTableMap::OM_CLASS;
+            /** @var GithubWebhook $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ProjectTableMap::addInstanceToPool($obj, $key);
+            GithubWebhookTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -296,18 +289,18 @@ class ProjectTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ProjectTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ProjectTableMap::getInstanceFromPool($key))) {
+            $key = GithubWebhookTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = GithubWebhookTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Project $obj */
+                /** @var GithubWebhook $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ProjectTableMap::addInstanceToPool($obj, $key);
+                GithubWebhookTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -328,15 +321,15 @@ class ProjectTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ProjectTableMap::COL_ID);
-            $criteria->addSelectColumn(ProjectTableMap::COL_OWNER);
-            $criteria->addSelectColumn(ProjectTableMap::COL_REPO);
-            $criteria->addSelectColumn(ProjectTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(ProjectTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(GithubWebhookTableMap::COL_ID);
+            $criteria->addSelectColumn(GithubWebhookTableMap::COL_PROJECT_ID);
+            $criteria->addSelectColumn(GithubWebhookTableMap::COL_GITHUB_ID);
+            $criteria->addSelectColumn(GithubWebhookTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(GithubWebhookTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.owner');
-            $criteria->addSelectColumn($alias . '.repo');
+            $criteria->addSelectColumn($alias . '.project_id');
+            $criteria->addSelectColumn($alias . '.github_id');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }
@@ -351,7 +344,7 @@ class ProjectTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ProjectTableMap::DATABASE_NAME)->getTable(ProjectTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(GithubWebhookTableMap::DATABASE_NAME)->getTable(GithubWebhookTableMap::TABLE_NAME);
     }
 
     /**
@@ -359,16 +352,16 @@ class ProjectTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ProjectTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ProjectTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ProjectTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(GithubWebhookTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(GithubWebhookTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new GithubWebhookTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Project or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a GithubWebhook or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Project object or primary key or array of primary keys
+     * @param mixed               $values Criteria or GithubWebhook object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -379,27 +372,27 @@ class ProjectTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(GithubWebhookTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \AppBundle\Model\Project) { // it's a model object
+        } elseif ($values instanceof \AppBundle\Model\GithubWebhook) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ProjectTableMap::DATABASE_NAME);
-            $criteria->add(ProjectTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(GithubWebhookTableMap::DATABASE_NAME);
+            $criteria->add(GithubWebhookTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = ProjectQuery::create()->mergeWith($criteria);
+        $query = GithubWebhookQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ProjectTableMap::clearInstancePool();
+            GithubWebhookTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ProjectTableMap::removeInstanceFromPool($singleval);
+                GithubWebhookTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -407,20 +400,20 @@ class ProjectTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the project table.
+     * Deletes all rows from the github_webhook table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ProjectQuery::create()->doDeleteAll($con);
+        return GithubWebhookQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Project or Criteria object.
+     * Performs an INSERT on the database, given a GithubWebhook or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Project object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or GithubWebhook object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -429,22 +422,22 @@ class ProjectTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(GithubWebhookTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Project object
+            $criteria = $criteria->buildCriteria(); // build Criteria from GithubWebhook object
         }
 
-        if ($criteria->containsKey(ProjectTableMap::COL_ID) && $criteria->keyContainsValue(ProjectTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectTableMap::COL_ID.')');
+        if ($criteria->containsKey(GithubWebhookTableMap::COL_ID) && $criteria->keyContainsValue(GithubWebhookTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GithubWebhookTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = ProjectQuery::create()->mergeWith($criteria);
+        $query = GithubWebhookQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -453,7 +446,7 @@ class ProjectTableMap extends TableMap
         });
     }
 
-} // ProjectTableMap
+} // GithubWebhookTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ProjectTableMap::buildTableMap();
+GithubWebhookTableMap::buildTableMap();

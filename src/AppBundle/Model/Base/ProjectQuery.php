@@ -40,6 +40,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProjectQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildProjectQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildProjectQuery leftJoinGithubWebhook($relationAlias = null) Adds a LEFT JOIN clause to the query using the GithubWebhook relation
+ * @method     ChildProjectQuery rightJoinGithubWebhook($relationAlias = null) Adds a RIGHT JOIN clause to the query using the GithubWebhook relation
+ * @method     ChildProjectQuery innerJoinGithubWebhook($relationAlias = null) Adds a INNER JOIN clause to the query using the GithubWebhook relation
+ *
+ * @method     ChildProjectQuery joinWithGithubWebhook($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the GithubWebhook relation
+ *
+ * @method     ChildProjectQuery leftJoinWithGithubWebhook() Adds a LEFT JOIN clause and with to the query using the GithubWebhook relation
+ * @method     ChildProjectQuery rightJoinWithGithubWebhook() Adds a RIGHT JOIN clause and with to the query using the GithubWebhook relation
+ * @method     ChildProjectQuery innerJoinWithGithubWebhook() Adds a INNER JOIN clause and with to the query using the GithubWebhook relation
+ *
  * @method     ChildProjectQuery leftJoinStage($relationAlias = null) Adds a LEFT JOIN clause to the query using the Stage relation
  * @method     ChildProjectQuery rightJoinStage($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Stage relation
  * @method     ChildProjectQuery innerJoinStage($relationAlias = null) Adds a INNER JOIN clause to the query using the Stage relation
@@ -50,7 +60,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProjectQuery rightJoinWithStage() Adds a RIGHT JOIN clause and with to the query using the Stage relation
  * @method     ChildProjectQuery innerJoinWithStage() Adds a INNER JOIN clause and with to the query using the Stage relation
  *
- * @method     \AppBundle\Model\StageQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \AppBundle\Model\GithubWebhookQuery|\AppBundle\Model\StageQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildProject findOne(ConnectionInterface $con = null) Return the first ChildProject matching the query
  * @method     ChildProject findOneOrCreate(ConnectionInterface $con = null) Return the first ChildProject matching the query, or a new ChildProject object populated from the query conditions when no match is found
@@ -439,6 +449,79 @@ abstract class ProjectQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProjectTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \AppBundle\Model\GithubWebhook object
+     *
+     * @param \AppBundle\Model\GithubWebhook|ObjectCollection $githubWebhook the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildProjectQuery The current query, for fluid interface
+     */
+    public function filterByGithubWebhook($githubWebhook, $comparison = null)
+    {
+        if ($githubWebhook instanceof \AppBundle\Model\GithubWebhook) {
+            return $this
+                ->addUsingAlias(ProjectTableMap::COL_ID, $githubWebhook->getProjectId(), $comparison);
+        } elseif ($githubWebhook instanceof ObjectCollection) {
+            return $this
+                ->useGithubWebhookQuery()
+                ->filterByPrimaryKeys($githubWebhook->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByGithubWebhook() only accepts arguments of type \AppBundle\Model\GithubWebhook or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the GithubWebhook relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildProjectQuery The current query, for fluid interface
+     */
+    public function joinGithubWebhook($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('GithubWebhook');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'GithubWebhook');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the GithubWebhook relation GithubWebhook object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \AppBundle\Model\GithubWebhookQuery A secondary query class using the current class as primary query
+     */
+    public function useGithubWebhookQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinGithubWebhook($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'GithubWebhook', '\AppBundle\Model\GithubWebhookQuery');
     }
 
     /**

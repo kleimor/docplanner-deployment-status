@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Subscriber;
 
-use AppBundle\Event\Project\ProjectDeletedEvent;
+use AppBundle\Event\Project\ProjectDeletingEvent;
 use AppBundle\GitHub\Client;
 
-class ProjectDeletedSubscriber
+class ProjectDeletingSubscriber
 {
 	/** @var Client */
 	protected $github;
@@ -21,18 +21,23 @@ class ProjectDeletedSubscriber
 		$this->subscribedEvents = $subscribedEvents;
 	}
 
-	public function onProjectDeleted(ProjectDeletedEvent $event)
+	public function onProjectDeleting(ProjectDeletingEvent $event)
 	{
-		$project = $event->getProject();
+		$project        = $event->getProject();
+		$githubWebhooks = $project->getGithubWebhooks();
 
-		foreach ($this->subscribedEvents as $subscribedEvent)
+		foreach ($githubWebhooks as $githubWebhook)
 		{
-			$this->github->unsubscribeFromEvent(
+			$deleted = $this->github->deleteHook(
 				$project->getOwner(),
 				$project->getRepo(),
-				$subscribedEvent
+				$githubWebhook->getGithubId()
 			);
-		}
 
+			if ($deleted)
+			{
+				$githubWebhook->delete();
+			}
+		}
 	}
 }

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace AppBundle\Subscriber;
 
-use AppBundle\Event\Project\ProjectCreatedEvent;
+use AppBundle\Event\Project\ProjectCreatingEvent;
 use AppBundle\GitHub\Client;
+use AppBundle\Model\GithubWebhook;
 
 class ProjectCreatedSubscriber
 {
@@ -21,18 +22,19 @@ class ProjectCreatedSubscriber
 		$this->subscribedEvents = $subscribedEvents;
 	}
 
-	public function onProjectCreated(ProjectCreatedEvent $event)
+	public function onProjectCreating(ProjectCreatingEvent $event)
 	{
 		$project = $event->getProject();
 
-		foreach ($this->subscribedEvents as $subscribedEvent)
-		{
-			$this->github->subscribeToEvent(
-				$project->getOwner(),
-				$project->getRepo(),
-				$subscribedEvent
-			);
-		}
+		$webhookId = $this->github->createHook(
+			$project->getOwner(),
+			$project->getRepo(),
+			$this->subscribedEvents
+		);
 
+		(new GithubWebhook)
+			->setProjectId($project->getId())
+			->setGithubId($webhookId)
+			->save();
 	}
 }

@@ -55,29 +55,31 @@ class Client implements LoggerAwareInterface
 		$this->logger = $logger;
 	}
 
-	public function subscribeToEvent(string $owner, string $repo, string $event): bool
+	public function createHook(string $owner, string $repo, array $events): int
 	{
 		$client = $this->getClient();
 
 		try
 		{
-			$client->post('/hub', [
-				'form_params' => [
-					'hub.mode'     => 'subscribe',
-					'hub.topic'    => $this->router->generate('github_hub_topic', [
-						'owner' => $owner,
-						'repo'  => $repo,
-						'event' => $event,
-					], RouterInterface::ABSOLUTE_URL),
-					'hub.callback' => $this->router->generate('api_v1_project_github_callback', [
-						'owner' => $owner,
-						'repo'  => $repo,
-					], RouterInterface::ABSOLUTE_URL),
-					'hub.secret'   => $this->githubSecret,
+			$callbackUrl = $this->router->generate('api_v1_github_callback', [], RouterInterface::ABSOLUTE_URL);
+			$response    = $client->post(strtr('/repos/:owner/:repo/hooks', [
+				':owner' => $owner,
+				':repo'  => $repo,
+			]), [
+				'json' => [
+					'name'   => 'web',
+					'config' => [
+						'url'          => $callbackUrl,
+						'content_type' => 'json',
+					],
+					'events' => $events,
+					'active' => true,
 				],
 			]);
 
-			return true;
+			$data = json_decode((string)$response->getBody(), true);
+
+			return (int)$data['id'];
 		}
 		catch (RequestException $exception)
 		{
@@ -85,35 +87,24 @@ class Client implements LoggerAwareInterface
 				'exception' => $exception,
 			]);
 
-			return false;
+			throw new \RuntimeException('Cannot create Github webhook');
 		}
 	}
 
-	public function unsubscribeFromEvent(string $owner, string $repo, string $event): bool
+	public function deleteHook(string $owner, string $repo, int $webhookId): bool
 	{
 		$client = $this->getClient();
 
 		try
 		{
-			$client->post('/hub', [
-				'form_params' => [
-					'hub.mode'     => 'unsubscribe',
-					'hub.topic'    => $this->router->generate('github_hub_topic', [
-						'owner' => $owner,
-						'repo'  => $repo,
-						'event' => $event,
-					], RouterInterface::ABSOLUTE_URL),
-					'hub.callback' => $this->router->generate('api_v1_project_github_callback', [
-						'owner' => $owner,
-						'repo'  => $repo,
-					], RouterInterface::ABSOLUTE_URL),
-					'hub.secret'   => $this->githubSecret,
-				],
-			]);
+			$response = $client->delete(strtr('/repos/:owner/:repo/hooks/:id', [
+				':owner' => $owner,
+				':repo'  => $repo,
+				':id'    => $webhookId,
+			]));
 
-			return true;
+			return 204 === $response->getStatusCode();
 		}
-
 		catch (RequestException $exception)
 		{
 			$this->logger->error($exception->getMessage(), [

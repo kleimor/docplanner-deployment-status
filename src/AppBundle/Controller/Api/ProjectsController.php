@@ -7,6 +7,7 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Event\Project\ProjectCreatedEvent;
 use AppBundle\Event\Project\ProjectCreatingEvent;
 use AppBundle\Event\Project\ProjectDeletedEvent;
+use AppBundle\Event\Project\ProjectDeletingEvent;
 use AppBundle\Model\Project;
 use AppBundle\Model\ProjectQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -97,6 +98,9 @@ class ProjectsController extends Controller
 	 */
 	public function deleteAction(Project $project): Response
 	{
+		$event = new ProjectDeletingEvent($project);
+		$this->get('event_dispatcher')->dispatch(ProjectDeletingEvent::getEventName(), $event);
+
 		$project->delete();
 
 		$event = new ProjectDeletedEvent($project);

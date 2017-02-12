@@ -1,20 +1,20 @@
 services:
-    subscriber.project.created:
+    subscriber.project.creating:
         class: AppBundle\Subscriber\ProjectCreatedSubscriber
         arguments:
             - "@github.client"
             - "%app.github.subscribed_events%"
         tags:
             - name: kernel.event_listener
-              event: project.created
-              method: onProjectCreated
+              event: project.creating
+              method: onProjectCreating
 
-    subscriber.project.deleted:
-        class: AppBundle\Subscriber\ProjectDeletedSubscriber
+    subscriber.project.deleting:
+        class: AppBundle\Subscriber\ProjectDeletingSubscriber
         arguments:
             - "@github.client"
             - "%app.github.subscribed_events%"
         tags:
             - name: kernel.event_listener
-              event: project.deleted
-              method: onProjectDeleted
+              event: project.deleting
+              method: onProjectDeleting

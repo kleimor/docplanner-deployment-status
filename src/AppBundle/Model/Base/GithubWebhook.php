@@ -9,17 +9,12 @@ use AppBundle\Model\GithubWebhook as ChildGithubWebhook;
 use AppBundle\Model\GithubWebhookQuery as ChildGithubWebhookQuery;
 use AppBundle\Model\Project as ChildProject;
 use AppBundle\Model\ProjectQuery as ChildProjectQuery;
-use AppBundle\Model\Stage as ChildStage;
-use AppBundle\Model\StageQuery as ChildStageQuery;
 use AppBundle\Model\Map\GithubWebhookTableMap;
-use AppBundle\Model\Map\ProjectTableMap;
-use AppBundle\Model\Map\StageTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -29,18 +24,18 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'project' table.
+ * Base class that represents a row from the 'github_webhook' table.
  *
  *
  *
  * @package    propel.generator.src.AppBundle.Model.Base
  */
-abstract class Project implements ActiveRecordInterface
+abstract class GithubWebhook implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\AppBundle\\Model\\Map\\ProjectTableMap';
+    const TABLE_MAP = '\\AppBundle\\Model\\Map\\GithubWebhookTableMap';
 
 
     /**
@@ -77,18 +72,18 @@ abstract class Project implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the owner field.
+     * The value for the project_id field.
      *
-     * @var        string
+     * @var        int
      */
-    protected $owner;
+    protected $project_id;
 
     /**
-     * The value for the repo field.
+     * The value for the github_id field.
      *
-     * @var        string
+     * @var        int
      */
-    protected $repo;
+    protected $github_id;
 
     /**
      * The value for the created_at field.
@@ -105,16 +100,9 @@ abstract class Project implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ObjectCollection|ChildGithubWebhook[] Collection to store aggregation of ChildGithubWebhook objects.
+     * @var        ChildProject
      */
-    protected $collGithubWebhooks;
-    protected $collGithubWebhooksPartial;
-
-    /**
-     * @var        ObjectCollection|ChildStage[] Collection to store aggregation of ChildStage objects.
-     */
-    protected $collStages;
-    protected $collStagesPartial;
+    protected $aProject;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -125,19 +113,7 @@ abstract class Project implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildGithubWebhook[]
-     */
-    protected $githubWebhooksScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildStage[]
-     */
-    protected $stagesScheduledForDeletion = null;
-
-    /**
-     * Initializes internal state of AppBundle\Model\Base\Project object.
+     * Initializes internal state of AppBundle\Model\Base\GithubWebhook object.
      */
     public function __construct()
     {
@@ -232,9 +208,9 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Project</code> instance.  If
-     * <code>obj</code> is an instance of <code>Project</code>, delegates to
-     * <code>equals(Project)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>GithubWebhook</code> instance.  If
+     * <code>obj</code> is an instance of <code>GithubWebhook</code>, delegates to
+     * <code>equals(GithubWebhook)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -300,7 +276,7 @@ abstract class Project implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Project The current object, for fluid interface
+     * @return $this|GithubWebhook The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -372,23 +348,23 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
-     * Get the [owner] column value.
+     * Get the [project_id] column value.
      *
-     * @return string
+     * @return int
      */
-    public function getOwner()
+    public function getProjectId()
     {
-        return $this->owner;
+        return $this->project_id;
     }
 
     /**
-     * Get the [repo] column value.
+     * Get the [github_id] column value.
      *
-     * @return string
+     * @return int
      */
-    public function getRepo()
+    public function getGithubId()
     {
-        return $this->repo;
+        return $this->github_id;
     }
 
     /**
@@ -435,7 +411,7 @@ abstract class Project implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -445,58 +421,62 @@ abstract class Project implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_ID] = true;
+            $this->modifiedColumns[GithubWebhookTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [owner] column.
+     * Set the value of [project_id] column.
      *
-     * @param string $v new value
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     * @param int $v new value
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
      */
-    public function setOwner($v)
+    public function setProjectId($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
-        if ($this->owner !== $v) {
-            $this->owner = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_OWNER] = true;
+        if ($this->project_id !== $v) {
+            $this->project_id = $v;
+            $this->modifiedColumns[GithubWebhookTableMap::COL_PROJECT_ID] = true;
+        }
+
+        if ($this->aProject !== null && $this->aProject->getId() !== $v) {
+            $this->aProject = null;
         }
 
         return $this;
-    } // setOwner()
+    } // setProjectId()
 
     /**
-     * Set the value of [repo] column.
+     * Set the value of [github_id] column.
      *
-     * @param string $v new value
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     * @param int $v new value
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
      */
-    public function setRepo($v)
+    public function setGithubId($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
-        if ($this->repo !== $v) {
-            $this->repo = $v;
-            $this->modifiedColumns[ProjectTableMap::COL_REPO] = true;
+        if ($this->github_id !== $v) {
+            $this->github_id = $v;
+            $this->modifiedColumns[GithubWebhookTableMap::COL_GITHUB_ID] = true;
         }
 
         return $this;
-    } // setRepo()
+    } // setGithubId()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -504,7 +484,7 @@ abstract class Project implements ActiveRecordInterface
         if ($this->created_at !== null || $dt !== null) {
             if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
                 $this->created_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectTableMap::COL_CREATED_AT] = true;
+                $this->modifiedColumns[GithubWebhookTableMap::COL_CREATED_AT] = true;
             }
         } // if either are not null
 
@@ -516,7 +496,7 @@ abstract class Project implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
      */
     public function setUpdatedAt($v)
     {
@@ -524,7 +504,7 @@ abstract class Project implements ActiveRecordInterface
         if ($this->updated_at !== null || $dt !== null) {
             if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
                 $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectTableMap::COL_UPDATED_AT] = true;
+                $this->modifiedColumns[GithubWebhookTableMap::COL_UPDATED_AT] = true;
             }
         } // if either are not null
 
@@ -567,22 +547,22 @@ abstract class Project implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ProjectTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : GithubWebhookTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectTableMap::translateFieldName('Owner', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->owner = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : GithubWebhookTableMap::translateFieldName('ProjectId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->project_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('Repo', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->repo = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : GithubWebhookTableMap::translateFieldName('GithubId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->github_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GithubWebhookTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GithubWebhookTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -595,10 +575,10 @@ abstract class Project implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = GithubWebhookTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\Project'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\GithubWebhook'), 0, $e);
         }
     }
 
@@ -617,6 +597,9 @@ abstract class Project implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aProject !== null && $this->project_id !== $this->aProject->getId()) {
+            $this->aProject = null;
+        }
     } // ensureConsistency
 
     /**
@@ -640,13 +623,13 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(GithubWebhookTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildProjectQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildGithubWebhookQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -656,10 +639,7 @@ abstract class Project implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collGithubWebhooks = null;
-
-            $this->collStages = null;
-
+            $this->aProject = null;
         } // if (deep)
     }
 
@@ -669,8 +649,8 @@ abstract class Project implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Project::setDeleted()
-     * @see Project::isDeleted()
+     * @see GithubWebhook::setDeleted()
+     * @see GithubWebhook::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -679,11 +659,11 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(GithubWebhookTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildProjectQuery::create()
+            $deleteQuery = ChildGithubWebhookQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -714,7 +694,7 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(GithubWebhookTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -724,16 +704,16 @@ abstract class Project implements ActiveRecordInterface
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
 
-                if (!$this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
+                if (!$this->isColumnModified(GithubWebhookTableMap::COL_CREATED_AT)) {
                     $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
-                if (!$this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+                if (!$this->isColumnModified(GithubWebhookTableMap::COL_UPDATED_AT)) {
                     $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             } else {
                 $ret = $ret && $this->preUpdate($con);
                 // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+                if ($this->isModified() && !$this->isColumnModified(GithubWebhookTableMap::COL_UPDATED_AT)) {
                     $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             }
@@ -745,7 +725,7 @@ abstract class Project implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ProjectTableMap::addInstanceToPool($this);
+                GithubWebhookTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -771,6 +751,18 @@ abstract class Project implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aProject !== null) {
+                if ($this->aProject->isModified() || $this->aProject->isNew()) {
+                    $affectedRows += $this->aProject->save($con);
+                }
+                $this->setProject($this->aProject);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -780,40 +772,6 @@ abstract class Project implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
-            }
-
-            if ($this->githubWebhooksScheduledForDeletion !== null) {
-                if (!$this->githubWebhooksScheduledForDeletion->isEmpty()) {
-                    \AppBundle\Model\GithubWebhookQuery::create()
-                        ->filterByPrimaryKeys($this->githubWebhooksScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->githubWebhooksScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collGithubWebhooks !== null) {
-                foreach ($this->collGithubWebhooks as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->stagesScheduledForDeletion !== null) {
-                if (!$this->stagesScheduledForDeletion->isEmpty()) {
-                    \AppBundle\Model\StageQuery::create()
-                        ->filterByPrimaryKeys($this->stagesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->stagesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collStages !== null) {
-                foreach ($this->collStages as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -836,30 +794,30 @@ abstract class Project implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ProjectTableMap::COL_ID] = true;
+        $this->modifiedColumns[GithubWebhookTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ProjectTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . GithubWebhookTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ProjectTableMap::COL_ID)) {
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_OWNER)) {
-            $modifiedColumns[':p' . $index++]  = '`owner`';
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_PROJECT_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`project_id`';
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPO)) {
-            $modifiedColumns[':p' . $index++]  = '`repo`';
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_GITHUB_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`github_id`';
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`created_at`';
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`updated_at`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `project` (%s) VALUES (%s)',
+            'INSERT INTO `github_webhook` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -871,11 +829,11 @@ abstract class Project implements ActiveRecordInterface
                     case '`id`':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case '`owner`':
-                        $stmt->bindValue($identifier, $this->owner, PDO::PARAM_STR);
+                    case '`project_id`':
+                        $stmt->bindValue($identifier, $this->project_id, PDO::PARAM_INT);
                         break;
-                    case '`repo`':
-                        $stmt->bindValue($identifier, $this->repo, PDO::PARAM_STR);
+                    case '`github_id`':
+                        $stmt->bindValue($identifier, $this->github_id, PDO::PARAM_INT);
                         break;
                     case '`created_at`':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -929,7 +887,7 @@ abstract class Project implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ProjectTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = GithubWebhookTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -949,10 +907,10 @@ abstract class Project implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getOwner();
+                return $this->getProjectId();
                 break;
             case 2:
-                return $this->getRepo();
+                return $this->getGithubId();
                 break;
             case 3:
                 return $this->getCreatedAt();
@@ -984,15 +942,15 @@ abstract class Project implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Project'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['GithubWebhook'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Project'][$this->hashCode()] = true;
-        $keys = ProjectTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['GithubWebhook'][$this->hashCode()] = true;
+        $keys = GithubWebhookTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getOwner(),
-            $keys[2] => $this->getRepo(),
+            $keys[1] => $this->getProjectId(),
+            $keys[2] => $this->getGithubId(),
             $keys[3] => $this->getCreatedAt(),
             $keys[4] => $this->getUpdatedAt(),
         );
@@ -1010,35 +968,20 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collGithubWebhooks) {
+            if (null !== $this->aProject) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'githubWebhooks';
+                        $key = 'project';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'github_webhooks';
+                        $key = 'project';
                         break;
                     default:
-                        $key = 'GithubWebhooks';
+                        $key = 'Project';
                 }
 
-                $result[$key] = $this->collGithubWebhooks->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collStages) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'stages';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'stages';
-                        break;
-                    default:
-                        $key = 'Stages';
-                }
-
-                $result[$key] = $this->collStages->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->aProject->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1054,11 +997,11 @@ abstract class Project implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\AppBundle\Model\Project
+     * @return $this|\AppBundle\Model\GithubWebhook
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ProjectTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = GithubWebhookTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1069,7 +1012,7 @@ abstract class Project implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\AppBundle\Model\Project
+     * @return $this|\AppBundle\Model\GithubWebhook
      */
     public function setByPosition($pos, $value)
     {
@@ -1078,10 +1021,10 @@ abstract class Project implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setOwner($value);
+                $this->setProjectId($value);
                 break;
             case 2:
-                $this->setRepo($value);
+                $this->setGithubId($value);
                 break;
             case 3:
                 $this->setCreatedAt($value);
@@ -1113,16 +1056,16 @@ abstract class Project implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ProjectTableMap::getFieldNames($keyType);
+        $keys = GithubWebhookTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setOwner($arr[$keys[1]]);
+            $this->setProjectId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setRepo($arr[$keys[2]]);
+            $this->setGithubId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setCreatedAt($arr[$keys[3]]);
@@ -1149,7 +1092,7 @@ abstract class Project implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\AppBundle\Model\Project The current object, for fluid interface
+     * @return $this|\AppBundle\Model\GithubWebhook The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1169,22 +1112,22 @@ abstract class Project implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ProjectTableMap::DATABASE_NAME);
+        $criteria = new Criteria(GithubWebhookTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ProjectTableMap::COL_ID)) {
-            $criteria->add(ProjectTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_ID)) {
+            $criteria->add(GithubWebhookTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_OWNER)) {
-            $criteria->add(ProjectTableMap::COL_OWNER, $this->owner);
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_PROJECT_ID)) {
+            $criteria->add(GithubWebhookTableMap::COL_PROJECT_ID, $this->project_id);
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_REPO)) {
-            $criteria->add(ProjectTableMap::COL_REPO, $this->repo);
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_GITHUB_ID)) {
+            $criteria->add(GithubWebhookTableMap::COL_GITHUB_ID, $this->github_id);
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
-            $criteria->add(ProjectTableMap::COL_CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_CREATED_AT)) {
+            $criteria->add(GithubWebhookTableMap::COL_CREATED_AT, $this->created_at);
         }
-        if ($this->isColumnModified(ProjectTableMap::COL_UPDATED_AT)) {
-            $criteria->add(ProjectTableMap::COL_UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(GithubWebhookTableMap::COL_UPDATED_AT)) {
+            $criteria->add(GithubWebhookTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1202,8 +1145,8 @@ abstract class Project implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildProjectQuery::create();
-        $criteria->add(ProjectTableMap::COL_ID, $this->id);
+        $criteria = ChildGithubWebhookQuery::create();
+        $criteria->add(GithubWebhookTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1265,37 +1208,17 @@ abstract class Project implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \AppBundle\Model\Project (or compatible) type.
+     * @param      object $copyObj An object of \AppBundle\Model\GithubWebhook (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setOwner($this->getOwner());
-        $copyObj->setRepo($this->getRepo());
+        $copyObj->setProjectId($this->getProjectId());
+        $copyObj->setGithubId($this->getGithubId());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getGithubWebhooks() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addGithubWebhook($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getStages() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addStage($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1311,7 +1234,7 @@ abstract class Project implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \AppBundle\Model\Project Clone of current object.
+     * @return \AppBundle\Model\GithubWebhook Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1324,473 +1247,55 @@ abstract class Project implements ActiveRecordInterface
         return $copyObj;
     }
 
-
     /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
+     * Declares an association between this object and a ChildProject object.
      *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('GithubWebhook' == $relationName) {
-            return $this->initGithubWebhooks();
-        }
-        if ('Stage' == $relationName) {
-            return $this->initStages();
-        }
-    }
-
-    /**
-     * Clears out the collGithubWebhooks collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addGithubWebhooks()
-     */
-    public function clearGithubWebhooks()
-    {
-        $this->collGithubWebhooks = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collGithubWebhooks collection loaded partially.
-     */
-    public function resetPartialGithubWebhooks($v = true)
-    {
-        $this->collGithubWebhooksPartial = $v;
-    }
-
-    /**
-     * Initializes the collGithubWebhooks collection.
-     *
-     * By default this just sets the collGithubWebhooks collection to an empty array (like clearcollGithubWebhooks());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initGithubWebhooks($overrideExisting = true)
-    {
-        if (null !== $this->collGithubWebhooks && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = GithubWebhookTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collGithubWebhooks = new $collectionClassName;
-        $this->collGithubWebhooks->setModel('\AppBundle\Model\GithubWebhook');
-    }
-
-    /**
-     * Gets an array of ChildGithubWebhook objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildProject is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildGithubWebhook[] List of ChildGithubWebhook objects
+     * @param  ChildProject $v
+     * @return $this|\AppBundle\Model\GithubWebhook The current object (for fluent API support)
      * @throws PropelException
      */
-    public function getGithubWebhooks(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function setProject(ChildProject $v = null)
     {
-        $partial = $this->collGithubWebhooksPartial && !$this->isNew();
-        if (null === $this->collGithubWebhooks || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collGithubWebhooks) {
-                // return empty collection
-                $this->initGithubWebhooks();
-            } else {
-                $collGithubWebhooks = ChildGithubWebhookQuery::create(null, $criteria)
-                    ->filterByProject($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collGithubWebhooksPartial && count($collGithubWebhooks)) {
-                        $this->initGithubWebhooks(false);
-
-                        foreach ($collGithubWebhooks as $obj) {
-                            if (false == $this->collGithubWebhooks->contains($obj)) {
-                                $this->collGithubWebhooks->append($obj);
-                            }
-                        }
-
-                        $this->collGithubWebhooksPartial = true;
-                    }
-
-                    return $collGithubWebhooks;
-                }
-
-                if ($partial && $this->collGithubWebhooks) {
-                    foreach ($this->collGithubWebhooks as $obj) {
-                        if ($obj->isNew()) {
-                            $collGithubWebhooks[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collGithubWebhooks = $collGithubWebhooks;
-                $this->collGithubWebhooksPartial = false;
-            }
+        if ($v === null) {
+            $this->setProjectId(NULL);
+        } else {
+            $this->setProjectId($v->getId());
         }
 
-        return $this->collGithubWebhooks;
-    }
+        $this->aProject = $v;
 
-    /**
-     * Sets a collection of ChildGithubWebhook objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $githubWebhooks A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildProject The current object (for fluent API support)
-     */
-    public function setGithubWebhooks(Collection $githubWebhooks, ConnectionInterface $con = null)
-    {
-        /** @var ChildGithubWebhook[] $githubWebhooksToDelete */
-        $githubWebhooksToDelete = $this->getGithubWebhooks(new Criteria(), $con)->diff($githubWebhooks);
-
-
-        $this->githubWebhooksScheduledForDeletion = $githubWebhooksToDelete;
-
-        foreach ($githubWebhooksToDelete as $githubWebhookRemoved) {
-            $githubWebhookRemoved->setProject(null);
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildProject object, it will not be re-added.
+        if ($v !== null) {
+            $v->addGithubWebhook($this);
         }
 
-        $this->collGithubWebhooks = null;
-        foreach ($githubWebhooks as $githubWebhook) {
-            $this->addGithubWebhook($githubWebhook);
-        }
-
-        $this->collGithubWebhooks = $githubWebhooks;
-        $this->collGithubWebhooksPartial = false;
 
         return $this;
     }
 
+
     /**
-     * Returns the number of related GithubWebhook objects.
+     * Get the associated ChildProject object
      *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related GithubWebhook objects.
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildProject The associated ChildProject object.
      * @throws PropelException
      */
-    public function countGithubWebhooks(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function getProject(ConnectionInterface $con = null)
     {
-        $partial = $this->collGithubWebhooksPartial && !$this->isNew();
-        if (null === $this->collGithubWebhooks || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collGithubWebhooks) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getGithubWebhooks());
-            }
-
-            $query = ChildGithubWebhookQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByProject($this)
-                ->count($con);
+        if ($this->aProject === null && ($this->project_id !== null)) {
+            $this->aProject = ChildProjectQuery::create()->findPk($this->project_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aProject->addGithubWebhooks($this);
+             */
         }
 
-        return count($this->collGithubWebhooks);
-    }
-
-    /**
-     * Method called to associate a ChildGithubWebhook object to this object
-     * through the ChildGithubWebhook foreign key attribute.
-     *
-     * @param  ChildGithubWebhook $l ChildGithubWebhook
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
-     */
-    public function addGithubWebhook(ChildGithubWebhook $l)
-    {
-        if ($this->collGithubWebhooks === null) {
-            $this->initGithubWebhooks();
-            $this->collGithubWebhooksPartial = true;
-        }
-
-        if (!$this->collGithubWebhooks->contains($l)) {
-            $this->doAddGithubWebhook($l);
-
-            if ($this->githubWebhooksScheduledForDeletion and $this->githubWebhooksScheduledForDeletion->contains($l)) {
-                $this->githubWebhooksScheduledForDeletion->remove($this->githubWebhooksScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildGithubWebhook $githubWebhook The ChildGithubWebhook object to add.
-     */
-    protected function doAddGithubWebhook(ChildGithubWebhook $githubWebhook)
-    {
-        $this->collGithubWebhooks[]= $githubWebhook;
-        $githubWebhook->setProject($this);
-    }
-
-    /**
-     * @param  ChildGithubWebhook $githubWebhook The ChildGithubWebhook object to remove.
-     * @return $this|ChildProject The current object (for fluent API support)
-     */
-    public function removeGithubWebhook(ChildGithubWebhook $githubWebhook)
-    {
-        if ($this->getGithubWebhooks()->contains($githubWebhook)) {
-            $pos = $this->collGithubWebhooks->search($githubWebhook);
-            $this->collGithubWebhooks->remove($pos);
-            if (null === $this->githubWebhooksScheduledForDeletion) {
-                $this->githubWebhooksScheduledForDeletion = clone $this->collGithubWebhooks;
-                $this->githubWebhooksScheduledForDeletion->clear();
-            }
-            $this->githubWebhooksScheduledForDeletion[]= clone $githubWebhook;
-            $githubWebhook->setProject(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clears out the collStages collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addStages()
-     */
-    public function clearStages()
-    {
-        $this->collStages = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collStages collection loaded partially.
-     */
-    public function resetPartialStages($v = true)
-    {
-        $this->collStagesPartial = $v;
-    }
-
-    /**
-     * Initializes the collStages collection.
-     *
-     * By default this just sets the collStages collection to an empty array (like clearcollStages());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initStages($overrideExisting = true)
-    {
-        if (null !== $this->collStages && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = StageTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collStages = new $collectionClassName;
-        $this->collStages->setModel('\AppBundle\Model\Stage');
-    }
-
-    /**
-     * Gets an array of ChildStage objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildProject is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildStage[] List of ChildStage objects
-     * @throws PropelException
-     */
-    public function getStages(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collStagesPartial && !$this->isNew();
-        if (null === $this->collStages || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collStages) {
-                // return empty collection
-                $this->initStages();
-            } else {
-                $collStages = ChildStageQuery::create(null, $criteria)
-                    ->filterByProject($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collStagesPartial && count($collStages)) {
-                        $this->initStages(false);
-
-                        foreach ($collStages as $obj) {
-                            if (false == $this->collStages->contains($obj)) {
-                                $this->collStages->append($obj);
-                            }
-                        }
-
-                        $this->collStagesPartial = true;
-                    }
-
-                    return $collStages;
-                }
-
-                if ($partial && $this->collStages) {
-                    foreach ($this->collStages as $obj) {
-                        if ($obj->isNew()) {
-                            $collStages[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collStages = $collStages;
-                $this->collStagesPartial = false;
-            }
-        }
-
-        return $this->collStages;
-    }
-
-    /**
-     * Sets a collection of ChildStage objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $stages A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildProject The current object (for fluent API support)
-     */
-    public function setStages(Collection $stages, ConnectionInterface $con = null)
-    {
-        /** @var ChildStage[] $stagesToDelete */
-        $stagesToDelete = $this->getStages(new Criteria(), $con)->diff($stages);
-
-
-        $this->stagesScheduledForDeletion = $stagesToDelete;
-
-        foreach ($stagesToDelete as $stageRemoved) {
-            $stageRemoved->setProject(null);
-        }
-
-        $this->collStages = null;
-        foreach ($stages as $stage) {
-            $this->addStage($stage);
-        }
-
-        $this->collStages = $stages;
-        $this->collStagesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Stage objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Stage objects.
-     * @throws PropelException
-     */
-    public function countStages(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collStagesPartial && !$this->isNew();
-        if (null === $this->collStages || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collStages) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getStages());
-            }
-
-            $query = ChildStageQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByProject($this)
-                ->count($con);
-        }
-
-        return count($this->collStages);
-    }
-
-    /**
-     * Method called to associate a ChildStage object to this object
-     * through the ChildStage foreign key attribute.
-     *
-     * @param  ChildStage $l ChildStage
-     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
-     */
-    public function addStage(ChildStage $l)
-    {
-        if ($this->collStages === null) {
-            $this->initStages();
-            $this->collStagesPartial = true;
-        }
-
-        if (!$this->collStages->contains($l)) {
-            $this->doAddStage($l);
-
-            if ($this->stagesScheduledForDeletion and $this->stagesScheduledForDeletion->contains($l)) {
-                $this->stagesScheduledForDeletion->remove($this->stagesScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildStage $stage The ChildStage object to add.
-     */
-    protected function doAddStage(ChildStage $stage)
-    {
-        $this->collStages[]= $stage;
-        $stage->setProject($this);
-    }
-
-    /**
-     * @param  ChildStage $stage The ChildStage object to remove.
-     * @return $this|ChildProject The current object (for fluent API support)
-     */
-    public function removeStage(ChildStage $stage)
-    {
-        if ($this->getStages()->contains($stage)) {
-            $pos = $this->collStages->search($stage);
-            $this->collStages->remove($pos);
-            if (null === $this->stagesScheduledForDeletion) {
-                $this->stagesScheduledForDeletion = clone $this->collStages;
-                $this->stagesScheduledForDeletion->clear();
-            }
-            $this->stagesScheduledForDeletion[]= clone $stage;
-            $stage->setProject(null);
-        }
-
-        return $this;
+        return $this->aProject;
     }
 
     /**
@@ -1800,9 +1305,12 @@ abstract class Project implements ActiveRecordInterface
      */
     public function clear()
     {
+        if (null !== $this->aProject) {
+            $this->aProject->removeGithubWebhook($this);
+        }
         $this->id = null;
-        $this->owner = null;
-        $this->repo = null;
+        $this->project_id = null;
+        $this->github_id = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;
@@ -1823,20 +1331,9 @@ abstract class Project implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collGithubWebhooks) {
-                foreach ($this->collGithubWebhooks as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collStages) {
-                foreach ($this->collStages as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        $this->collGithubWebhooks = null;
-        $this->collStages = null;
+        $this->aProject = null;
     }
 
     /**
@@ -1846,7 +1343,7 @@ abstract class Project implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ProjectTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(GithubWebhookTableMap::DEFAULT_STRING_FORMAT);
     }
 
     // timestampable behavior
@@ -1854,11 +1351,11 @@ abstract class Project implements ActiveRecordInterface
     /**
      * Mark the current object so that the update date doesn't get updated during next save
      *
-     * @return     $this|ChildProject The current object (for fluent API support)
+     * @return     $this|ChildGithubWebhook The current object (for fluent API support)
      */
     public function keepUpdateDateUnchanged()
     {
-        $this->modifiedColumns[ProjectTableMap::COL_UPDATED_AT] = true;
+        $this->modifiedColumns[GithubWebhookTableMap::COL_UPDATED_AT] = true;
 
         return $this;
     }

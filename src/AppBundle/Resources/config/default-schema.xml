@@ -28,6 +28,28 @@
 		</unique>
 	</table>
 
+	<table name="github_webhook" idMethod="native">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+		<column name="project_id" type="INTEGER" required="true"/>
+		<column name="github_id" type="INTEGER" required="true"/>
+
+		<foreign-key foreignTable="project" name="github_webhook_FK1" onUpdate="CASCADE">
+			<reference local="project_id" foreign="id"/>
+		</foreign-key>
+
+		<index name="project_id">
+			<index-column name="project_id"/>
+		</index>
+		<index name="github_id">
+			<index-column name="github_id"/>
+		</index>
+
+		<unique name="project_id_github_id">
+			<unique-column name="project_id"/>
+			<unique-column name="github_id"/>
+		</unique>
+	</table>
+
 	<table name="stage" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
 		<column name="project_id" type="INTEGER" required="true"/>
