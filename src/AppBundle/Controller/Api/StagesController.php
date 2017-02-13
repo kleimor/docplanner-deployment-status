@@ -158,4 +158,32 @@ class StagesController extends Controller
 
 		return new JsonResponse($statuses);
 	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Get stage deployments",
+	 *     views={"default", "v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function deploymentsAction(Project $project, string $stage)
+	{
+		$stageModel = (new StageQuery)
+			->filterByProject($project)
+			->filterByName($stage)
+			->findOne();
+
+		if (null === $stageModel)
+		{
+			throw $this->createNotFoundException("Stage {$stage} not found");
+		}
+
+		$owner    = $project->getOwner();
+		$repo     = $project->getRepo();
+
+		$statuses = $this->get('github.client')->getDeployments($owner, $repo, $stage, $stageModel->getTrackedBranch());
+
+		return new JsonResponse($statuses);
+	}
 }
