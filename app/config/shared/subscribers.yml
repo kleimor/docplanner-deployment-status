@@ -10,3 +10,9 @@ services:
             - { name: kernel.event_listener, event: project.created, method: onProjectCreated }
             - { name: kernel.event_listener, event: project.deleting, method: onProjectDeleting }
             - { name: kernel.event_listener, event: project.deleted, method: onProjectDeleted }
+
+    subscriber.github:
+        class: AppBundle\Subscriber\GithubSubscriber
+        arguments:
+            - "@lopi_pusher.pusher"
+        tags: [] # configured in AppExtension
