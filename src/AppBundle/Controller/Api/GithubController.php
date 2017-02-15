@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace AppBundle\Controller\Api\GitHub;
+namespace AppBundle\Controller\Api;
 
 use AppBundle\Event\GitHub\GitHubEventFactory;
+use AppBundle\Model\ProjectQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CallbackController extends Controller
+class GithubController extends Controller
 {
 	const HEADER_EVENT     = 'X-GitHub-Event';
 	const HEADER_DELIVERY  = 'X-GitHub-Delivery';
@@ -78,6 +79,42 @@ class CallbackController extends Controller
 		}
 
 		$this->get('event_dispatcher')->dispatch($event::getEventName(), $event);
+
+		return new Response(null, Response::HTTP_NO_CONTENT);
+	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Install Github hooks",
+	 *     views={"default","v1"}
+	 * )
+	 */
+	public function installHooks(): Response
+	{
+		$projects = (new ProjectQuery)->find();
+
+		foreach ($projects as $project)
+		{
+			$this->get('github.hook_manager')->installHooks($project);
+		}
+
+		return new Response(null, Response::HTTP_NO_CONTENT);
+	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Remove Github hooks",
+	 *     views={"default","v1"}
+	 * )
+	 */
+	public function removeHooks(): Response
+	{
+		$projects = (new ProjectQuery)->find();
+
+		foreach ($projects as $project)
+		{
+			$this->get('github.hook_manager')->removeHooks($project);
+		}
 
 		return new Response(null, Response::HTTP_NO_CONTENT);
 	}

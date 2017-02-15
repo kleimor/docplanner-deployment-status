@@ -2,7 +2,19 @@ api_v1_github_callback:
     path: /github/callback
     methods: [POST]
     defaults:
-        _controller: AppBundle:Api/GitHub/Callback:callback
+        _controller: AppBundle:Api/Github:callback
+
+api_v1_github_install_hooks:
+    path: /github/hooks
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Api/Github:installHooks
+
+api_v1_github_remove_hooks:
+    path: /github/hooks
+    methods: [DELETE]
+    defaults:
+        _controller: AppBundle:Api/Github:removeHooks
 
 api_v1_list_projects:
     path: /projects

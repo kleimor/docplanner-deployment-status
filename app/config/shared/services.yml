@@ -10,3 +10,9 @@ services:
         tags:
             - name: monolog.logger
               channel: github
+
+    github.hook_manager:
+        class: AppBundle\GitHub\HookManager
+        arguments:
+            - "@github.client"
+            - "%app.github.subscribed_events%"

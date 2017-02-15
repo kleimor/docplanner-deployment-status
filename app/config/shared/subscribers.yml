@@ -2,11 +2,9 @@ services:
     subscriber.project:
         class: AppBundle\Subscriber\ProjectSubscriber
         arguments:
-            - "@github.client"
-            - "%app.github.subscribed_events%"
+            - "@github.hook_manager"
             - "@lopi_pusher.pusher"
         tags:
-            - { name: kernel.event_listener, event: project.creating, method: onProjectCreating }
             - { name: kernel.event_listener, event: project.created, method: onProjectCreated }
             - { name: kernel.event_listener, event: project.deleting, method: onProjectDeleting }
             - { name: kernel.event_listener, event: project.deleted, method: onProjectDeleted }
