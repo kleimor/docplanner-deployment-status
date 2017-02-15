@@ -89,7 +89,7 @@ class GithubController extends Controller
 	 *     views={"default","v1"}
 	 * )
 	 */
-	public function installHooks(): Response
+	public function installHooksAction(): Response
 	{
 		$projects = (new ProjectQuery)->find();
 
@@ -107,7 +107,7 @@ class GithubController extends Controller
 	 *     views={"default","v1"}
 	 * )
 	 */
-	public function removeHooks(): Response
+	public function removeHooksAction(): Response
 	{
 		$projects = (new ProjectQuery)->find();
 
