@@ -11,6 +11,7 @@ use AppBundle\Event\Project\ProjectDeletingEvent;
 use AppBundle\Model\Project;
 use AppBundle\Model\ProjectQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,7 +62,12 @@ class ProjectsController extends Controller
 	public function listAction(): JsonResponse
 	{
 		$projects = (new ProjectQuery)
-			->leftJoinWith('Stage')
+			->orderByOwner()
+			->orderByRepo()
+			->useStageQuery(null, Criteria::LEFT_JOIN)
+				->orderByName()
+			->endUse()
+			->with('Stage')
 			->find();
 
 		$data = [];
