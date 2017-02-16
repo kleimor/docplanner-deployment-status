@@ -88,7 +88,10 @@ class Client implements LoggerAwareInterface
 				'exception' => $exception,
 			]);
 
-			throw new \RuntimeException('Cannot create Github webhook');
+			throw new \RuntimeException(vsprintf('Cannot create Github webhook for %s/%s', [
+				$owner,
+				$repo,
+			]));
 		}
 	}
 

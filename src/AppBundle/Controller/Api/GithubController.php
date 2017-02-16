@@ -95,6 +95,7 @@ class GithubController extends Controller
 
 		foreach ($projects as $project)
 		{
+			$this->get('github.hook_manager')->removeHooks($project);
 			$this->get('github.hook_manager')->installHooks($project);
 		}
 
