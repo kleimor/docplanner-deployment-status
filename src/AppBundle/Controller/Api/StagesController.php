@@ -126,7 +126,7 @@ class StagesController extends Controller
 		$repo     = $project->getRepo();
 		$daysBack = $request->query->get('daysBack', 7);
 
-		$commits = $this->get('github.client')->getCommits($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
+		$commits = $this->get('github.cached_client')->getCommits($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
 
 		return new JsonResponse($commits);
 	}
@@ -154,7 +154,7 @@ class StagesController extends Controller
 		$owner    = $project->getOwner();
 		$repo     = $project->getRepo();
 
-		$statuses = $this->get('github.client')->getStatuses($owner, $repo, $stageModel->getTrackedBranch());
+		$statuses = $this->get('github.cached_client')->getStatuses($owner, $repo, $stageModel->getTrackedBranch());
 
 		return new JsonResponse($statuses);
 	}
@@ -182,7 +182,7 @@ class StagesController extends Controller
 		$owner    = $project->getOwner();
 		$repo     = $project->getRepo();
 
-		$statuses = $this->get('github.client')->getDeployments($owner, $repo, $stage, $stageModel->getTrackedBranch());
+		$statuses = $this->get('github.cached_client')->getDeployments($owner, $repo, $stage, $stageModel->getTrackedBranch());
 
 		return new JsonResponse($statuses);
 	}

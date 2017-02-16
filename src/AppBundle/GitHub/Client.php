@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Routing\RouterInterface;
 
-class Client implements LoggerAwareInterface
+class Client implements ClientInterface, LoggerAwareInterface
 {
 	/** @var GuzzleClient|null */
 	protected $client;

@@ -11,8 +11,14 @@ services:
             - name: monolog.logger
               channel: github
 
+    github.cached_client:
+        class: AppBundle\GitHub\CachedClient
+        arguments:
+            - "@github.client"
+            - "@cache.app"
+
     github.hook_manager:
         class: AppBundle\GitHub\HookManager
         arguments:
-            - "@github.client"
+            - "@github.cached_client"
             - "%app.github.subscribed_events%"
