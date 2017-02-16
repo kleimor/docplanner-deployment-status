@@ -15,7 +15,7 @@ class HookManager
 	/** @var string[] */
 	private $subscribedEvents;
 
-	public function __construct(Client $github, array $subscribedEvents, \Pusher $pusher)
+	public function __construct(Client $github, array $subscribedEvents)
 	{
 		$this->github           = $github;
 		$this->subscribedEvents = $subscribedEvents;
