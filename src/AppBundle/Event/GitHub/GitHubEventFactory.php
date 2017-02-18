@@ -17,10 +17,6 @@ class GitHubEventFactory
 	{
 		switch ($githubEventType)
 		{
-			case DeleteEvent::getGitHubEventType():
-				return new DeleteEvent($payload);
-				break;
-
 			case DeploymentEvent::getGitHubEventType():
 				return new DeploymentEvent($payload);
 				break;
