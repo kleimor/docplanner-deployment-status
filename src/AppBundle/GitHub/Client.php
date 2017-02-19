@@ -339,68 +339,44 @@ class Client implements ClientInterface, LoggerAwareInterface
 		return $data;
 	}
 
-//	public function getCommits(string $owner, string $repo, string $branchName)
-//	{
-//		$client = $this->getClient();
-//
-//		$response = $client->get(strtr('/repos/:owner/:repo/commits/:branch', [
-//			':owner' => $owner,
-//			':repo' => $repo,
-//			':ref' => $branchName,
-//		]), [
-//
-//		]);
-//
-//		$commits = $this->getCommits('-7 days', $branchName);
-//
-//		list($prodHash, $stagingHash) = $this->getProdStagingHashes();
-//		$prodWasHere    = false;
-//		$stagingWasHere = false;
-//
-//		$data = [];
-//		foreach ($commits as $commit)
-//		{
-//			$prodWasHere    = $prodWasHere || $prodHash == $commit['sha'];
-//			$stagingWasHere = $stagingWasHere || $stagingHash == $commit['sha'];
-//
-//			if (15 <= count($data))
-//			{
-//				break;
-//			}
-//
-//			$status = $this->getCommitStatus($commit['sha']);
-//
-//			$statuses = [];
-//			foreach ($status['statuses'] as $oneStatus)
-//			{
-//				$name       = explode('/', $oneStatus['context']);
-//				$name       = end($name);
-//				$statuses[] = [
-//					'name'       => $name,
-//					'target_url' => $oneStatus['target_url'],
-//					'label'      => self::$stateLabelNames[$oneStatus['state']],
-//				];
-//			}
-//
-//			$data[] = [
-//				'html_url'       => $commit['html_url'],
-//				'sha'            => $status['sha'],
-//				'message'        => $commit['commit']['message'],
-//				'name'           => $commit['commit']['committer']['name'],
-//				'date'           => (new \DateTime($commit['commit']['committer']['date']))->setTimezone(new \DateTimeZone('Europe/Warsaw'))->format('Y-m-d H:i:s'),
-//				'state'          => $status['state'],
-//				'label'          => [
-//					'name' => self::$stateLabelNames[$status['state']],
-//					'text' => strtoupper($status['state']),
-//				],
-//				'statuses'       => $statuses,
-//				'prodWasHere'    => $prodWasHere,
-//				'stagingWasHere' => $stagingWasHere,
-//			];
-//		}
-//
-//		return $data;
-//	}
+	public function getDeploymentStatuses(string $owner, string $repo, int $deploymentId): array
+	{
+		$client = $this->getClient();
+
+		$response = $client->get(strtr('/repos/:owner/:repo/deployments/:id/statuses', [
+			':owner' => $owner,
+			':repo'  => $repo,
+			':id'    => $deploymentId,
+		]), [
+			'query' => [
+				'per_page' => 100,
+				'page'     => 1,
+			],
+		]);
+
+		$statuses = json_decode((string)$response->getBody(), true);
+
+		$data = [];
+		foreach ($statuses as $status)
+		{
+			$data[] = [
+				'id'          => $status['id'],
+				'state'       => $status['state'],
+				'description' => $status['description'],
+				'target_url'  => $status['target_url'],
+				'created_at'  => $status['created_at'],
+				'updated_at'  => $status['updated_at'],
+				'creator'     => [
+					'login'      => $status['creator']['login'],
+					'avatar_url' => $status['creator']['avatar_url'],
+					'html_url'   => $status['creator']['html_url'],
+				],
+			];
+		}
+
+
+		return $data;
+	}
 
 	protected function getClient(): GuzzleClient
 	{

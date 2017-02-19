@@ -126,7 +126,8 @@ class StagesController extends Controller
 		$repo     = $project->getRepo();
 		$daysBack = $request->query->get('daysBack', 7);
 
-		$commits = $this->get('github.cached_client')->getCommits($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
+		$commits = $this->get('github.cached_client')
+			->getCommits($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
 
 		return new JsonResponse($commits);
 	}
@@ -151,8 +152,8 @@ class StagesController extends Controller
 			throw $this->createNotFoundException("Stage {$stage} not found");
 		}
 
-		$owner    = $project->getOwner();
-		$repo     = $project->getRepo();
+		$owner = $project->getOwner();
+		$repo  = $project->getRepo();
 
 		$statuses = $this->get('github.cached_client')->getStatuses($owner, $repo, $stageModel->getTrackedBranch());
 
@@ -179,10 +180,41 @@ class StagesController extends Controller
 			throw $this->createNotFoundException("Stage {$stage} not found");
 		}
 
-		$owner    = $project->getOwner();
-		$repo     = $project->getRepo();
+		$owner = $project->getOwner();
+		$repo  = $project->getRepo();
 
-		$statuses = $this->get('github.cached_client')->getDeployments($owner, $repo, $stage, $stageModel->getTrackedBranch());
+		$statuses = $this->get('github.cached_client')
+			->getDeployments($owner, $repo, $stage, $stageModel->getTrackedBranch());
+
+		return new JsonResponse($statuses);
+	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Get stage deployment statuses",
+	 *     views={"default", "v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function deploymentStatusesAction(Project $project, string $stage, string $deploymentId)
+	{
+		$stageModel = (new StageQuery)
+			->filterByProject($project)
+			->filterByName($stage)
+			->findOne();
+
+		if (null === $stageModel)
+		{
+			throw $this->createNotFoundException("Stage {$stage} not found");
+		}
+
+		$owner = $project->getOwner();
+		$repo  = $project->getRepo();
+
+		$statuses = $this
+			->get('github.cached_client')
+			->getDeploymentStatuses($owner, $repo, (int)$deploymentId);
 
 		return new JsonResponse($statuses);
 	}

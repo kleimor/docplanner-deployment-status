@@ -65,6 +65,17 @@ class CachedClient implements ClientInterface
 		);
 	}
 
+	/** {@inheritdoc} */
+	public function getDeploymentStatuses(string $owner, string $repo, int $deploymentId): array
+	{
+		return $this->getFromCache([__METHOD__, $owner, $repo, $deploymentId],
+			function () use ($owner, $repo, $deploymentId)
+			{
+				return $this->client->getDeploymentStatuses($owner, $repo, $deploymentId);
+			}
+		);
+	}
+
 	protected function getFromCache(array $keyChunks, callable $callback, int $ttl = 86400)
 	{
 		$key = implode('_', $keyChunks);
