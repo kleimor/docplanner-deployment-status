@@ -15,8 +15,9 @@ class ConnectGithubEventsToSubscriberPass implements CompilerPassInterface
 		foreach ($subscribedEvents as $subscribedEvent)
 		{
 			$githubSubscriber->addTag('kernel.event_listener', [
-				'event'  => "github.{$subscribedEvent}",
-				'method' => 'onGithubEvent',
+				'event'    => "github.{$subscribedEvent}",
+				'method'   => 'onGithubEvent',
+				'priority' => -100,
 			]);
 		}
 	}

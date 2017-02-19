@@ -22,4 +22,4 @@ services:
         class: AppBundle\Subscriber\GithubSubscriber
         arguments:
             - "@lopi_pusher.pusher"
-        tags: [] # configured in AppExtension
+        tags: [] # configured in ConnectGithubEventsToSubscriberPass
