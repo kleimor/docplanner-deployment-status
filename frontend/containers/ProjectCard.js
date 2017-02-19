@@ -93,10 +93,18 @@ class ProjectCard extends React.Component {
 			></Stage>
 		));
 
-		let maxDate;
+		let latestChange;
 		for (let stage in this.props.commits) {
-			const stageUpdatedAt = this.props.commits[stage].updatedAt;
-			maxDate = ("undefined" === typeof maxDate || stageUpdatedAt > maxDate) ? stageUpdatedAt : maxDate;
+			if (this.props.commits.hasOwnProperty(stage)) {
+				const commitUpdatedAt = this.props.commits[stage].updatedAt;
+				latestChange = ("undefined" === typeof latestChange || commitUpdatedAt > latestChange) ? commitUpdatedAt : latestChange;
+			}
+		}
+		for (let stage in this.props.statuses) {
+			if (this.props.statuses[stage]) {
+				const statusUpdatedAt = this.props.statuses[stage].updatedAt;
+				latestChange = ("undefined" === typeof latestChange || statusUpdatedAt > latestChange) ? statusUpdatedAt : latestChange;
+			}
 		}
 
 		const overallState = this.getOverallState();
@@ -134,7 +142,7 @@ class ProjectCard extends React.Component {
 						</div>
 						<small className="float-right font-italic">
 							<RelativeTime
-								date={maxDate}
+								date={latestChange}
 								onClick={this.loadProjectData.bind(this)}
 							>
 								<span className="md-icon pr-1">schedule</span>
