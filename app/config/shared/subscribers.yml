@@ -3,23 +3,15 @@ services:
         class: AppBundle\Subscriber\ProjectSubscriber
         arguments:
             - "@github.hook_manager"
-            - "@lopi_pusher.pusher"
         tags:
             - { name: kernel.event_listener, event: project.created, method: onProjectCreated }
             - { name: kernel.event_listener, event: project.deleting, method: onProjectDeleting }
-            - { name: kernel.event_listener, event: project.deleted, method: onProjectDeleted }
-
-    subscriber.stage:
-            class: AppBundle\Subscriber\StageSubscriber
-            arguments:
-                - "@lopi_pusher.pusher"
-            tags:
-                - { name: kernel.event_listener, event: stage.created, method: onStageCreated }
-                - { name: kernel.event_listener, event: stage.deleting, method: onStageDeleting }
-                - { name: kernel.event_listener, event: stage.deleted, method: onStageDeleted }
 
     subscriber.github:
         class: AppBundle\Subscriber\GithubSubscriber
         arguments:
             - "@lopi_pusher.pusher"
-        tags: [] # configured in ConnectGithubEventsToSubscriberPass
+        tags:
+            # configured in ConnectGithubEventsToSubscriberPass
+            - { name: kernel.event_listener, event: project.created, method: onProjectEvent, priority: -100 }
+            - { name: kernel.event_listener, event: stage.created, method: onStageEvent, priority: -100 }
