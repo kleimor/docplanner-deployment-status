@@ -44,15 +44,23 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ],
+        "dev-scripts": [
+            "[ \"prod\" != \"$SYMFONY_ENV\" ] && npm install || :",
+            "[ \"prod\" != \"$SYMFONY_ENV\" ] && npm run build || :"
+        ],
         "prod-scripts": [
-            "[ \"prod\" = \"$SYMFONY_ENV\" ] && bin/console propel:migration:migrate || :"
+            "[ \"prod\" = \"$SYMFONY_ENV\" ] && bin/console propel:migration:migrate || :",
+            "[ \"prod\" = \"$SYMFONY_ENV\" ] && npm install --production --loglevel error --no-progress || :",
+            "[ \"prod\" = \"$SYMFONY_ENV\" ] && npm run build --production || :"
         ],
         "post-install-cmd": [
             "@symfony-scripts",
+            "@dev-scripts",
             "@prod-scripts"
         ],
         "post-update-cmd": [
             "@symfony-scripts",
+            "@dev-scripts",
             "@prod-scripts"
         ]
     },
