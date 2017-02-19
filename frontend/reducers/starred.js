@@ -1,4 +1,4 @@
-import {TOGGLE_STARRED} from "../actions/starred"
+import {TOGGLE_STARRED} from "../actions/starred";
 
 const initialState = {
 	starred: JSON.parse(localStorage.getItem('starred')) || [],

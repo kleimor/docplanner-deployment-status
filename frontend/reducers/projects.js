@@ -1,4 +1,5 @@
-import {FETCH_PROJECTS_STARTED, FETCH_PROJECTS_FINISHED} from "../actions/projects"
+import {FETCH_PROJECTS_STARTED, FETCH_PROJECTS_FINISHED, REMOVE_PROJECT, ADD_PROJECT} from "../actions/projects"
+import {REMOVE_STAGE} from "../actions/stages";
 
 const initialState = {
 	projects: [],
@@ -29,6 +30,38 @@ const projectsReducer = (state = initialState, action) => {
 				}
 			)
 				;
+			break;
+
+		case REMOVE_PROJECT:
+			return Object.assign(
+				{},
+				state,
+				{
+					projects: state.projects.filter((project) => {
+						return !(project.owner === action.owner && project.repo === action.repo);
+					}),
+					updatedAt: new Date,
+				}
+			);
+			break;
+
+		case REMOVE_STAGE:
+			const newState = {...state};
+			newState.projects.forEach((project) => {
+				if (project.owner === action.owner && project.repo === action.repo) {
+					project.stages = project.stages.filter((stage) => {
+						return stage.name !== action.stage;
+					})
+				}
+			});
+			return Object.assign(
+				{},
+				state,
+				newState,
+				{
+					updatedAt: new Date,
+				}
+			);
 			break;
 	}
 

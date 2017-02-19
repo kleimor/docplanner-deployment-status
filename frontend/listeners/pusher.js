@@ -2,6 +2,8 @@ import Pusher from 'pusher-js';
 import appStore from "../stores/app";
 import * as CommitActions from "../actions/commits";
 import * as StatusActions from "../actions/statuses";
+import * as ProjectActions from "../actions/projects";
+import * as StageActions from "../actions/stages";
 
 let pusher = ((appConfig) => (
 	new Pusher(appConfig.pusher.key, {
@@ -45,4 +47,19 @@ publicChannel.bind('github.status', (event) => {
 			});
 		}
 	});
+});
+
+publicChannel.bind('project.deleted', (event) => {
+	const owner = event["owner"];
+	const repo = event["repo"];
+
+	appStore.dispatch(ProjectActions.removeProject(owner, repo));
+});
+
+publicChannel.bind('stage.deleted', (event) => {
+	const owner = event["owner"];
+	const repo = event["repo"];
+	const stage = event["stage"];
+
+	appStore.dispatch(StageActions.removeStage(owner, repo, stage));
 });
