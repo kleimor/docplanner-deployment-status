@@ -17,7 +17,7 @@ class ProjectList extends React.Component {
 				<div className="card-header text-center bg-faded">
 					<strong>{this.props.title}</strong>
 				</div>
-				<div className="card-block">
+				<div className="card-block p-2">
 					<div className="d-flex justify-content-start align-items-stretch flex-wrap">
 						{cards}
 					</div>

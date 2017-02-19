@@ -63,3 +63,5 @@ publicChannel.bind('stage.deleted', (event) => {
 
 	appStore.dispatch(StageActions.removeStage(owner, repo, stage));
 });
+
+// TODO: listen to deployments and their statuses

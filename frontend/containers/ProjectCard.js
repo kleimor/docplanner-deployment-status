@@ -5,6 +5,7 @@ import {toggleStarred} from "../actions/starred";
 import {connect} from "react-redux";
 import RelativeTime from "../components/RelativeTime";
 import Stage from "./Stage";
+import {fetchDeployments} from "../actions/deployments";
 
 class ProjectCard extends React.Component {
 	componentDidMount () {
@@ -19,6 +20,7 @@ class ProjectCard extends React.Component {
 	loadProjectData () {
 		this.loadProjectCommits();
 		this.loadProjectStatuses();
+		this.loadProjectDeployments();
 	}
 
 	loadProjectCommits () {
@@ -37,9 +39,18 @@ class ProjectCard extends React.Component {
 		});
 	}
 
+	loadProjectDeployments () {
+		const {owner, repo, stages} = this.props;
+
+		stages.forEach((stage) => {
+			this.props.fetchDeployments(owner, repo, stage.name);
+		});
+	}
+
 	toggleStarred () {
 		const {owner, repo} = this.props;
 
+		jQuery(this.refs.starButton).tooltip('hide');
 		this.props.toggleStarred(owner, repo);
 	};
 
@@ -90,6 +101,7 @@ class ProjectCard extends React.Component {
 				stage={stage}
 				commits={this.props.commits[stage.name]}
 				statuses={this.props.statuses[stage.name]}
+				deployments={this.props.deployments[stage.name]}
 			></Stage>
 		));
 
@@ -106,12 +118,18 @@ class ProjectCard extends React.Component {
 				latestChange = ("undefined" === typeof latestChange || statusUpdatedAt > latestChange) ? statusUpdatedAt : latestChange;
 			}
 		}
+		for (let stage in this.props.deployments) {
+			if (this.props.deployments[stage]) {
+				const deploymentUpdatedAt = this.props.deployments[stage].updatedAt;
+				latestChange = ("undefined" === typeof latestChange || deploymentUpdatedAt > latestChange) ? deploymentUpdatedAt : latestChange;
+			}
+		}
 
 		const overallState = this.getOverallState();
 
 		return (
 			<div className={`col-sm-6 col-md-6 col-lg-4 col-xl-3 p-0`}>
-				<div className={`card card-outline-${overallState} mx-2 mb-2`}>
+				<div className={`card card-outline-${overallState} mx-1 mb-2`}>
 					<div className={`card-header text-center bg-${overallState}`}>
 						<a
 							className={"faded" === overallState ? "text-primary" : "text-white"}
@@ -172,11 +190,20 @@ const mapStateToProps = (state, ownProps) => {
 			:
 			null;
 	});
+	let deployments = {};
+	ownProps.stages.forEach((stage) => {
+		let key = `${ownProps.owner}/${ownProps.repo}/${stage.name}`;
+		deployments[stage.name] = state.deployments.forProject.hasOwnProperty(key) ?
+			state.deployments.forProject[key]
+			:
+			null;
+	});
 
 	return {
 		...ownProps,
 		commits: commits,
 		statuses: statuses,
+		deployments: deployments,
 		isStarred: state.starred.starred.indexOf(`${ownProps.owner}/${ownProps.repo}`) > -1,
 	};
 };
@@ -184,6 +211,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => ({
 	fetchCommits: (owner, repo, stage) => dispatch(fetchCommits(owner, repo, stage)),
 	fetchStatuses: (owner, repo, stage) => dispatch(fetchStatuses(owner, repo, stage)),
+	fetchDeployments: (owner, repo, stage) => dispatch(fetchDeployments(owner, repo, stage)),
 	toggleStarred: (owner, repo) => dispatch(toggleStarred(owner, repo)),
 });
 

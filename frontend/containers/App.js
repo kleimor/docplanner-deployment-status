@@ -5,17 +5,7 @@ import {fetchProjects} from "../actions/projects";
 
 class App extends React.Component {
 	componentDidMount () {
-		this.props.fetchProjects((projects) => {
-			projects.forEach(function (project) {
-				project.stages.forEach(function (stage) {
-					this.props.fetchCommits(
-						project.owner,
-						project.repo,
-						stage.name,
-					);
-				});
-			});
-		});
+		this.props.fetchProjects();
 	}
 
 	render = () => {
