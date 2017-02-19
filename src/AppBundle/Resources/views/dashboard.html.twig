@@ -1,5 +1,98 @@
 {% extends "base.html.twig" %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Signika:300,400,500,700"/>
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+	<link rel="stylesheet"
+	      type="text/css"
+	      href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+	      integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+	      crossorigin="anonymous" />
+	<style type="text/css">
+		.md-icon {
+			font-family: 'Material Icons';
+			font-weight: normal;
+			font-style: normal;
+			display: inline-block;
+			line-height: 1;
+			text-transform: none;
+			letter-spacing: normal;
+			word-wrap: normal;
+			white-space: nowrap;
+			direction: ltr;
+			vertical-align: text-bottom;
+
+			/* Support for all WebKit browsers. */
+			-webkit-font-smoothing: antialiased;
+			/* Support for Safari and Chrome. */
+			text-rendering: optimizeLegibility;
+
+			/* Support for Firefox. */
+			-moz-osx-font-smoothing: grayscale;
+
+			/* Support for IE. */
+			font-feature-settings: 'liga';
+		}
+
+		.rotating {
+			animation-name: rotation;
+			animation-duration: 2s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+			-webkit-animation-name: rotation;
+			-webkit-animation-duration: 2s;
+			-webkit-animation-iteration-count: infinite;
+			-webkit-animation-timing-function: linear;
+		}
+
+		button {
+			cursor: pointer;
+		}
+
+		@-webkit-keyframes rotation {
+			from {transform: rotate(0deg);}
+			to {transform: rotate(360deg);}
+		}
+
+		@keyframes rotation {
+			from {transform: rotate(0deg);}
+			to {transform: rotate(360deg);}
+		}
+	</style>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		window.appConfig = {
+			pusher: {{ pusher|json_encode|raw }}
+		};
+	</script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-with-addons.min.js"
+	        integrity="sha256-NtwBF+7tVJHQJP21n/7wq6vbvRoVyzs+Pk0YZganCN8="
+	        crossorigin="anonymous"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js"
+	        integrity="sha256-uzKwYuH50DHzDYr3h/Bnpv7C5QJNUjHEpVmT3Xuq3ww="
+	        crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react-router/4.0.0-beta.5/react-router.min.js"
+	        integrity="sha256-HEdEg67sFL3n8NDfu4zn0ADB8BSZliH9VtSC5Rf/GgI="
+	        crossorigin="anonymous"></script>
+	<script src="//code.jquery.com/jquery-3.1.1.min.js"
+	        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	        crossorigin="anonymous"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"
+	        integrity="sha256-vvT7Ok9u6GbfnBPXnbM6FVDEO8E1kTdgHOFZOAXrktA="
+	        crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+	        integrity="sha256-gL1ibrbVcRIHKlCO5OXOPC/lZz/gpdApgQAzskqqXp8="
+	        crossorigin="anonymous"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+	        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+	        crossorigin="anonymous"></script>
+	<script src="//js.pusher.com/4.0/pusher.min.js"></script>
+	<script type="text/javascript" src="{{ asset("app/main.js") }}"></script>
+{% endblock %}
 
 {% block body %}
-    Hello!
+	<div id="app"/>
 {% endblock %}

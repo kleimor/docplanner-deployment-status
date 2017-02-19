@@ -12,7 +12,10 @@ class MainController extends Controller
 	public function dashboardAction(): Response
 	{
 		$response = $this->render('@App/dashboard.html.twig', [
-
+			'pusher' => [
+				'key'     => $this->getParameter('pusher.key'),
+				'cluster' => $this->getParameter('pusher.cluster'),
+			],
 		]);
 
 		return $response;
