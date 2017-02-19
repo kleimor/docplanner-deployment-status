@@ -1,3 +1,5 @@
+import * as jQuery from "jquery";
+
 export const FETCH_PROJECTS_STARTED = 'FETCH_PROJECTS_STARTED';
 export const FETCH_PROJECTS_FINISHED = 'FETCH_PROJECTS_FINISHED';
 export const FETCH_PROJECTS_FAILED = 'FETCH_PROJECTS_FAILED';
@@ -20,7 +22,7 @@ const fetchProjectsFailed = (error) => ({
 export const fetchProjects = () => (dispatch) => {
 	dispatch(fetchProjectsStarted());
 
-	return jQuery.ajax({
+	jQuery.ajax({
 		url: "/api/1/projects",
 		dataType: 'json',
 		success: (data) => {

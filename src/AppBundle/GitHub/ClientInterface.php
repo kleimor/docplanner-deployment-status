@@ -14,7 +14,7 @@ interface ClientInterface
 
 	public function getStatuses(string $owner, string $repo, string $ref): array;
 
-	public function getDeployments(string $owner, string $repo, string $stage, string $ref): array;
+	public function getLatestDeployment(string $owner, string $repo, string $stage, string $ref): array;
 
 	public function getDeploymentStatuses(string $owner, string $repo, int $deploymentId): array;
 }

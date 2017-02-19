@@ -1,4 +1,5 @@
-export const FETCH_COMMITS = 'FETCH_COMMITS';
+import * as jQuery from "jquery";
+
 export const FETCH_COMMITS_STARTED = 'FETCH_COMMITS_STARTED';
 export const FETCH_COMMITS_FINISHED = 'FETCH_COMMITS_FINISHED';
 export const FETCH_COMMITS_FAILED = 'FETCH_COMMITS_FAILED';

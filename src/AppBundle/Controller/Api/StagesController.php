@@ -162,13 +162,13 @@ class StagesController extends Controller
 
 	/**
 	 * @ApiDoc(
-	 *     description="Get stage deployments",
+	 *     description="Get latest deployment of a stage",
 	 *     views={"default", "v1"}
 	 * )
 	 *
 	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
 	 */
-	public function deploymentsAction(Project $project, string $stage)
+	public function latestDeploymentAction(Project $project, string $stage)
 	{
 		$stageModel = (new StageQuery)
 			->filterByProject($project)
@@ -183,39 +183,14 @@ class StagesController extends Controller
 		$owner = $project->getOwner();
 		$repo  = $project->getRepo();
 
-		$statuses = $this->get('github.cached_client')
-			->getDeployments($owner, $repo, $stage, $stageModel->getTrackedBranch());
+		$githubClient = $this->get('github.cached_client');
+		$deployment   = $githubClient->getLatestDeployment($owner, $repo, $stage, $stageModel->getTrackedBranch());
 
-		return new JsonResponse($statuses);
-	}
-
-	/**
-	 * @ApiDoc(
-	 *     description="Get stage deployment statuses",
-	 *     views={"default", "v1"}
-	 * )
-	 *
-	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
-	 */
-	public function deploymentStatusesAction(Project $project, string $stage, string $deploymentId)
-	{
-		$stageModel = (new StageQuery)
-			->filterByProject($project)
-			->filterByName($stage)
-			->findOne();
-
-		if (null === $stageModel)
+		if (!empty($deployment['id']))
 		{
-			throw $this->createNotFoundException("Stage {$stage} not found");
+			$deployment['statuses'] = $githubClient->getDeploymentStatuses($owner, $repo, (int)$deployment['id']);
 		}
 
-		$owner = $project->getOwner();
-		$repo  = $project->getRepo();
-
-		$statuses = $this
-			->get('github.cached_client')
-			->getDeploymentStatuses($owner, $repo, (int)$deploymentId);
-
-		return new JsonResponse($statuses);
+		return new JsonResponse($deployment);
 	}
 }

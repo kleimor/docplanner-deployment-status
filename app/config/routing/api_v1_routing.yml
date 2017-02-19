@@ -82,24 +82,13 @@ api_v1_get_stage_statuses:
         repo: "[a-zA-Z0-9_-]+"
         stage: "[a-zA-Z0-9_-]+"
 
-api_v1_get_stage_deployments:
-    path: /projects/{owner}/{repo}/{stage}/deployments
+api_v1_get_stage_latest_deployment:
+    path: /projects/{owner}/{repo}/{stage}/latest_deployment
     methods: [GET]
     defaults:
-        _controller: AppBundle:Api/Stages:deployments
+        _controller: AppBundle:Api/Stages:latestDeployment
         days_back: 1
     requirements:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"
         stage: "[a-zA-Z0-9_-]+"
-
-api_v1_get_stage_deployment_statuses:
-    path: /projects/{owner}/{repo}/{stage}/deployments/{deploymentId}/statuses
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Api/Stages:deploymentStatuses
-    requirements:
-        owner: "[a-zA-Z0-9_-]+"
-        repo: "[a-zA-Z0-9_-]+"
-        stage: "[a-zA-Z0-9_-]+"
-        deploymentId: "\\d+"

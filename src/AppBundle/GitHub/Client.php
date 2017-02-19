@@ -297,7 +297,7 @@ class Client implements ClientInterface, LoggerAwareInterface
 		return $data;
 	}
 
-	public function getDeployments(string $owner, string $repo, string $stage, string $ref): array
+	public function getLatestDeployment(string $owner, string $repo, string $stage, string $ref): array
 	{
 		$client = $this->getClient();
 
@@ -308,35 +308,35 @@ class Client implements ClientInterface, LoggerAwareInterface
 			'query' => [
 				'environment' => $stage,
 				'ref'         => $ref,
-				'per_page'    => 100,
+				'per_page'    => 1,
 				'page'        => 1,
 			],
 		]);
 
 		$deployments = json_decode((string)$response->getBody(), true);
 
-		$data = [];
-		foreach ($deployments as $deployment)
+		if (0 === count($deployments))
 		{
-			$data[] = [
-				'id'          => $deployment['id'],
-				'ref'         => $deployment['ref'],
-				'task'        => $deployment['task'],
-				'payload'     => $deployment['payload'],
-				'environment' => $deployment['environment'],
-				'description' => $deployment['description'],
-				'created_at'  => $deployment['created_at'],
-				'updated_at'  => $deployment['updated_at'],
-				'creator'     => [
-					'login'      => $deployment['creator']['login'],
-					'avatar_url' => $deployment['creator']['avatar_url'],
-					'html_url'   => $deployment['creator']['html_url'],
-				],
-			];
+			return [];
 		}
 
+		$deployment = array_shift($deployments);
 
-		return $data;
+		return [
+			'id'          => $deployment['id'],
+			'ref'         => $deployment['ref'],
+			'task'        => $deployment['task'],
+			'payload'     => $deployment['payload'],
+			'environment' => $deployment['environment'],
+			'description' => $deployment['description'],
+			'created_at'  => $deployment['created_at'],
+			'updated_at'  => $deployment['updated_at'],
+			'creator'     => [
+				'login'      => $deployment['creator']['login'],
+				'avatar_url' => $deployment['creator']['avatar_url'],
+				'html_url'   => $deployment['creator']['html_url'],
+			],
+		];
 	}
 
 	public function getDeploymentStatuses(string $owner, string $repo, int $deploymentId): array

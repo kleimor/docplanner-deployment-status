@@ -5,7 +5,7 @@ import {toggleStarred} from "../actions/starred";
 import {connect} from "react-redux";
 import RelativeTime from "../components/RelativeTime";
 import Stage from "./Stage";
-import {fetchDeployments} from "../actions/deployments";
+import {fetchLatestDeployment} from "../actions/deployments";
 
 class ProjectCard extends React.Component {
 	componentDidMount () {
@@ -43,7 +43,7 @@ class ProjectCard extends React.Component {
 		const {owner, repo, stages} = this.props;
 
 		stages.forEach((stage) => {
-			this.props.fetchDeployments(owner, repo, stage.name);
+			this.props.fetchLatestDeployment(owner, repo, stage.name);
 		});
 	}
 
@@ -211,7 +211,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => ({
 	fetchCommits: (owner, repo, stage) => dispatch(fetchCommits(owner, repo, stage)),
 	fetchStatuses: (owner, repo, stage) => dispatch(fetchStatuses(owner, repo, stage)),
-	fetchDeployments: (owner, repo, stage) => dispatch(fetchDeployments(owner, repo, stage)),
+	fetchLatestDeployment: (owner, repo, stage) => dispatch(fetchLatestDeployment(owner, repo, stage)),
 	toggleStarred: (owner, repo) => dispatch(toggleStarred(owner, repo)),
 });
 

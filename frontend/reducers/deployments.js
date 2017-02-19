@@ -1,4 +1,4 @@
-import {FETCH_DEPLOYMENTS_STARTED, FETCH_DEPLOYMENTS_FINISHED, FETCH_DEPLOYMENTS_FAILED} from "../actions/deployments"
+import {FETCH_LATEST_DEPLOYMENT_STARTED, FETCH_LATEST_DEPLOYMENT_FINISHED, FETCH_LATEST_DEPLOYMENT_FAILED} from "../actions/deployments"
 import {REMOVE_PROJECT} from "../actions/projects";
 import {REMOVE_STAGE} from "../actions/stages";
 
@@ -8,7 +8,7 @@ const initialState = {
 
 const deploymentsReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case FETCH_DEPLOYMENTS_STARTED:
+		case FETCH_LATEST_DEPLOYMENT_STARTED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
@@ -20,14 +20,14 @@ const deploymentsReducer = (state = initialState, action) => {
 			})();
 			break;
 
-		case FETCH_DEPLOYMENTS_FAILED:
+		case FETCH_LATEST_DEPLOYMENT_FAILED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
-					deployments: state.hasOwnProperty(`${action.owner}/${action.repo}/${action.stage}`) ?
+					latestDeployment: state.hasOwnProperty(`${action.owner}/${action.repo}/${action.stage}`) ?
 						state[`${action.owner}/${action.repo}/${action.stage}`]
 						:
-						[],
+						{},
 					isRecent: false,
 					isLoading: false,
 					updatedAt: new Date,
@@ -37,11 +37,11 @@ const deploymentsReducer = (state = initialState, action) => {
 			})();
 			break;
 
-		case FETCH_DEPLOYMENTS_FINISHED:
+		case FETCH_LATEST_DEPLOYMENT_FINISHED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
-					deployments: action.deployments,
+					latestDeployment: action.deployment,
 					isRecent: true,
 					isLoading: false,
 					updatedAt: new Date,

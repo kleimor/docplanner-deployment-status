@@ -55,12 +55,12 @@ class CachedClient implements ClientInterface
 	}
 
 	/** {@inheritdoc} */
-	public function getDeployments(string $owner, string $repo, string $stage, string $ref): array
+	public function getLatestDeployment(string $owner, string $repo, string $stage, string $ref): array
 	{
 		return $this->getFromCache([__METHOD__, $owner, $repo, $stage, $ref],
 			function () use ($owner, $repo, $stage, $ref)
 			{
-				return $this->client->getDeployments($owner, $repo, $stage, $ref);
+				return $this->client->getLatestDeployment($owner, $repo, $stage, $ref);
 			}
 		);
 	}

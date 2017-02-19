@@ -1,4 +1,5 @@
-export const FETCH_STATUSES = 'FETCH_STATUSES';
+import * as jQuery from "jquery";
+
 export const FETCH_STATUSES_STARTED = 'FETCH_STATUSES_STARTED';
 export const FETCH_STATUSES_FINISHED = 'FETCH_STATUSES_FINISHED';
 export const FETCH_STATUSES_FAILED = 'FETCH_STATUSES_FAILED';
@@ -29,7 +30,7 @@ const fetchStatusesFailed = (owner, repo, stage, error) => ({
 export const fetchStatuses = (owner, repo, stage) => (dispatch) => {
 	dispatch(fetchStatusesStarted(owner, repo, stage));
 
-	return jQuery.ajax({
+	jQuery.ajax({
 		url: `/api/1/projects/${owner}/${repo}/${stage}/statuses`,
 		dataType: 'json',
 		success: (data) => {
