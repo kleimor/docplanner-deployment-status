@@ -20,7 +20,7 @@ class ProjectCard extends React.Component {
 	loadProjectData () {
 		this.loadProjectCommits();
 		this.loadProjectStatuses();
-		this.loadProjectDeployments();
+		this.loadLatestDeployment();
 	}
 
 	loadProjectCommits () {
@@ -39,7 +39,7 @@ class ProjectCard extends React.Component {
 		});
 	}
 
-	loadProjectDeployments () {
+	loadLatestDeployment () {
 		const {owner, repo, stages} = this.props;
 
 		stages.forEach((stage) => {
@@ -140,6 +140,16 @@ class ProjectCard extends React.Component {
 					</div>
 					<div className="card-block p-0">
 						<ul className="list-group list-group-flush">
+							<li className="list-group-item py-0">
+								<div className="container-fluid w-100">
+									<div className="row">
+										<div className="col-6 p-0 text-left"><small><strong>Stage</strong></small></div>
+										<div className="col-3 p-0 text-center"><small><strong>Commit</strong></small></div>
+										<div className="col-2 p-0 text-center"><small><strong>Tests</strong></small></div>
+										<div className="col-1 p-0 text-center"><small><strong>D</strong></small></div>
+									</div>
+								</div>
+							</li>
 							{stages}
 						</ul>
 					</div>

@@ -35,7 +35,7 @@ class CachedClient implements ClientInterface
 	/** {@inheritdoc} */
 	public function getCommits(string $owner, string $repo, string $ref, int $daysBack): array
 	{
-		return $this->getFromCache([__METHOD__, $owner, $repo, $ref, $daysBack,],
+		return $this->getFromCache([__METHOD__, $owner, $repo, $ref, $daysBack],
 			function () use ($owner, $repo, $ref, $daysBack)
 			{
 				return $this->client->getCommits($owner, $repo, $ref, $daysBack);

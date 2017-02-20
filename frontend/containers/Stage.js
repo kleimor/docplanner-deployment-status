@@ -19,12 +19,12 @@ class Stage extends React.Component {
 	}
 
 	render = () => {
-		const {stage, commits, statuses} = this.props;
+		const {stage, commits, statuses, deployments} = this.props;
 
 		let commitHtml = "";
 		if (commits.isLoading) {
 			commitHtml = (
-				<span className="md-icon rotating pr-1 text-warning">sync</span>
+				<span className="md-icon text-warning">more_horiz</span>
 			);
 		} else {
 			if (commits.commits && commits.commits.length) {
@@ -51,17 +51,16 @@ class Stage extends React.Component {
 				);
 			} else {
 				commitHtml = (
-					<span ref="commitBadge" className="md-icon pr-1 text-danger">warning</span>
+					<span ref="commitBadge" className="md-icon text-danger">warning</span>
 				);
 			}
 		}
 
-		let statusHtml = <span className="md-icon pr-1 text-danger">warning</span>;
+		let statusHtml = <span className="md-icon text-danger">more_horiz</span>;
 		if (statuses) {
 			if (statuses.isLoading) {
-				statusHtml = <span className="md-icon rotating pr-1 text-warning">sync</span>;
-			}
-			else {
+				statusHtml = <span className="md-icon text-warning">more_horiz</span>;
+			} else {
 				const latestStatus = statuses.statuses.length ?
 					statuses.statuses[0]
 					:
@@ -73,19 +72,53 @@ class Stage extends React.Component {
 							<span
 								ref="statusBadge"
 								className={{
-									pending: "badge badge-warning",
-									success: "badge badge-success",
-									failure: "badge badge-danger",
+									failure: "md-icon text-danger",
+									pending: "md-icon rotating text-warning",
+									success: "md-icon text-success",
 								}[latestStatus.state]}
 								data-toggle="tooltip"
 								data-placement="top"
 								data-html="true"
-								title={`<small>${latestStatus.description}</small>`}
+								title={`<small>${latestStatus.description}<br />${latestStatus.context}</small>`}
 							>
-								{latestStatus.context}
+								{{
+									failure: "warning",
+									pending: "sync",
+									success: "done",
+								}[latestStatus.state]}
 							</span>
 						</a>
 					);
+				} else {
+					statusHtml = "";
+				}
+			}
+		}
+
+		let deploymentHtml = <span className="md-icon text-warning">more_horiz</span>;
+		if (deployments && !deployments.isLoading) {
+			if (deployments.isLoading) {
+				deploymentHtml = <span className="md-icon text-warning">more_horiz</span>;
+			} else {
+				const latestDeployment = deployments.latestDeployment;
+				if (latestDeployment && latestDeployment.statuses) {
+					const latestDeploymentStatus = latestDeployment.statuses[0];
+					switch (latestDeploymentStatus.state) {
+						case "failure":
+						case "error":
+							deploymentHtml = <span className="md-icon text-danger">sync_problem</span>;
+							break;
+
+						case "pending":
+							deploymentHtml = <span className="md-icon rotating text-warning">sync</span>;
+							break;
+
+						case "success":
+							deploymentHtml = <span className="md-icon text-success">done</span>;
+							break;
+					}
+				} else {
+					deploymentHtml = <span className="md-icon text-muted">sync_disabled</span>;
 				}
 			}
 		}
@@ -93,10 +126,11 @@ class Stage extends React.Component {
 		return (
 			<li className="list-group-item">
 				<div className="container-fluid w-100">
-					<div className="row justify-content-between">
-						<div className="col-4 p-0 text-left">{stage.name}</div>
-						<div className="col-4 p-0 text-center">{commitHtml}</div>
-						<div className="col-4 p-0 text-right">{statusHtml}</div>
+					<div className="row">
+						<div className="col-6 p-0 text-left">{stage.name}</div>
+						<div className="col-3 p-0 text-center">{commitHtml}</div>
+						<div className="col-2 p-0 text-center">{statusHtml}</div>
+						<div className="col-1 p-0 text-center">{deploymentHtml}</div>
 					</div>
 				</div>
 			</li>

@@ -307,7 +307,6 @@ class Client implements ClientInterface, LoggerAwareInterface
 		]), [
 			'query' => [
 				'environment' => $stage,
-				'ref'         => $ref,
 				'per_page'    => 1,
 				'page'        => 1,
 			],

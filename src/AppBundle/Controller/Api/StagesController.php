@@ -124,7 +124,7 @@ class StagesController extends Controller
 
 		$owner    = $project->getOwner();
 		$repo     = $project->getRepo();
-		$daysBack = $request->query->get('daysBack', 7);
+		$daysBack = (int)$request->query->get('days_back', 7);
 
 		$commits = $this->get('github.cached_client')
 			->getCommits($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
