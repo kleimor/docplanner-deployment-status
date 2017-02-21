@@ -1,17 +1,18 @@
 import React from "react";
 import {connect} from "react-redux";
 import jQuery from "jquery";
-import {fetchCommitsDiff} from "../actions/commits_diff";
 
 class Stage extends React.Component {
 	componentDidMount () {
 		jQuery(this.refs.commitBadge).tooltip();
 		jQuery(this.refs.statusBadge).tooltip();
+		jQuery(this.refs.deploymentBadge).tooltip();
 	}
 
 	componentDidUpdate () {
 		jQuery(this.refs.commitBadge).tooltip();
 		jQuery(this.refs.statusBadge).tooltip();
+		jQuery(this.refs.deploymentBadge).tooltip();
 	}
 
 	formatMessage (message) {
@@ -46,10 +47,9 @@ class Stage extends React.Component {
 				}
 
 				commitHtml = (
-					<a href={commits.commits[0].html_url}>
-					<span
+					<a
 						ref="commitBadge"
-						className={commitClassNames.join(" ")}
+						href={commits.commits[0].html_url}
 						data-toggle="tooltip"
 						data-placement="top"
 						data-html="true"
@@ -61,8 +61,9 @@ class Stage extends React.Component {
 							</small>
 						`}
 					>
-						{commitText}
-					</span>
+						<span className={commitClassNames.join(" ")}>
+							{commitText}
+						</span>
 					</a>
 				);
 			} else {
@@ -122,17 +123,46 @@ class Stage extends React.Component {
 					switch (latestDeploymentStatus.state) {
 						case "failure":
 						case "error":
-							deploymentHtml = <span className="md-icon text-danger font-weight-bold">sync_problem</span>;
+							deploymentHtml = (
+								<span className="badge badge-danger">
+									{latestDeployment.ref.substr(0, 6)}
+								</span>
+							);
 							break;
 
 						case "pending":
-							deploymentHtml = <span className="md-icon rotating text-warning">sync</span>;
+							deploymentHtml = (
+								<span className="md-icon rotating text-warning">
+									sync
+								</span>
+							);
 							break;
 
 						case "success":
-							deploymentHtml = <span className="md-icon text-success font-weight-bold">done</span>;
+							deploymentHtml = (
+								<span className="badge badge-success">
+									{latestDeployment.ref.substr(0, 6)}
+								</span>
+							);
 							break;
 					}
+
+					deploymentHtml = (
+						<a
+							ref="deploymentBadge"
+							href={latestDeployment.html_url}
+							data-toggle="tooltip"
+							data-placement="top"
+							data-html="true"
+							title={`
+								<small class="text-left">
+									${this.formatMessage(latestDeployment.creator.login)}
+								</small>
+							`}
+						>
+							{deploymentHtml}
+						</a>
+					);
 				} else {
 					deploymentHtml = <span className="md-icon text-muted font-weight-bold">sync_disabled</span>;
 				}
@@ -140,13 +170,13 @@ class Stage extends React.Component {
 		}
 
 		return (
-			<li className="list-group-item">
+			<li className="list-group-item p-2">
 				<div className="container-fluid w-100">
 					<div className="row">
-						<div className="col-6 p-0 text-left">{stage.name}</div>
+						<div className="col-5 p-0 text-left">{stage.title}</div>
 						<div className="col-3 p-0 text-center">{commitHtml}</div>
-						<div className="col-2 p-0 text-center">{statusHtml}</div>
-						<div className="col-1 p-0 text-center">{deploymentHtml}</div>
+						<div className="col-1 p-0 text-center">{statusHtml}</div>
+						<div className="col-3 p-0 text-center">{deploymentHtml}</div>
 					</div>
 				</div>
 			</li>

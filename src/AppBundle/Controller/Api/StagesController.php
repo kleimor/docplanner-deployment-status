@@ -46,6 +46,7 @@ class StagesController extends Controller
 		{
 			$stageModel = (new Stage)
 				->setProjectId($project->getId())
+				->setTitle($stage)
 				->setName($stage)
 				->setTrackedBranch('master');
 			$stageModel->save();
@@ -98,19 +99,12 @@ class StagesController extends Controller
 	/**
 	 * @ApiDoc(
 	 *     description="Get stage commits",
-	 *     views={"default", "v1"},
-	 *     parameters={
-	 *         {
-	 *             "name": "days_back",
-	 *             "dataType": "integer",
-	 *             "required": false
-	 *         }
-	 *     }
+	 *     views={"default", "v1"}
 	 * )
 	 *
 	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
 	 */
-	public function commitsAction(Project $project, string $stage, Request $request)
+	public function commitsAction(Project $project, string $stage)
 	{
 		$stageModel = (new StageQuery)
 			->filterByProject($project)
@@ -122,12 +116,11 @@ class StagesController extends Controller
 			throw $this->createNotFoundException("Stage {$stage} not found");
 		}
 
-		$owner    = $project->getOwner();
-		$repo     = $project->getRepo();
-		$daysBack = (int)$request->query->get('days_back', 7);
+		$owner = $project->getOwner();
+		$repo  = $project->getRepo();
 
 		$commits = $this->get('github.cached_client')
-			->getCommits($owner, $repo, $stageModel->getTrackedBranch(), $daysBack);
+			->getCommits($owner, $repo, $stageModel->getTrackedBranch());
 
 		return new JsonResponse($commits);
 	}

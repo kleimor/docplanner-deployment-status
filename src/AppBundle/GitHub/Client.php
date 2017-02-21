@@ -133,93 +133,41 @@ class Client implements ClientInterface, LoggerAwareInterface
 	}
 
 	/** {@inheritdoc} */
-	public function getCommits(string $owner, string $repo, string $ref, int $daysBack): array
+	public function getCommits(string $owner, string $repo, string $ref): array
 	{
-		$generateRequest  = function (int $page) use ($owner, $repo, $ref, $daysBack): RequestInterface
+		$client = $this->getClient();
+
+		$response = $client->get(strtr('/repos/:owner/:repo/commits?sha=:sha&per_page=:perPage&page=:page', [
+			':owner'   => $owner,
+			':repo'    => $repo,
+			':sha'     => $ref,
+			':perPage' => 100,
+			':page'    => 1,
+		]));
+
+		$commits = json_decode((string)$response->getBody(), true);
+
+		return array_map(function (array $commit)
 		{
-			return new Request('GET',
-				strtr('/repos/:owner/:repo/commits?sha=:sha&since=:since&per_page=:perPage&page=:page', [
-					':owner'   => $owner,
-					':repo'    => $repo,
-					':sha'     => $ref,
-					':since'   => (new \DateTime("-{$daysBack} days 00:00:00"))->format(\DateTime::ISO8601),
-					':perPage' => 100,
-					':page'    => $page,
-				]));
-		};
-		$generateRequests = function (int $maxPage, int $minPage = 2) use ($generateRequest): \Generator
-		{
-			while ($maxPage-- >= $minPage)
-			{
-				yield $generateRequest($maxPage);
-			}
-		};
-
-		$client        = $this->getClient();
-		$firstResponse = $client->send($generateRequest(1));
-
-		/** @var ResponseInterface[] $responses */
-		$responses = [];
-		if ($firstResponse->hasHeader('Link'))
-		{
-			$links          = \GuzzleHttp\Psr7\parse_header($firstResponse->getHeader('Link'));
-			$lastPageNumber = 1;
-			foreach ($links as $link)
-			{
-				if ('last' === $link['rel'] && preg_match('/(?:\?|&)page=(\d+)/i', $link[0], $matches))
-				{
-					$lastPageNumber = (int)$matches[1];
-					break;
-				}
-			}
-
-			if ($lastPageNumber > 1)
-			{
-				$pool = new Pool($client, $generateRequests($lastPageNumber), [
-					'concurrency' => 5,
-					'fulfilled'   => function ($response, $index) use (&$responses)
-					{
-						$responses[$index] = $response;
-					},
-				]);
-
-				$promise = $pool->promise();
-				$promise->wait();
-			}
-		}
-		array_unshift($responses, $firstResponse);
-
-		$data = array_reduce(array_map(function (ResponseInterface $response)
-		{
-			$commits = json_decode((string)$response->getBody(), true);
-
-			return array_map(function (array $commit)
-			{
-				return [
-					'sha'       => $commit['sha'],
-					'commit'    => [
-						'message'       => $commit['commit']['message'],
-						'comment_count' => $commit['commit']['comment_count'],
-					],
-					'html_url'  => $commit['html_url'],
-					'author'    => [
-						'login'      => $commit['author']['login'],
-						'avatar_url' => $commit['author']['avatar_url'],
-						'html_url'   => $commit['author']['html_url'],
-					],
-					'committer' => [
-						'login'      => $commit['committer']['login'],
-						'avatar_url' => $commit['committer']['avatar_url'],
-						'html_url'   => $commit['committer']['html_url'],
-					],
-				];
-			}, $commits);
-		}, $responses), function (array $initial, $sequence)
-		{
-			return array_merge($initial, $sequence);
-		}, []);
-
-		return $data;
+			return [
+				'sha'       => $commit['sha'],
+				'commit'    => [
+					'message'       => $commit['commit']['message'],
+					'comment_count' => $commit['commit']['comment_count'],
+				],
+				'html_url'  => $commit['html_url'],
+				'author'    => [
+					'login'      => $commit['author']['login'],
+					'avatar_url' => $commit['author']['avatar_url'],
+					'html_url'   => $commit['author']['html_url'],
+				],
+				'committer' => [
+					'login'      => $commit['committer']['login'],
+					'avatar_url' => $commit['committer']['avatar_url'],
+					'html_url'   => $commit['committer']['html_url'],
+				],
+			];
+		}, $commits);
 	}
 
 	/** {@inheritdoc} */

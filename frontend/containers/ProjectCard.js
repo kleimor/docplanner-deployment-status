@@ -88,7 +88,14 @@ class ProjectCard extends React.Component {
 			if (stageCommitsDiff.isLoading) {
 				return "faded";
 			} else if (false === stageCommitsDiff.isRecent) {
-				return "danger";
+				if (false === (
+						this.props.deployments.hasOwnProperty(stage)
+						&& this.props.deployments[stage].isRecent
+						&& this.props.deployments[stage].latestDeployment
+					)
+				) {
+					return "danger";
+				}
 			} else if (stageCommitsDiff.diff && parseInt(stageCommitsDiff.diff.ahead_by) > 0)
 				return "warning";
 		}
@@ -164,20 +171,20 @@ class ProjectCard extends React.Component {
 					</div>
 					<div className="card-block p-0">
 						<ul className="list-group list-group-flush">
-							<li className="list-group-item py-0">
+							<li className="list-group-item px-2 py-0 text-muted">
 								<div className="container-fluid w-100">
 									<div className="row">
-										<div className="col-6 p-0 text-left">
-											<small><strong>Stage</strong></small>
+										<div className="col-5 p-0 text-left">
+											<small className="text-uppercase">Stage</small>
 										</div>
 										<div className="col-3 p-0 text-center">
-											<span className="md-icon">call_split</span>
-										</div>
-										<div className="col-2 p-0 text-center">
-											<span className="md-icon">bug_report</span>
+											<small className="text-uppercase">Commit</small>
 										</div>
 										<div className="col-1 p-0 text-center">
-											<span className="md-icon">sync</span>
+											<small className="text-uppercase">CI</small>
+										</div>
+										<div className="col-3 p-0 text-center">
+											<small className="text-uppercase">Deploy</small>
 										</div>
 									</div>
 								</div>

@@ -61,6 +61,7 @@ class ProjectsController extends Controller
 	 */
 	public function listAction(): JsonResponse
 	{
+		// @formatter:off
 		$projects = (new ProjectQuery)
 			->orderByOwner()
 			->orderByRepo()
@@ -69,19 +70,22 @@ class ProjectsController extends Controller
 			->endUse()
 			->with('Stage')
 			->find();
+		// @formatter:on
 
 		$data = [];
 		foreach ($projects as $project)
 		{
 			$projectData = [
-				'owner'  => $project->getOwner(),
-				'repo'   => $project->getRepo(),
-				'stages' => [],
+				'owner'       => $project->getOwner(),
+				'repo'        => $project->getRepo(),
+				'base_branch' => $project->getBaseBranch(),
+				'stages'      => [],
 			];
 
 			foreach ($project->getStages() as $stage)
 			{
 				$projectData['stages'][] = [
+					'title'          => $stage->getTitle(),
 					'name'           => $stage->getName(),
 					'tracked_branch' => $stage->getTrackedBranch(),
 				];
