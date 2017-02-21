@@ -134,6 +134,41 @@ class StagesController extends Controller
 
 	/**
 	 * @ApiDoc(
+	 *     description="Get stage commits diff",
+	 *     views={"default", "v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function commitsDiffAction(Project $project, string $stage, Request $request)
+	{
+		$stageModel = (new StageQuery)
+			->filterByProject($project)
+			->filterByName($stage)
+			->findOne();
+
+		if (null === $stageModel)
+		{
+			throw $this->createNotFoundException("Stage {$stage} not found");
+		}
+
+		$owner = $project->getOwner();
+		$repo  = $project->getRepo();
+
+		$client           = $this->get('github.cached_client');
+		$latestDeployment = $client->getLatestDeployment($owner, $repo, $stage);
+		if (empty($latestDeployment['ref']))
+		{
+			throw $this->createNotFoundException("No deployments of {$stage} found");
+		}
+
+		$commits = $client->getCommitsDiff($owner, $repo, $latestDeployment['ref'], $stageModel->getTrackedBranch());
+
+		return new JsonResponse($commits);
+	}
+
+	/**
+	 * @ApiDoc(
 	 *     description="Get stage statuses",
 	 *     views={"default", "v1"}
 	 * )
@@ -184,7 +219,7 @@ class StagesController extends Controller
 		$repo  = $project->getRepo();
 
 		$githubClient = $this->get('github.cached_client');
-		$deployment   = $githubClient->getLatestDeployment($owner, $repo, $stage, $stageModel->getTrackedBranch());
+		$deployment   = $githubClient->getLatestDeployment($owner, $repo, $stage);
 
 		if (!empty($deployment['id']))
 		{

@@ -44,6 +44,17 @@ class CachedClient implements ClientInterface
 	}
 
 	/** {@inheritdoc} */
+	public function getCommitsDiff(string $owner, string $repo, string $baseRef, string $headRef): array
+	{
+		return $this->getFromCache([__METHOD__, $owner, $repo, $baseRef, $headRef],
+			function () use ($owner, $repo, $baseRef, $headRef)
+			{
+				return $this->client->getCommitsDiff($owner, $repo, $baseRef, $headRef);
+			}
+		);
+	}
+
+	/** {@inheritdoc} */
 	public function getStatuses(string $owner, string $repo, string $ref): array
 	{
 		return $this->getFromCache([__METHOD__, $owner, $repo, $ref],
@@ -55,12 +66,12 @@ class CachedClient implements ClientInterface
 	}
 
 	/** {@inheritdoc} */
-	public function getLatestDeployment(string $owner, string $repo, string $stage, string $ref): array
+	public function getLatestDeployment(string $owner, string $repo, string $stage): array
 	{
-		return $this->getFromCache([__METHOD__, $owner, $repo, $stage, $ref],
-			function () use ($owner, $repo, $stage, $ref)
+		return $this->getFromCache([__METHOD__, $owner, $repo, $stage],
+			function () use ($owner, $repo, $stage)
 			{
-				return $this->client->getLatestDeployment($owner, $repo, $stage, $ref);
+				return $this->client->getLatestDeployment($owner, $repo, $stage);
 			}
 		);
 	}

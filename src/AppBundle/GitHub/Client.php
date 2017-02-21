@@ -56,6 +56,7 @@ class Client implements ClientInterface, LoggerAwareInterface
 		$this->logger = $logger;
 	}
 
+	/** {@inheritdoc} */
 	public function createHook(string $owner, string $repo, array $events): int
 	{
 		$client = $this->getClient();
@@ -95,6 +96,7 @@ class Client implements ClientInterface, LoggerAwareInterface
 		}
 	}
 
+	/** {@inheritdoc} */
 	public function deleteHook(string $owner, string $repo, int $webhookId): bool
 	{
 		$client = $this->getClient();
@@ -130,6 +132,7 @@ class Client implements ClientInterface, LoggerAwareInterface
 		}
 	}
 
+	/** {@inheritdoc} */
 	public function getCommits(string $owner, string $repo, string $ref, int $daysBack): array
 	{
 		$generateRequest  = function (int $page) use ($owner, $repo, $ref, $daysBack): RequestInterface
@@ -219,6 +222,29 @@ class Client implements ClientInterface, LoggerAwareInterface
 		return $data;
 	}
 
+	/** {@inheritdoc} */
+	public function getCommitsDiff(string $owner, string $repo, string $baseRef, string $headRef): array
+	{
+		$client = $this->getClient();
+
+		$response = $client->get(strtr('/repos/:owner/:repo/compare/:base...:head', [
+			':owner' => $owner,
+			':repo'  => $repo,
+			':base'  => $baseRef,
+			':head'  => $headRef,
+		]));
+
+		$diff = json_decode((string)$response->getBody(), true);
+
+		return [
+			'status'        => $diff['status'],
+			'ahead_by'      => $diff['ahead_by'],
+			'behind_by'     => $diff['behind_by'],
+			'total_commits' => $diff['total_commits'],
+		];
+	}
+
+	/** {@inheritdoc} */
 	public function getStatuses(string $owner, string $repo, string $ref): array
 	{
 		$generateRequest  = function (int $page) use ($owner, $repo, $ref): RequestInterface
@@ -297,7 +323,8 @@ class Client implements ClientInterface, LoggerAwareInterface
 		return $data;
 	}
 
-	public function getLatestDeployment(string $owner, string $repo, string $stage, string $ref): array
+	/** {@inheritdoc} */
+	public function getLatestDeployment(string $owner, string $repo, string $stage): array
 	{
 		$client = $this->getClient();
 
@@ -338,6 +365,7 @@ class Client implements ClientInterface, LoggerAwareInterface
 		];
 	}
 
+	/** {@inheritdoc} */
 	public function getDeploymentStatuses(string $owner, string $repo, int $deploymentId): array
 	{
 		$client = $this->getClient();

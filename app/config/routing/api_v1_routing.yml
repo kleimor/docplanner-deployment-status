@@ -71,6 +71,17 @@ api_v1_get_stage_commits:
         repo: "[a-zA-Z0-9_-]+"
         stage: "[a-zA-Z0-9_-]+"
 
+api_v1_get_stage_commits_diff:
+    path: /projects/{owner}/{repo}/{stage}/commits_diff
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Api/Stages:commitsDiff
+        days_back: 1
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+        stage: "[a-zA-Z0-9_-]+"
+
 api_v1_get_stage_statuses:
     path: /projects/{owner}/{repo}/{stage}/statuses
     methods: [GET]
