@@ -60,7 +60,13 @@
 	<table name="stage" idMethod="native">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
 		<column name="project_id" type="INTEGER" required="true"/>
-		<column name="name" type="VARCHAR" size="255" required="true"/>
+		<column name="title" type="VARCHAR" size="255" required="true"/>
+		<column name="name" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
 		<column name="tracked_branch" type="VARCHAR" size="255" required="true">
 			<vendor type="mysql">
 				<parameter name="Charset" value="ascii"/>

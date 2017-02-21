@@ -22,6 +22,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildStageQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildStageQuery orderByProjectId($order = Criteria::ASC) Order by the project_id column
+ * @method     ChildStageQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildStageQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildStageQuery orderByTrackedBranch($order = Criteria::ASC) Order by the tracked_branch column
  * @method     ChildStageQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -29,6 +30,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildStageQuery groupById() Group by the id column
  * @method     ChildStageQuery groupByProjectId() Group by the project_id column
+ * @method     ChildStageQuery groupByTitle() Group by the title column
  * @method     ChildStageQuery groupByName() Group by the name column
  * @method     ChildStageQuery groupByTrackedBranch() Group by the tracked_branch column
  * @method     ChildStageQuery groupByCreatedAt() Group by the created_at column
@@ -59,6 +61,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildStage findOneById(int $id) Return the first ChildStage filtered by the id column
  * @method     ChildStage findOneByProjectId(int $project_id) Return the first ChildStage filtered by the project_id column
+ * @method     ChildStage findOneByTitle(string $title) Return the first ChildStage filtered by the title column
  * @method     ChildStage findOneByName(string $name) Return the first ChildStage filtered by the name column
  * @method     ChildStage findOneByTrackedBranch(string $tracked_branch) Return the first ChildStage filtered by the tracked_branch column
  * @method     ChildStage findOneByCreatedAt(string $created_at) Return the first ChildStage filtered by the created_at column
@@ -69,6 +72,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildStage requireOneById(int $id) Return the first ChildStage filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOneByProjectId(int $project_id) Return the first ChildStage filtered by the project_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildStage requireOneByTitle(string $title) Return the first ChildStage filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOneByName(string $name) Return the first ChildStage filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOneByTrackedBranch(string $tracked_branch) Return the first ChildStage filtered by the tracked_branch column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStage requireOneByCreatedAt(string $created_at) Return the first ChildStage filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -77,6 +81,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStage[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildStage objects based on current ModelCriteria
  * @method     ChildStage[]|ObjectCollection findById(int $id) Return ChildStage objects filtered by the id column
  * @method     ChildStage[]|ObjectCollection findByProjectId(int $project_id) Return ChildStage objects filtered by the project_id column
+ * @method     ChildStage[]|ObjectCollection findByTitle(string $title) Return ChildStage objects filtered by the title column
  * @method     ChildStage[]|ObjectCollection findByName(string $name) Return ChildStage objects filtered by the name column
  * @method     ChildStage[]|ObjectCollection findByTrackedBranch(string $tracked_branch) Return ChildStage objects filtered by the tracked_branch column
  * @method     ChildStage[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildStage objects filtered by the created_at column
@@ -179,7 +184,7 @@ abstract class StageQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `project_id`, `name`, `tracked_branch`, `created_at`, `updated_at` FROM `stage` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `project_id`, `title`, `name`, `tracked_branch`, `created_at`, `updated_at` FROM `stage` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -351,6 +356,31 @@ abstract class StageQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(StageTableMap::COL_PROJECT_ID, $projectId, $comparison);
+    }
+
+    /**
+     * Filter the query on the title column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
+     * $query->filterByTitle('%fooValue%', Criteria::LIKE); // WHERE title LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $title The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildStageQuery The current query, for fluid interface
+     */
+    public function filterByTitle($title = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($title)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(StageTableMap::COL_TITLE, $title, $comparison);
     }
 
     /**
