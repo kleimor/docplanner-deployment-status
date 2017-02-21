@@ -151,12 +151,13 @@ class ProjectCard extends React.Component {
 		const overallState = this.getOverallState();
 
 		return (
-			<div className={`col-sm-6 col-md-6 col-lg-4 col-xl-3 p-0`}>
+			<div className="col-sm-6 col-md-6 col-lg-4 col-xl-3 p-0">
 				<div className={`card card-outline-${overallState} mx-1 mb-2`}>
 					<div className={`card-header text-center bg-${overallState}`}>
 						<a
 							className={"faded" === overallState ? "text-primary" : "text-white"}
 							href={`https://github.com/${this.props.owner}/${this.props.repo}`}
+							target="_blank"
 						>
 							<strong>{this.props.owner}/{this.props.repo}</strong>
 						</a>
@@ -170,13 +171,13 @@ class ProjectCard extends React.Component {
 											<small><strong>Stage</strong></small>
 										</div>
 										<div className="col-3 p-0 text-center">
-											<small><strong>Commit</strong></small>
+											<span className="md-icon">call_split</span>
 										</div>
 										<div className="col-2 p-0 text-center">
-											<small><strong>Tests</strong></small>
+											<span className="md-icon">bug_report</span>
 										</div>
 										<div className="col-1 p-0 text-center">
-											<small><strong>D</strong></small>
+											<span className="md-icon">sync</span>
 										</div>
 									</div>
 								</div>
@@ -195,8 +196,9 @@ class ProjectCard extends React.Component {
 								data-html="true"
 								title={`<small>${this.props.isStarred ? "Unstar project" : "Star project"}</small>`}
 							>
-								<span
-									className={`md-icon ${this.props.isStarred ? "text-warning" : "text-muted"}`}>star</span>
+								<span className={`md-icon ${this.props.isStarred ? "text-warning" : "text-muted"}`}>
+									{this.props.isStarred ? "star" : "star_border"}
+								</span>
 							</button>
 						</div>
 						<small className="float-right font-italic">
