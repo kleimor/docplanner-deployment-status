@@ -162,7 +162,7 @@ class StagesController extends Controller
 			throw $this->createNotFoundException("No deployments of {$stage} found");
 		}
 
-		$commits = $client->getCommitsDiff($owner, $repo, $latestDeployment['ref'], $stageModel->getTrackedBranch());
+		$commits = $client->getCommitsDiff($owner, $repo, $latestDeployment['ref'], $project->getBaseBranch());
 
 		return new JsonResponse($commits);
 	}

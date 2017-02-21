@@ -91,6 +91,13 @@ abstract class Project implements ActiveRecordInterface
     protected $repo;
 
     /**
+     * The value for the base_branch field.
+     *
+     * @var        string
+     */
+    protected $base_branch;
+
+    /**
      * The value for the created_at field.
      *
      * @var        DateTime
@@ -392,6 +399,16 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
+     * Get the [base_branch] column value.
+     *
+     * @return string
+     */
+    public function getBaseBranch()
+    {
+        return $this->base_branch;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -492,6 +509,26 @@ abstract class Project implements ActiveRecordInterface
     } // setRepo()
 
     /**
+     * Set the value of [base_branch] column.
+     *
+     * @param string $v new value
+     * @return $this|\AppBundle\Model\Project The current object (for fluent API support)
+     */
+    public function setBaseBranch($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->base_branch !== $v) {
+            $this->base_branch = $v;
+            $this->modifiedColumns[ProjectTableMap::COL_BASE_BRANCH] = true;
+        }
+
+        return $this;
+    } // setBaseBranch()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -576,13 +613,16 @@ abstract class Project implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('Repo', TableMap::TYPE_PHPNAME, $indexType)];
             $this->repo = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('BaseBranch', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->base_branch = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -595,7 +635,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\AppBundle\\Model\\Project'), 0, $e);
@@ -851,6 +891,9 @@ abstract class Project implements ActiveRecordInterface
         if ($this->isColumnModified(ProjectTableMap::COL_REPO)) {
             $modifiedColumns[':p' . $index++]  = '`repo`';
         }
+        if ($this->isColumnModified(ProjectTableMap::COL_BASE_BRANCH)) {
+            $modifiedColumns[':p' . $index++]  = '`base_branch`';
+        }
         if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`created_at`';
         }
@@ -876,6 +919,9 @@ abstract class Project implements ActiveRecordInterface
                         break;
                     case '`repo`':
                         $stmt->bindValue($identifier, $this->repo, PDO::PARAM_STR);
+                        break;
+                    case '`base_branch`':
+                        $stmt->bindValue($identifier, $this->base_branch, PDO::PARAM_STR);
                         break;
                     case '`created_at`':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -955,9 +1001,12 @@ abstract class Project implements ActiveRecordInterface
                 return $this->getRepo();
                 break;
             case 3:
-                return $this->getCreatedAt();
+                return $this->getBaseBranch();
                 break;
             case 4:
+                return $this->getCreatedAt();
+                break;
+            case 5:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -993,15 +1042,16 @@ abstract class Project implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getOwner(),
             $keys[2] => $this->getRepo(),
-            $keys[3] => $this->getCreatedAt(),
-            $keys[4] => $this->getUpdatedAt(),
+            $keys[3] => $this->getBaseBranch(),
+            $keys[4] => $this->getCreatedAt(),
+            $keys[5] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[3]] instanceof \DateTime) {
-            $result[$keys[3]] = $result[$keys[3]]->format('c');
-        }
-
         if ($result[$keys[4]] instanceof \DateTime) {
             $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1084,9 +1134,12 @@ abstract class Project implements ActiveRecordInterface
                 $this->setRepo($value);
                 break;
             case 3:
-                $this->setCreatedAt($value);
+                $this->setBaseBranch($value);
                 break;
             case 4:
+                $this->setCreatedAt($value);
+                break;
+            case 5:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1125,10 +1178,13 @@ abstract class Project implements ActiveRecordInterface
             $this->setRepo($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setCreatedAt($arr[$keys[3]]);
+            $this->setBaseBranch($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUpdatedAt($arr[$keys[4]]);
+            $this->setCreatedAt($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setUpdatedAt($arr[$keys[5]]);
         }
     }
 
@@ -1179,6 +1235,9 @@ abstract class Project implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ProjectTableMap::COL_REPO)) {
             $criteria->add(ProjectTableMap::COL_REPO, $this->repo);
+        }
+        if ($this->isColumnModified(ProjectTableMap::COL_BASE_BRANCH)) {
+            $criteria->add(ProjectTableMap::COL_BASE_BRANCH, $this->base_branch);
         }
         if ($this->isColumnModified(ProjectTableMap::COL_CREATED_AT)) {
             $criteria->add(ProjectTableMap::COL_CREATED_AT, $this->created_at);
@@ -1274,6 +1333,7 @@ abstract class Project implements ActiveRecordInterface
     {
         $copyObj->setOwner($this->getOwner());
         $copyObj->setRepo($this->getRepo());
+        $copyObj->setBaseBranch($this->getBaseBranch());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -1803,6 +1863,7 @@ abstract class Project implements ActiveRecordInterface
         $this->id = null;
         $this->owner = null;
         $this->repo = null;
+        $this->base_branch = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

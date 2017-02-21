@@ -23,12 +23,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProjectQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildProjectQuery orderByOwner($order = Criteria::ASC) Order by the owner column
  * @method     ChildProjectQuery orderByRepo($order = Criteria::ASC) Order by the repo column
+ * @method     ChildProjectQuery orderByBaseBranch($order = Criteria::ASC) Order by the base_branch column
  * @method     ChildProjectQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildProjectQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildProjectQuery groupById() Group by the id column
  * @method     ChildProjectQuery groupByOwner() Group by the owner column
  * @method     ChildProjectQuery groupByRepo() Group by the repo column
+ * @method     ChildProjectQuery groupByBaseBranch() Group by the base_branch column
  * @method     ChildProjectQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildProjectQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -68,6 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProject findOneById(int $id) Return the first ChildProject filtered by the id column
  * @method     ChildProject findOneByOwner(string $owner) Return the first ChildProject filtered by the owner column
  * @method     ChildProject findOneByRepo(string $repo) Return the first ChildProject filtered by the repo column
+ * @method     ChildProject findOneByBaseBranch(string $base_branch) Return the first ChildProject filtered by the base_branch column
  * @method     ChildProject findOneByCreatedAt(string $created_at) Return the first ChildProject filtered by the created_at column
  * @method     ChildProject findOneByUpdatedAt(string $updated_at) Return the first ChildProject filtered by the updated_at column *
 
@@ -77,6 +80,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProject requireOneById(int $id) Return the first ChildProject filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildProject requireOneByOwner(string $owner) Return the first ChildProject filtered by the owner column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildProject requireOneByRepo(string $repo) Return the first ChildProject filtered by the repo column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildProject requireOneByBaseBranch(string $base_branch) Return the first ChildProject filtered by the base_branch column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildProject requireOneByCreatedAt(string $created_at) Return the first ChildProject filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildProject requireOneByUpdatedAt(string $updated_at) Return the first ChildProject filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -84,6 +88,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildProject[]|ObjectCollection findById(int $id) Return ChildProject objects filtered by the id column
  * @method     ChildProject[]|ObjectCollection findByOwner(string $owner) Return ChildProject objects filtered by the owner column
  * @method     ChildProject[]|ObjectCollection findByRepo(string $repo) Return ChildProject objects filtered by the repo column
+ * @method     ChildProject[]|ObjectCollection findByBaseBranch(string $base_branch) Return ChildProject objects filtered by the base_branch column
  * @method     ChildProject[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildProject objects filtered by the created_at column
  * @method     ChildProject[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildProject objects filtered by the updated_at column
  * @method     ChildProject[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -184,7 +189,7 @@ abstract class ProjectQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `owner`, `repo`, `created_at`, `updated_at` FROM `project` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `owner`, `repo`, `base_branch`, `created_at`, `updated_at` FROM `project` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -363,6 +368,31 @@ abstract class ProjectQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProjectTableMap::COL_REPO, $repo, $comparison);
+    }
+
+    /**
+     * Filter the query on the base_branch column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByBaseBranch('fooValue');   // WHERE base_branch = 'fooValue'
+     * $query->filterByBaseBranch('%fooValue%', Criteria::LIKE); // WHERE base_branch LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $baseBranch The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildProjectQuery The current query, for fluid interface
+     */
+    public function filterByBaseBranch($baseBranch = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($baseBranch)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ProjectTableMap::COL_BASE_BRANCH, $baseBranch, $comparison);
     }
 
     /**

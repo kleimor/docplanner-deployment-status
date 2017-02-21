@@ -21,6 +21,12 @@
 				<parameter name="Collate" value="ascii_general_ci"/>
 			</vendor>
 		</column>
+		<column name="base_branch" type="VARCHAR" size="255" required="true">
+			<vendor type="mysql">
+				<parameter name="Charset" value="ascii"/>
+				<parameter name="Collate" value="ascii_general_ci"/>
+			</vendor>
+		</column>
 
 		<unique name="owner_repo">
 			<unique-column name="owner"/>

@@ -59,7 +59,7 @@ class ProjectTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ProjectTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -85,6 +85,11 @@ class ProjectTableMap extends TableMap
      * the column name for the repo field
      */
     const COL_REPO = 'project.repo';
+
+    /**
+     * the column name for the base_branch field
+     */
+    const COL_BASE_BRANCH = 'project.base_branch';
 
     /**
      * the column name for the created_at field
@@ -108,11 +113,11 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Owner', 'Repo', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'owner', 'repo', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_OWNER, ProjectTableMap::COL_REPO, ProjectTableMap::COL_CREATED_AT, ProjectTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'owner', 'repo', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'Owner', 'Repo', 'BaseBranch', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'owner', 'repo', 'baseBranch', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID, ProjectTableMap::COL_OWNER, ProjectTableMap::COL_REPO, ProjectTableMap::COL_BASE_BRANCH, ProjectTableMap::COL_CREATED_AT, ProjectTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'owner', 'repo', 'base_branch', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -122,11 +127,11 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Owner' => 1, 'Repo' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_OWNER => 1, ProjectTableMap::COL_REPO => 2, ProjectTableMap::COL_CREATED_AT => 3, ProjectTableMap::COL_UPDATED_AT => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'created_at' => 3, 'updated_at' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Owner' => 1, 'Repo' => 2, 'BaseBranch' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'baseBranch' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::COL_ID => 0, ProjectTableMap::COL_OWNER => 1, ProjectTableMap::COL_REPO => 2, ProjectTableMap::COL_BASE_BRANCH => 3, ProjectTableMap::COL_CREATED_AT => 4, ProjectTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'owner' => 1, 'repo' => 2, 'base_branch' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -149,6 +154,7 @@ class ProjectTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('owner', 'Owner', 'VARCHAR', true, 255, null);
         $this->addColumn('repo', 'Repo', 'VARCHAR', true, 255, null);
+        $this->addColumn('base_branch', 'BaseBranch', 'VARCHAR', true, 255, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -331,12 +337,14 @@ class ProjectTableMap extends TableMap
             $criteria->addSelectColumn(ProjectTableMap::COL_ID);
             $criteria->addSelectColumn(ProjectTableMap::COL_OWNER);
             $criteria->addSelectColumn(ProjectTableMap::COL_REPO);
+            $criteria->addSelectColumn(ProjectTableMap::COL_BASE_BRANCH);
             $criteria->addSelectColumn(ProjectTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(ProjectTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.owner');
             $criteria->addSelectColumn($alias . '.repo');
+            $criteria->addSelectColumn($alias . '.base_branch');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }
