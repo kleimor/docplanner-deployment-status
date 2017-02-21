@@ -1,6 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import jQuery from "jquery";
+import {fetchCommitsDiff} from "../actions/commits_diff";
 
 class Stage extends React.Component {
 	componentDidMount () {
@@ -19,7 +20,7 @@ class Stage extends React.Component {
 	}
 
 	render = () => {
-		const {stage, commits, statuses, deployments} = this.props;
+		const {stage, commits, commitsDiff, statuses, deployments} = this.props;
 
 		let commitHtml = "";
 		if (commits.isLoading) {
@@ -29,11 +30,26 @@ class Stage extends React.Component {
 		} else {
 			if (commits.commits && commits.commits.length) {
 				const latestCommit = commits.commits[0];
+				let commitText = latestCommit.sha.substr(0, 6);
+
+				let commitClassNames = ["badge"];
+				if (commitsDiff && commitsDiff.diff) {
+					const aheadCount = parseInt(commitsDiff.diff.ahead_by);
+					if (aheadCount) {
+						commitText = `${commitText} (-${aheadCount})`;
+						commitClassNames.push("badge-warning");
+					} else {
+						commitClassNames.push("badge-success");
+					}
+				} else {
+					commitClassNames.push("badge-default");
+				}
+
 				commitHtml = (
 					<a href={commits.commits[0].html_url}>
 					<span
 						ref="commitBadge"
-						className="badge badge-success"
+						className={commitClassNames.join(" ")}
 						data-toggle="tooltip"
 						data-placement="top"
 						data-html="true"
@@ -45,13 +61,13 @@ class Stage extends React.Component {
 							</small>
 						`}
 					>
-						{latestCommit.sha.substr(0, 6)}
+						{commitText}
 					</span>
 					</a>
 				);
 			} else {
 				commitHtml = (
-					<span ref="commitBadge" className="md-icon text-danger">warning</span>
+					<span ref="commitBadge" className="md-icon text-danger">error_outline</span>
 				);
 			}
 		}
@@ -82,9 +98,9 @@ class Stage extends React.Component {
 								title={`<small>${latestStatus.description}<br />${latestStatus.context}</small>`}
 							>
 								{{
-									failure: "warning",
-									pending: "sync",
-									success: "done",
+									failure: "error_outline",
+									pending: <span className="rotating font-weight-bold">sync</span>,
+									success: <span className="font-weight-bold">done</span>,
 								}[latestStatus.state]}
 							</span>
 						</a>
@@ -106,7 +122,7 @@ class Stage extends React.Component {
 					switch (latestDeploymentStatus.state) {
 						case "failure":
 						case "error":
-							deploymentHtml = <span className="md-icon text-danger">sync_problem</span>;
+							deploymentHtml = <span className="md-icon text-danger font-weight-bold">sync_problem</span>;
 							break;
 
 						case "pending":
@@ -114,11 +130,11 @@ class Stage extends React.Component {
 							break;
 
 						case "success":
-							deploymentHtml = <span className="md-icon text-success">done</span>;
+							deploymentHtml = <span className="md-icon text-success font-weight-bold">done</span>;
 							break;
 					}
 				} else {
-					deploymentHtml = <span className="md-icon text-muted">sync_disabled</span>;
+					deploymentHtml = <span className="md-icon text-muted font-weight-bold">sync_disabled</span>;
 				}
 			}
 		}

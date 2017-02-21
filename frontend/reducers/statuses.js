@@ -12,6 +12,8 @@ const statusesReducer = (state = initialState, action) => {
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
+					statuses: [],
+					isRecent: false,
 					isLoading: true,
 					updatedAt: new Date,
 				};

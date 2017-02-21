@@ -13,6 +13,7 @@ const projectsReducer = (state = initialState, action) => {
 				{},
 				state,
 				{
+					projects: [],
 					isLoading: true,
 					updatedAt: new Date,
 				}

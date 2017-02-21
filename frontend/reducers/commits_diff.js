@@ -1,8 +1,8 @@
 import {
-	FETCH_LATEST_DEPLOYMENT_STARTED,
-	FETCH_LATEST_DEPLOYMENT_FINISHED,
-	FETCH_LATEST_DEPLOYMENT_FAILED
-} from "../actions/deployments"
+	FETCH_COMMITS_DIFF_STARTED,
+	FETCH_COMMITS_DIFF_FINISHED,
+	FETCH_COMMITS_DIFF_FAILED
+} from "../actions/commits_diff"
 import {REMOVE_PROJECT} from "../actions/projects";
 import {REMOVE_STAGE} from "../actions/stages";
 
@@ -10,13 +10,13 @@ const initialState = {
 	forProject: {},
 };
 
-const deploymentsReducer = (state = initialState, action) => {
+const commitsDiffReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case FETCH_LATEST_DEPLOYMENT_STARTED:
+		case FETCH_COMMITS_DIFF_STARTED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
-					latestDeployment: {},
+					diff: [],
 					isRecent: false,
 					isLoading: true,
 					updatedAt: new Date,
@@ -26,14 +26,14 @@ const deploymentsReducer = (state = initialState, action) => {
 			})();
 			break;
 
-		case FETCH_LATEST_DEPLOYMENT_FAILED:
+		case FETCH_COMMITS_DIFF_FAILED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
-					latestDeployment: state.hasOwnProperty(`${action.owner}/${action.repo}/${action.stage}`) ?
+					diff: state.hasOwnProperty(`${action.owner}/${action.repo}/${action.stage}`) ?
 						state[`${action.owner}/${action.repo}/${action.stage}`]
 						:
-						{},
+						[],
 					isRecent: false,
 					isLoading: false,
 					updatedAt: new Date,
@@ -43,11 +43,11 @@ const deploymentsReducer = (state = initialState, action) => {
 			})();
 			break;
 
-		case FETCH_LATEST_DEPLOYMENT_FINISHED:
+		case FETCH_COMMITS_DIFF_FINISHED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
-					latestDeployment: action.deployment,
+					diff: action.diff,
 					isRecent: true,
 					isLoading: false,
 					updatedAt: new Date,
@@ -97,4 +97,4 @@ const deploymentsReducer = (state = initialState, action) => {
 	return state;
 };
 
-export default deploymentsReducer;
+export default commitsDiffReducer;

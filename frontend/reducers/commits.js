@@ -6,12 +6,14 @@ const initialState = {
 	forProject: {},
 };
 
-const projectsReducer = (state = initialState, action) => {
+const commitsReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case FETCH_COMMITS_STARTED:
 			return (() => {
 				let newState = {...state};
 				newState.forProject[`${action.owner}/${action.repo}/${action.stage}`] = {
+					commits: [],
+					isRecent: false,
 					isLoading: true,
 					updatedAt: new Date,
 				};
@@ -91,4 +93,4 @@ const projectsReducer = (state = initialState, action) => {
 	return state;
 };
 
-export default projectsReducer;
+export default commitsReducer;

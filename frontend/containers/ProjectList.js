@@ -9,7 +9,7 @@ class ProjectList extends React.Component {
 		}
 
 		const cards = this.props.projects.map((project) => (
-			<ProjectCard {...project} />
+			<ProjectCard {...project} project={project} />
 		));
 
 		return (

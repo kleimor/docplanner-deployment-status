@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import RelativeTime from "../components/RelativeTime";
 import Stage from "./Stage";
 import {fetchLatestDeployment} from "../actions/deployments";
+import {fetchCommitsDiff} from "../actions/commits_diff";
 
 class ProjectCard extends React.Component {
 	componentDidMount () {
@@ -19,6 +20,7 @@ class ProjectCard extends React.Component {
 
 	loadProjectData () {
 		this.loadProjectCommits();
+		this.loadProjectCommitsDiff();
 		this.loadProjectStatuses();
 		this.loadLatestDeployment();
 	}
@@ -28,6 +30,14 @@ class ProjectCard extends React.Component {
 
 		stages.forEach((stage) => {
 			this.props.fetchCommits(owner, repo, stage.name);
+		});
+	}
+
+	loadProjectCommitsDiff () {
+		const {owner, repo, stages} = this.props;
+
+		stages.forEach((stage) => {
+			this.props.fetchCommitsDiff(owner, repo, stage.name);
 		});
 	}
 
@@ -68,8 +78,19 @@ class ProjectCard extends React.Component {
 				if (0 === stageCommits.commits.length) {
 					return "danger";
 				}
-				// TODO: check whether commit on "stage" branch is latest from reference branch
 			}
+		}
+		for (let stage in this.props.commitsDiff) {
+			const stageCommitsDiff = this.props.commitsDiff[stage];
+			if (null === stageCommitsDiff) {
+				continue;
+			}
+			if (stageCommitsDiff.isLoading) {
+				return "faded";
+			} else if (false === stageCommitsDiff.isRecent) {
+				return "danger";
+			} else if (stageCommitsDiff.diff && parseInt(stageCommitsDiff.diff.ahead_by) > 0)
+				return "warning";
 		}
 		for (let stage in this.props.statuses) {
 			const stageStatuses = this.props.statuses[stage];
@@ -98,8 +119,10 @@ class ProjectCard extends React.Component {
 	render = () => {
 		const stages = this.props.stages.map((stage) => (
 			<Stage
+				project={this.props.project}
 				stage={stage}
 				commits={this.props.commits[stage.name]}
+				commitsDiff={this.props.commitsDiff[stage.name]}
 				statuses={this.props.statuses[stage.name]}
 				deployments={this.props.deployments[stage.name]}
 			></Stage>
@@ -143,10 +166,18 @@ class ProjectCard extends React.Component {
 							<li className="list-group-item py-0">
 								<div className="container-fluid w-100">
 									<div className="row">
-										<div className="col-6 p-0 text-left"><small><strong>Stage</strong></small></div>
-										<div className="col-3 p-0 text-center"><small><strong>Commit</strong></small></div>
-										<div className="col-2 p-0 text-center"><small><strong>Tests</strong></small></div>
-										<div className="col-1 p-0 text-center"><small><strong>D</strong></small></div>
+										<div className="col-6 p-0 text-left">
+											<small><strong>Stage</strong></small>
+										</div>
+										<div className="col-3 p-0 text-center">
+											<small><strong>Commit</strong></small>
+										</div>
+										<div className="col-2 p-0 text-center">
+											<small><strong>Tests</strong></small>
+										</div>
+										<div className="col-1 p-0 text-center">
+											<small><strong>D</strong></small>
+										</div>
 									</div>
 								</div>
 							</li>
@@ -192,6 +223,14 @@ const mapStateToProps = (state, ownProps) => {
 			:
 			[];
 	});
+	let commitsDiff = {};
+	ownProps.stages.forEach((stage) => {
+		let key = `${ownProps.owner}/${ownProps.repo}/${stage.name}`;
+		commitsDiff[stage.name] = state.commitsDiff.forProject.hasOwnProperty(key) ?
+			state.commitsDiff.forProject[key]
+			:
+			[];
+	});
 	let statuses = {};
 	ownProps.stages.forEach((stage) => {
 		let key = `${ownProps.owner}/${ownProps.repo}/${stage.name}`;
@@ -212,6 +251,7 @@ const mapStateToProps = (state, ownProps) => {
 	return {
 		...ownProps,
 		commits: commits,
+		commitsDiff: commitsDiff,
 		statuses: statuses,
 		deployments: deployments,
 		isStarred: state.starred.starred.indexOf(`${ownProps.owner}/${ownProps.repo}`) > -1,
@@ -220,6 +260,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => ({
 	fetchCommits: (owner, repo, stage) => dispatch(fetchCommits(owner, repo, stage)),
+	fetchCommitsDiff: (owner, repo, stage) => dispatch(fetchCommitsDiff(owner, repo, stage)),
 	fetchStatuses: (owner, repo, stage) => dispatch(fetchStatuses(owner, repo, stage)),
 	fetchLatestDeployment: (owner, repo, stage) => dispatch(fetchLatestDeployment(owner, repo, stage)),
 	toggleStarred: (owner, repo) => dispatch(toggleStarred(owner, repo)),
