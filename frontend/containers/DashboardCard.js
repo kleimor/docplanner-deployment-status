@@ -8,10 +8,11 @@ import RelativeTime from "../components/RelativeTime";
 import Stage from "./Stage";
 import {fetchLatestDeployment} from "../actions/deployments";
 import {fetchCommitsDiff} from "../actions/commits_diff";
+import {loadProjectData, reloadProjectData} from "../helpers/utilities";
 
 class DashboardCard extends React.Component {
 	componentDidMount () {
-		this.loadProjectData();
+		loadProjectData(this.props.owner, this.props.repo);
 		jQuery(this.refs.starButton).tooltip();
 	}
 
@@ -19,51 +20,8 @@ class DashboardCard extends React.Component {
 		jQuery(this.refs.starButton).tooltip();
 	}
 
-	loadProjectData () {
-		this.loadProjectCommits();
-		this.loadProjectCommitsDiff();
-		this.loadProjectStatuses();
-		this.loadLatestDeployment();
-	}
-
-	reloadProjectData () {
-		const {owner, repo} = this.props;
-
-		this.props.clearProjectCache(owner, repo, () => {
-			this.loadProjectData();
-		});
-	}
-
-	loadProjectCommits () {
-		const {owner, repo, stages} = this.props;
-
-		stages.forEach((stage) => {
-			this.props.fetchCommits(owner, repo, stage.name);
-		});
-	}
-
-	loadProjectCommitsDiff () {
-		const {owner, repo, stages} = this.props;
-
-		stages.forEach((stage) => {
-			this.props.fetchCommitsDiff(owner, repo, stage.name);
-		});
-	}
-
-	loadProjectStatuses () {
-		const {owner, repo, stages} = this.props;
-
-		stages.forEach((stage) => {
-			this.props.fetchStatuses(owner, repo, stage.name);
-		});
-	}
-
-	loadLatestDeployment () {
-		const {owner, repo, stages} = this.props;
-
-		stages.forEach((stage) => {
-			this.props.fetchLatestDeployment(owner, repo, stage.name);
-		});
+	reloadProject () {
+		reloadProjectData(this.props.owner, this.props.repo);
 	}
 
 	toggleStarred () {
@@ -220,7 +178,7 @@ class DashboardCard extends React.Component {
 						<small className="float-right font-italic">
 							<RelativeTime
 								date={latestChange}
-								onClick={this.reloadProjectData.bind(this)}
+								onClick={this.reloadProject.bind(this)}
 							>
 								<span className="md-icon pr-1">schedule</span>
 							</RelativeTime>

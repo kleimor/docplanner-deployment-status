@@ -11,7 +11,7 @@ export const removeStage = (owner, repo, stage) => (dispatch) => {
 	});
 };
 
-export const clearStageCache = (owner, repo, stage, onCacheCleared = () => {}) => (dispatch) => {
+export const clearStageCache = (owner, repo, stage, onCacheCleared = () => {}) => {
 	jQuery.ajax({
 		url: `/api/1/projects/${owner}/${repo}/${stage}/cache`,
 		method: 'DELETE',
