@@ -32,6 +32,7 @@ class DashboardCard extends React.Component {
 	};
 
 	getOverallState () {
+		// TODO: move this to utilities
 		for (let stage in this.props.commits) {
 			const stageCommits = this.props.commits[stage];
 			if (null === stageCommits) {

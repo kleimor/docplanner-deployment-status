@@ -2,10 +2,17 @@ import React from 'react';
 import {IndexLink, Link} from 'react-router';
 import {connect} from "react-redux";
 import {fetchProjects} from "../actions/projects";
+import {reloadProjectData} from "../helpers/utilities";
 
 class App extends React.Component {
 	componentDidMount () {
 		this.props.fetchProjects();
+	}
+
+	clearCacheAndReloadProjects () {
+		this.props.projects.projects.forEach((project) => {
+			reloadProjectData(project.owner, project.repo);
+		})
 	}
 
 	render = () => {
@@ -27,12 +34,17 @@ class App extends React.Component {
 								Dashboard
 							</IndexLink>
 						</li>
-						<li className="nav-item">
-							<Link to="/detailed" className="nav-link" activeClassName="active">
-								Detailed
-							</Link>
-						</li>
+						{/*<li className="nav-item">*/}
+							{/*<Link to="/detailed" className="nav-link" activeClassName="active">*/}
+								{/*Detailed*/}
+							{/*</Link>*/}
+						{/*</li>*/}
 					</ul>
+					<div className="btn-group btn-group-sm">
+						<button className="btn btn-outline-secondary" onClick={this.clearCacheAndReloadProjects.bind(this)}>
+							Reload all projects
+						</button>
+					</div>
 				</div>
 			</nav>
 
