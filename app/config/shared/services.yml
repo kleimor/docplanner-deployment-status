@@ -1,4 +1,10 @@
 services:
+    app.cache:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments:
+            - "@cache.app"
+            - "@cache.app"
+
     github.client:
         class: AppBundle\GitHub\Client
         arguments:
@@ -15,7 +21,7 @@ services:
         class: AppBundle\GitHub\CachedClient
         arguments:
             - "@github.client"
-            - "@cache.app"
+            - "@app.cache"
 
     github.hook_manager:
         class: AppBundle\GitHub\HookManager

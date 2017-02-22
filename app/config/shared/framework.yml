@@ -1,4 +1,6 @@
 framework:
+    cache:
+        prefix_seed: "%secret%"
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
     secret:          "%secret%"

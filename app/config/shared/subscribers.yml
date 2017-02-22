@@ -7,6 +7,18 @@ services:
             - { name: kernel.event_listener, event: project.created, method: onProjectCreated }
             - { name: kernel.event_listener, event: project.deleting, method: onProjectDeleting }
 
+    subscriber.cache:
+        class: AppBundle\Subscriber\CacheSubscriber
+        arguments:
+            - "@app.cache"
+        tags:
+            - { name: kernel.event_listener, event: project.creating, method: onProjectCreating }
+            - { name: kernel.event_listener, event: project.deleted, method: onProjectDeleting }
+            - { name: kernel.event_listener, event: github.deployment, method: onGithubDeployment }
+            - { name: kernel.event_listener, event: github.deployment_status, method: onGithubDeploymentStatus }
+            - { name: kernel.event_listener, event: github.push, method: onGithubPush }
+            - { name: kernel.event_listener, event: github.status, method: onGithubStatus }
+
     subscriber.github:
         class: AppBundle\Subscriber\GithubSubscriber
         arguments:
