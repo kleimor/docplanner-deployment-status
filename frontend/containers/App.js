@@ -6,13 +6,19 @@ import {reloadProjectData} from "../helpers/utilities";
 
 class App extends React.Component {
 	componentDidMount () {
+		this.reloadProjects();
+	}
+
+	reloadProjects () {
 		this.props.fetchProjects();
 	}
 
 	clearCacheAndReloadProjects () {
-		this.props.projects.projects.forEach((project) => {
-			reloadProjectData(project.owner, project.repo);
-		})
+		if (confirm('Are You sure?')) {
+			this.props.projects.projects.forEach((project) => {
+				reloadProjectData(project.owner, project.repo);
+			})
+		}
 	}
 
 	render = () => {
@@ -41,8 +47,12 @@ class App extends React.Component {
 						{/*</li>*/}
 					</ul>
 					<div className="btn-group btn-group-sm">
-						<button className="btn btn-outline-secondary" onClick={this.clearCacheAndReloadProjects.bind(this)}>
-							Reload all projects
+						<button className="btn btn-outline-secondary" onClick={this.reloadProjects.bind(this)}>
+							Reload
+						</button>
+						<button className="btn btn-outline-danger"
+								onClick={this.clearCacheAndReloadProjects.bind(this)}>
+							Clear cache
 						</button>
 					</div>
 				</div>
