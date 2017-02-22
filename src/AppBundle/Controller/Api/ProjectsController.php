@@ -117,4 +117,19 @@ class ProjectsController extends Controller
 
 		return new Response(null, Response::HTTP_NO_CONTENT);
 	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Clear cache for a project",
+	 *     views={"default", "v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function clearCacheAction(Project $project): Response
+	{
+		$this->get('app.cache')->invalidateTags(["owner_{$project->getOwner()}_repo_{$project->getRepo()}"]);
+
+		return new Response(null, Response::HTTP_NO_CONTENT);
+	}
 }

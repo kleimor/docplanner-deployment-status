@@ -40,6 +40,15 @@ api_v1_delete_project:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"
 
+api_v1_clear_project_cache:
+    path: /projects/{owner}/{repo}/cache
+    methods: [DELETE]
+    defaults:
+        _controller: AppBundle:Api/Projects:clearCache
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+
 api_v1_create_stage:
     path: /projects/{owner}/{repo}/{stage}
     methods: [POST]
@@ -55,6 +64,16 @@ api_v1_delete_stage:
     methods: [DELETE]
     defaults:
         _controller: AppBundle:Api/Stages:delete
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+        stage: "[a-zA-Z0-9_-]+"
+
+api_v1_clear_stage_cache:
+    path: /projects/{owner}/{repo}/{stage}/cache
+    methods: [DELETE]
+    defaults:
+        _controller: AppBundle:Api/Stages:clearCache
     requirements:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"

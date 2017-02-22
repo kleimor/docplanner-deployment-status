@@ -98,6 +98,33 @@ class StagesController extends Controller
 
 	/**
 	 * @ApiDoc(
+	 *     description="Clear cache for a stage within a project",
+	 *     views={"default", "v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function clearCacheAction(Project $project, string $stage): Response
+	{
+		$stageModel = (new StageQuery)
+			->filterByProject($project)
+			->filterByName($stage)
+			->findOne();
+
+		if (null === $stageModel)
+		{
+			throw $this->createNotFoundException("Stage {$stage} not found");
+		}
+
+		$this->get('app.cache')->invalidateTags([
+			"owner_{$project->getOwner()}_repo_{$project->getRepo()}_stage_{$stage}",
+		]);
+
+		return new Response(null, Response::HTTP_NO_CONTENT);
+	}
+
+	/**
+	 * @ApiDoc(
 	 *     description="Get stage commits",
 	 *     views={"default", "v1"}
 	 * )
