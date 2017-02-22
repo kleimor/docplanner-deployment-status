@@ -48,7 +48,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-	fetchProjects: (onFetched) => dispatch(fetchProjects(onFetched))
+	fetchProjects: () => dispatch(fetchProjects())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
