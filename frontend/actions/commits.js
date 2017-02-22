@@ -33,9 +33,6 @@ export const fetchCommits = (owner, repo, stage) => (dispatch) => {
 	return jQuery.ajax({
 		url: `/api/1/projects/${owner}/${repo}/${stage}/commits`,
 		dataType: 'json',
-		data: {
-			days_back: 7,
-		},
 		success: (data) => {
 			dispatch(fetchCommitsFinished(owner, repo, stage, data));
 		},

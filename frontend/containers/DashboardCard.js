@@ -1,4 +1,5 @@
 import React from "react";
+import {clearProjectCache} from "../actions/projects";
 import {fetchCommits} from "../actions/commits";
 import {fetchStatuses} from "../actions/statuses";
 import {toggleStarred} from "../actions/starred";
@@ -23,6 +24,14 @@ class DashboardCard extends React.Component {
 		this.loadProjectCommitsDiff();
 		this.loadProjectStatuses();
 		this.loadLatestDeployment();
+	}
+
+	reloadProjectData () {
+		const {owner, repo} = this.props;
+
+		this.props.clearProjectCache(owner, repo, () => {
+			this.loadProjectData();
+		});
 	}
 
 	loadProjectCommits () {
@@ -211,7 +220,7 @@ class DashboardCard extends React.Component {
 						<small className="float-right font-italic">
 							<RelativeTime
 								date={latestChange}
-								onClick={this.loadProjectData.bind(this)}
+								onClick={this.reloadProjectData.bind(this)}
 							>
 								<span className="md-icon pr-1">schedule</span>
 							</RelativeTime>
@@ -273,6 +282,7 @@ const mapDispatchToProps = (dispatch) => ({
 	fetchStatuses: (owner, repo, stage) => dispatch(fetchStatuses(owner, repo, stage)),
 	fetchLatestDeployment: (owner, repo, stage) => dispatch(fetchLatestDeployment(owner, repo, stage)),
 	toggleStarred: (owner, repo) => dispatch(toggleStarred(owner, repo)),
+	clearProjectCache: (owner, repo, onCacheCleared) => dispatch(clearProjectCache(owner, repo, onCacheCleared)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardCard);

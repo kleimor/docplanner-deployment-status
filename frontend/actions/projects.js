@@ -41,3 +41,13 @@ export const removeProject = (owner, repo) => (dispatch) => {
 		repo: repo
 	});
 };
+
+export const clearProjectCache = (owner, repo, onCacheCleared = () => {}) => (dispatch) => {
+	jQuery.ajax({
+		url: `/api/1/projects/${owner}/${repo}/cache`,
+		method: 'DELETE',
+		success: () => {
+			onCacheCleared();
+		}
+	});
+};
