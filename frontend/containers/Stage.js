@@ -1,6 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import jQuery from "jquery";
+import RelativeTime from "../components/RelativeTime";
 
 class Stage extends React.Component {
 	componentDidMount () {
@@ -125,7 +126,7 @@ class Stage extends React.Component {
 						case "error":
 							deploymentHtml = (
 								<span className="badge badge-danger">
-									{latestDeployment.ref.substr(0, 6)}
+									<RelativeTime date={latestDeploymentStatus.updated_at} />
 								</span>
 							);
 							break;
@@ -141,7 +142,7 @@ class Stage extends React.Component {
 						case "success":
 							deploymentHtml = (
 								<span className="badge badge-success">
-									{latestDeployment.ref.substr(0, 6)}
+									<RelativeTime date={latestDeploymentStatus.updated_at} />
 								</span>
 							);
 							break;
@@ -156,6 +157,8 @@ class Stage extends React.Component {
 							data-html="true"
 							title={`
 								<small class="text-left">
+									${latestDeployment.ref.substr(0, 6)}
+									<br />
 									${this.formatMessage(latestDeployment.creator.login)}
 								</small>
 							`}
