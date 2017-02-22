@@ -9,13 +9,13 @@ use AppBundle\Model\Project;
 
 class HookManager
 {
-	/** @var Client */
+	/** @var ClientInterface */
 	protected $github;
 
 	/** @var string[] */
 	private $subscribedEvents;
 
-	public function __construct(Client $github, array $subscribedEvents)
+	public function __construct(ClientInterface $github, array $subscribedEvents)
 	{
 		$this->github           = $github;
 		$this->subscribedEvents = $subscribedEvents;
