@@ -8,7 +8,7 @@ import Stage from "./Stage";
 import {fetchLatestDeployment} from "../actions/deployments";
 import {fetchCommitsDiff} from "../actions/commits_diff";
 
-class ProjectCard extends React.Component {
+class DashboardCard extends React.Component {
 	componentDidMount () {
 		this.loadProjectData();
 		jQuery(this.refs.starButton).tooltip();
@@ -275,4 +275,4 @@ const mapDispatchToProps = (dispatch) => ({
 	toggleStarred: (owner, repo) => dispatch(toggleStarred(owner, repo)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectCard);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardCard);

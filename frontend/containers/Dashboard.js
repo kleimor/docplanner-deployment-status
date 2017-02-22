@@ -1,5 +1,5 @@
 import React from "react";
-import ProjectList from "../containers/ProjectList";
+import DashboardSections from "../containers/DashboardSections";
 import {connect} from "react-redux"
 
 class Dashboard extends React.Component {
@@ -15,12 +15,12 @@ class Dashboard extends React.Component {
 			<div>
 				<div className="row">
 					<div className="col-md-12 pt-3">
-						<ProjectList title="Starred" projects={this.props.starredProjects}/>
+						<DashboardSections title="Starred" projects={this.props.starredProjects}/>
 					</div>
 				</div>
 				<div className="row">
 					<div className="col-md-12 pt-3">
-						<ProjectList title="Projects" projects={this.props.otherProjects}/>
+						<DashboardSections title="Projects" projects={this.props.otherProjects}/>
 					</div>
 				</div>
 			</div>

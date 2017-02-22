@@ -1,15 +1,15 @@
 import React from "react"
-import ProjectCard from "../containers/ProjectCard"
+import DashboardCard from "../containers/DashboardCard"
 import {connect} from "react-redux"
 
-class ProjectList extends React.Component {
+class DashboardSections extends React.Component {
 	render = () => {
 		if (0 === this.props.projects.length) {
 			return <div></div>;
 		}
 
 		const cards = this.props.projects.map((project) => (
-			<ProjectCard {...project} project={project} />
+			<DashboardCard {...project} project={project} />
 		));
 
 		return (
@@ -33,4 +33,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectList);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardSections);
