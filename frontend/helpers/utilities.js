@@ -9,21 +9,19 @@ import appStore from "../stores/app";
 export const reloadProjectData = (owner, repo) => {
 	const state = appStore.getState();
 
-	clearProjectCache(owner, repo, () => {
-		state.projects.projects.forEach((project) => {
-			if (project.owner === owner && project.repo === repo) {
-				project.stages.forEach((stage) => {
-					reloadStageData(owner, repo, stage.name);
-				})
-			}
-		})
-	})
+	clearProjectCache(owner, repo)
+		.then(() => {
+			state.projects.projects.forEach((project) => {
+				if (project.owner === owner && project.repo === repo) {
+					project.stages.forEach((stage) => reloadStageData(owner, repo, stage.name))
+				}
+			})
+		});
 };
 
 export const reloadStageData = (owner, repo, stage) => {
-	clearStageCache(owner, repo, stage, () => {
-		loadStageData(owner, repo, stage);
-	})
+	clearStageCache(owner, repo, stage)
+		.then(() => loadStageData(owner, repo, stage));
 };
 
 export const loadProjectData = (owner, repo) => {
@@ -31,9 +29,7 @@ export const loadProjectData = (owner, repo) => {
 
 	state.projects.projects.forEach((project) => {
 		if (project.owner === owner && project.repo === repo) {
-			project.stages.forEach((stage) => {
-				loadStageData(owner, repo, stage.name);
-			})
+			project.stages.forEach((stage) => loadStageData(owner, repo, stage.name))
 		}
 	})
 };

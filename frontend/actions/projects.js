@@ -1,4 +1,4 @@
-import * as jQuery from "jquery";
+import axios from "axios";
 
 export const FETCH_PROJECTS_STARTED = 'FETCH_PROJECTS_STARTED';
 export const FETCH_PROJECTS_FINISHED = 'FETCH_PROJECTS_FINISHED';
@@ -22,16 +22,10 @@ const fetchProjectsFailed = (error) => ({
 export const fetchProjects = () => (dispatch) => {
 	dispatch(fetchProjectsStarted());
 
-	jQuery.ajax({
-		url: "/api/1/projects",
-		dataType: 'json',
-		success: (data) => {
-			dispatch(fetchProjectsFinished(data));
-		},
-		error: (data) => {
-			dispatch(fetchProjectsFailed(data))
-		}
-	});
+	return axios
+		.get("/api/1/projects")
+		.then((response) => dispatch(fetchProjectsFinished(response.data)))
+		.catch((error) => dispatch(fetchProjectsFailed(error)));
 };
 
 export const removeProject = (owner, repo) => (dispatch) => {
@@ -42,12 +36,6 @@ export const removeProject = (owner, repo) => (dispatch) => {
 	});
 };
 
-export const clearProjectCache = (owner, repo, onCacheCleared = () => {}) => {
-	jQuery.ajax({
-		url: `/api/1/projects/${owner}/${repo}/cache`,
-		method: 'DELETE',
-		success: () => {
-			onCacheCleared();
-		}
-	});
+export const clearProjectCache = (owner, repo) => {
+	return axios.delete(`/api/1/projects/${owner}/${repo}/cache`);
 };

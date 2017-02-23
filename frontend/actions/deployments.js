@@ -1,4 +1,4 @@
-import * as jQuery from "jquery";
+import axios from "axios";
 
 export const FETCH_LATEST_DEPLOYMENT = 'FETCH_LATEST_DEPLOYMENT';
 export const FETCH_LATEST_DEPLOYMENT_STARTED = 'FETCH_LATEST_DEPLOYMENT_STARTED';
@@ -31,14 +31,8 @@ const fetchLatestDeploymentFailed = (owner, repo, stage, error) => ({
 export const fetchLatestDeployment = (owner, repo, stage) => (dispatch) => {
 	dispatch(fetchLatestDeploymentStarted(owner, repo, stage));
 
-	jQuery.ajax({
-		url: `/api/1/projects/${owner}/${repo}/${stage}/latest_deployment`,
-		dataType: 'json',
-		success: (data) => {
-			dispatch(fetchLatestDeploymentFinished(owner, repo, stage, data));
-		},
-		error: (data) => {
-			dispatch(fetchLatestDeploymentFailed(owner, repo, stage, data));
-		}
-	});
+	return axios
+		.get(`/api/1/projects/${owner}/${repo}/${stage}/latest_deployment`)
+		.then((response) => dispatch(fetchLatestDeploymentFinished(owner, repo, stage, response.data)))
+		.catch((error) => dispatch(fetchLatestDeploymentFailed(owner, repo, stage, error)));
 };

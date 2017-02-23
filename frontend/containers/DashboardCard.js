@@ -1,5 +1,4 @@
 import React from "react";
-import {clearProjectCache} from "../actions/projects";
 import {fetchCommits} from "../actions/commits";
 import {fetchStatuses} from "../actions/statuses";
 import {toggleStarred} from "../actions/starred";
@@ -241,7 +240,6 @@ const mapDispatchToProps = (dispatch) => ({
 	fetchStatuses: (owner, repo, stage) => dispatch(fetchStatuses(owner, repo, stage)),
 	fetchLatestDeployment: (owner, repo, stage) => dispatch(fetchLatestDeployment(owner, repo, stage)),
 	toggleStarred: (owner, repo) => dispatch(toggleStarred(owner, repo)),
-	clearProjectCache: (owner, repo, onCacheCleared) => dispatch(clearProjectCache(owner, repo, onCacheCleared)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardCard);

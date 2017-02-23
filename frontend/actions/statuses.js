@@ -1,4 +1,4 @@
-import * as jQuery from "jquery";
+import axios from "axios";
 
 export const FETCH_STATUSES_STARTED = 'FETCH_STATUSES_STARTED';
 export const FETCH_STATUSES_FINISHED = 'FETCH_STATUSES_FINISHED';
@@ -30,14 +30,8 @@ const fetchStatusesFailed = (owner, repo, stage, error) => ({
 export const fetchStatuses = (owner, repo, stage) => (dispatch) => {
 	dispatch(fetchStatusesStarted(owner, repo, stage));
 
-	jQuery.ajax({
-		url: `/api/1/projects/${owner}/${repo}/${stage}/statuses`,
-		dataType: 'json',
-		success: (data) => {
-			dispatch(fetchStatusesFinished(owner, repo, stage, data));
-		},
-		error: (data) => {
-			dispatch(fetchStatusesFailed(owner, repo, stage, data));
-		}
-	});
+	return axios
+		.get(`/api/1/projects/${owner}/${repo}/${stage}/statuses`)
+		.then((response) => dispatch(fetchStatusesFinished(owner, repo, stage, response.data)))
+		.catch((error) => dispatch(fetchStatusesFailed(owner, repo, stage, error)));
 };

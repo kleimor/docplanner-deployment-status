@@ -1,6 +1,5 @@
 import React from "react";
 import {connect} from "react-redux";
-import jQuery from "jquery";
 import RelativeTime from "../components/RelativeTime";
 
 class Stage extends React.Component {

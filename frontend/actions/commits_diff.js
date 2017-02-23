@@ -1,4 +1,4 @@
-import * as jQuery from "jquery";
+import axios from "axios";
 
 export const FETCH_COMMITS_DIFF_STARTED = 'FETCH_COMMITS_DIFF_STARTED';
 export const FETCH_COMMITS_DIFF_FINISHED = 'FETCH_COMMITS_DIFF_FINISHED';
@@ -30,14 +30,8 @@ const fetchCommitsDiffFailed = (owner, repo, stage, error) => ({
 export const fetchCommitsDiff = (owner, repo, stage) => (dispatch) => {
 	dispatch(fetchCommitsDiffStarted(owner, repo, stage));
 
-	return jQuery.ajax({
-		url: `/api/1/projects/${owner}/${repo}/${stage}/commits_diff`,
-		dataType: 'json',
-		success: (data) => {
-			dispatch(fetchCommitsDiffFinished(owner, repo, stage, data));
-		},
-		error: (data) => {
-			dispatch(fetchCommitsDiffFailed(owner, repo, stage, data));
-		}
-	});
+	return axios
+		.get(`/api/1/projects/${owner}/${repo}/${stage}/commits_diff`)
+		.then((response) => dispatch(fetchCommitsDiffFinished(owner, repo, stage, response.data)))
+		.catch((error) => dispatch(fetchCommitsDiffFailed(owner, repo, stage, error)));
 };

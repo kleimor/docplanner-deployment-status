@@ -1,4 +1,4 @@
-import * as jQuery from "jquery";
+import axios from "axios";
 
 export const REMOVE_STAGE = 'REMOVE_STAGE';
 
@@ -11,12 +11,6 @@ export const removeStage = (owner, repo, stage) => (dispatch) => {
 	});
 };
 
-export const clearStageCache = (owner, repo, stage, onCacheCleared = () => {}) => {
-	jQuery.ajax({
-		url: `/api/1/projects/${owner}/${repo}/${stage}/cache`,
-		method: 'DELETE',
-		success: () => {
-			onCacheCleared();
-		}
-	});
+export const clearStageCache = (owner, repo, stage) => {
+	return axios.delete(`/api/1/projects/${owner}/${repo}/${stage}/cache`);
 };
