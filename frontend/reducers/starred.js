@@ -6,23 +6,21 @@ const initialState = {
 
 const starredReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case TOGGLE_STARRED:
-			return (() => {
-				let newState = {...state};
-				let key = `${action.owner}/${action.repo}`;
-				let index = newState.starred.indexOf(key);
-				if (index > -1) {
-					newState.starred.splice(index, 1);
-				}
-				else {
-					newState.starred.push(key);
-				}
+		case TOGGLE_STARRED: {
+			let newState = {...state};
+			let key = `${action.owner}/${action.repo}`;
+			let index = newState.starred.indexOf(key);
+			if (index > -1) {
+				newState.starred.splice(index, 1);
+			}
+			else {
+				newState.starred.push(key);
+			}
 
-				localStorage.setItem('starred', JSON.stringify(state.starred));
+			localStorage.setItem('starred', JSON.stringify(state.starred));
 
-				return newState;
-			})();
-			break;
+			return newState;
+		}
 	}
 
 	return state;

@@ -8,7 +8,7 @@ const initialState = {
 
 const projectsReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case FETCH_PROJECTS_STARTED:
+		case FETCH_PROJECTS_STARTED: {
 			return Object.assign(
 				{},
 				state,
@@ -18,9 +18,9 @@ const projectsReducer = (state = initialState, action) => {
 					updatedAt: new Date,
 				}
 			);
-			break;
+		}
 
-		case FETCH_PROJECTS_FINISHED:
+		case FETCH_PROJECTS_FINISHED: {
 			return Object.assign(
 				{},
 				state,
@@ -29,11 +29,10 @@ const projectsReducer = (state = initialState, action) => {
 					isLoading: false,
 					updatedAt: new Date,
 				}
-			)
-				;
-			break;
+			);
+		}
 
-		case REMOVE_PROJECT:
+		case REMOVE_PROJECT: {
 			return Object.assign(
 				{},
 				state,
@@ -44,9 +43,9 @@ const projectsReducer = (state = initialState, action) => {
 					updatedAt: new Date,
 				}
 			);
-			break;
+		}
 
-		case REMOVE_STAGE:
+		case REMOVE_STAGE: {
 			const newState = {...state};
 			newState.projects.forEach((project) => {
 				if (project.owner === action.owner && project.repo === action.repo) {
@@ -63,7 +62,7 @@ const projectsReducer = (state = initialState, action) => {
 					updatedAt: new Date,
 				}
 			);
-			break;
+		}
 	}
 
 	return state;
