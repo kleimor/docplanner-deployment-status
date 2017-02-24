@@ -49,6 +49,7 @@
             "[ \"prod\" != \"$SYMFONY_ENV\" ] && npm run build || :"
         ],
         "prod-scripts": [
+            "[ \"prod\" = \"$SYMFONY_ENV\" ] && /usr/bin/git-crypt unlock ~/.git-crypt/deployments.key || :",
             "[ \"prod\" = \"$SYMFONY_ENV\" ] && bin/console propel:migration:migrate || :",
             "[ \"prod\" = \"$SYMFONY_ENV\" ] && npm install --production --loglevel error --no-progress || :",
             "[ \"prod\" = \"$SYMFONY_ENV\" ] && npm run build --production || :"
