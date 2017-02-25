@@ -6,7 +6,6 @@ monolog:
     handlers:
         console:
             type: console
-            formatter: monolog.formatter.console
         sentry_default:
 #            channels:
 #                - '!security'
