@@ -41,7 +41,7 @@ class GithubController extends Controller
 			}
 		}
 
-		$subscribedEvents = $this->getParameter('github.subscribed_events');
+		$subscribedEvents = $this->getParameter('app.github.subscribed_events');
 
 		$eventType = $request->headers->get(self::HEADER_EVENT);
 		if (!in_array($eventType, $subscribedEvents, true))
