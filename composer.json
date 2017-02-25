@@ -29,7 +29,8 @@
         "propel/propel-bundle": "^3.0@dev",
         "propel/propel": "2.0.0-alpha6",
         "guzzlehttp/guzzle": "^6.2",
-        "nelmio/api-doc-bundle": "^2.13"
+        "nelmio/api-doc-bundle": "^2.13",
+        "sentry/sentry": "^1.6"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
