@@ -2,11 +2,18 @@
 
 declare(strict_types=1);
 
-use Symfony\Component\HttpKernel\Kernel;
+use Monolog\ErrorHandler;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
+	/** @var null|ErrorHandler */
+	protected static $errorHandler;
+
 	/** {@inheritdoc} */
 	public function registerBundles()
 	{
@@ -31,6 +38,27 @@ class AppKernel extends Kernel
 		}
 
 		return $bundles;
+	}
+
+	/** {@inheritdoc} */
+	public function boot()
+	{
+		$ret = parent::boot();
+
+		if (null === self::$errorHandler)
+		{
+			$container = $this->getContainer();
+			$logger    = $container->get('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+			if ($logger instanceof LoggerInterface)
+			{
+				self::$errorHandler = new ErrorHandler($logger);
+				self::$errorHandler->registerErrorHandler();
+				self::$errorHandler->registerExceptionHandler(LogLevel::ERROR);
+				self::$errorHandler->registerFatalHandler(LogLevel::ALERT);
+			}
+		}
+
+		return $ret;
 	}
 
 	/** {@inheritdoc} */

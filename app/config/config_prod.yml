@@ -4,13 +4,18 @@ imports:
 
 monolog:
     handlers:
-#        main:
-#            type:         fingers_crossed
-#            action_level: error
-#            handler:      nested
-#        nested:
-#            type:  stream
-#            path:  "%kernel.logs_dir%/%kernel.environment%.log"
-#            level: debug
         console:
-            type:  console
+            type: console
+            formatter: monolog.formatter.console
+        sentry_default:
+#            channels:
+#                - '!security'
+            type: fingers_crossed
+            action_level: warning
+            handler: sentry_deployments
+            excluded_404s: [.]
+        sentry_deployments:
+            type: raven
+            level: warning
+            dsn: https://38403b3775c34bd9a351c74266e19a2d:95e987c3a17448af959925a0bb0e8858@sentry.io/142396
+
