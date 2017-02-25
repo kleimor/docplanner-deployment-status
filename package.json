@@ -7,8 +7,9 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "watch": "webpack --config webpack.config.js --watch"
+    "build": "webpack --config webpack.config.dev.js",
+    "build:prod": "webpack --config webpack.config.prod.js",
+    "watch": "webpack --config webpack.config.dev.js --watch"
   },
   "repository": {
     "type": "git",

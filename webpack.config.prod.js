@@ -48,7 +48,7 @@ const config = {
 				NODE_ENV: JSON.stringify('production')
 			}
 		}),
-		// new webpack.optimize.UglifyJsPlugin(),
+		new webpack.optimize.UglifyJsPlugin(),
 	]
 };
 
