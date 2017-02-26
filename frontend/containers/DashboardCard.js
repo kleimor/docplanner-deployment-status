@@ -20,6 +20,14 @@ class DashboardCard extends React.Component {
 		jQuery(this.refs.starButton).tooltip();
 	}
 
+	componentWillUpdate() {
+		jQuery(this.refs.starButton).tooltip('hide');
+	}
+
+	componentWillUnmount() {
+		jQuery(this.refs.starButton).tooltip('hide');
+	}
+
 	reloadProject () {
 		reloadProjectData(this.props.owner, this.props.repo);
 	}
@@ -27,7 +35,6 @@ class DashboardCard extends React.Component {
 	toggleStarred () {
 		const {owner, repo} = this.props;
 
-		jQuery(this.refs.starButton).tooltip('hide');
 		this.props.toggleStarred(owner, repo);
 	};
 
