@@ -50,6 +50,7 @@ class Stage extends React.Component {
 					<a
 						ref="commitBadge"
 						href={commits.commits[0].html_url}
+						target="_blank"
 						data-toggle="tooltip"
 						data-placement="top"
 						data-html="true"
@@ -151,6 +152,7 @@ class Stage extends React.Component {
 						<a
 							ref="deploymentBadge"
 							href={latestDeployment.html_url}
+							target="_blank"
 							data-toggle="tooltip"
 							data-placement="top"
 							data-html="true"
