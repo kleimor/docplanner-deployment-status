@@ -5,6 +5,7 @@ import commitsDiffReducer from "./commits_diff"
 import statusesReducer from "./statuses"
 import starredReducer from "./starred"
 import deploymentsReducer from "./deployments"
+import hooksReducer from "./hooks"
 
 const rootReducer = combineReducers({
 	projects: projectsReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
 	statuses: statusesReducer,
 	starred: starredReducer,
 	deployments: deploymentsReducer,
+	hooks: hooksReducer,
 });
 
 export default rootReducer;

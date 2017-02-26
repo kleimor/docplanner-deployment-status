@@ -5,6 +5,7 @@ import {fetchCommitsDiff} from "../actions/commits_diff";
 import {fetchStatuses} from "../actions/statuses";
 import {fetchLatestDeployment} from "../actions/deployments";
 import appStore from "../stores/app";
+import {fetchHooks} from "../actions/hooks";
 
 export const reloadProjectData = (owner, repo) => {
 	const state = appStore.getState();
@@ -12,6 +13,7 @@ export const reloadProjectData = (owner, repo) => {
 	clearProjectCache(owner, repo)
 		.then(() => {
 			state.projects.projects.forEach((project) => {
+				appStore.dispatch(fetchHooks(owner, repo));
 				if (project.owner === owner && project.repo === repo) {
 					project.stages.forEach((stage) => reloadStageData(owner, repo, stage.name))
 				}
@@ -29,6 +31,7 @@ export const loadProjectData = (owner, repo) => {
 
 	state.projects.projects.forEach((project) => {
 		if (project.owner === owner && project.repo === repo) {
+			appStore.dispatch(fetchHooks(owner, repo));
 			project.stages.forEach((stage) => loadStageData(owner, repo, stage.name))
 		}
 	})

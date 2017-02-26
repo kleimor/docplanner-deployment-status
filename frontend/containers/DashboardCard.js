@@ -8,6 +8,7 @@ import Stage from "./Stage";
 import {fetchLatestDeployment} from "../actions/deployments";
 import {fetchCommitsDiff} from "../actions/commits_diff";
 import {loadProjectData, reloadProjectData} from "../helpers/utilities";
+import LiveUpdateIndicator from "./LiveUpdateIndicator";
 
 class DashboardCard extends React.Component {
 	componentDidMount () {
@@ -159,30 +160,38 @@ class DashboardCard extends React.Component {
 							{stages}
 						</ul>
 					</div>
-					<div className="card-footer text-muted text-right">
-						<div className="float-left">
-							<button
-								ref="starButton"
-								className="btn btn-link btn-sm p-0 mr-1"
-								onClick={this.toggleStarred.bind(this)}
-								data-toggle="tooltip"
-								data-placement="right"
-								data-html="true"
-								title={`<small>${this.props.isStarred ? "Unstar project" : "Star project"}</small>`}
-							>
+					<div className="card-footer text-muted">
+						<div className="row">
+							<div className="col-4 text-left">
+								<button
+									ref="starButton"
+									className="btn btn-link btn-sm p-0 mr-1"
+									onClick={this.toggleStarred.bind(this)}
+									data-toggle="tooltip"
+									data-placement="right"
+									data-html="true"
+									title={`<small>${this.props.isStarred ? "Unstar project" : "Star project"}</small>`}
+								>
 								<span className={`md-icon ${this.props.isStarred ? "text-warning" : "text-muted"}`}>
 									{this.props.isStarred ? "star" : "star_border"}
 								</span>
-							</button>
+								</button>
+							</div>
+							<div className="col-4 text-center">
+								<LiveUpdateIndicator
+									project={this.props.project}
+									hooks={this.props.hooks}
+								/>
+							</div>
+							<div className="col-4 text-right">
+								<small className="font-italic">
+									<RelativeTime
+										date={latestChange}
+										onClick={this.reloadProject.bind(this)}
+									/>
+								</small>
+							</div>
 						</div>
-						<small className="float-right font-italic">
-							<RelativeTime
-								date={latestChange}
-								onClick={this.reloadProject.bind(this)}
-							>
-								<span className="md-icon pr-1">schedule</span>
-							</RelativeTime>
-						</small>
 					</div>
 				</div>
 			</div>
@@ -223,6 +232,10 @@ const mapStateToProps = (state, ownProps) => {
 			:
 			null;
 	});
+	const hooks = state.hooks.forProject.hasOwnProperty(`${ownProps.owner}/${ownProps.repo}`) ?
+		state.hooks.forProject[`${ownProps.owner}/${ownProps.repo}`]
+		:
+		null;
 
 	return {
 		...ownProps,
@@ -230,6 +243,7 @@ const mapStateToProps = (state, ownProps) => {
 		commitsDiff: commitsDiff,
 		statuses: statuses,
 		deployments: deployments,
+		hooks: hooks,
 		isStarred: state.starred.starred.indexOf(`${ownProps.owner}/${ownProps.repo}`) > -1,
 	};
 };
