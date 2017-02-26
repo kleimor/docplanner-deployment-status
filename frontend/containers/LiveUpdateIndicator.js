@@ -4,15 +4,19 @@ import {installHook} from "../actions/hooks";
 
 class LiveUpdateIndicator extends React.Component {
 	componentDidMount () {
-		jQuery(this.refs.liveUpdate)
-			.tooltip()
-			.tooltip('hide');
+		jQuery(this.refs.liveUpdate).tooltip();
 	}
 
 	componentDidUpdate () {
-		jQuery(this.refs.liveUpdate)
-			.tooltip()
-			.tooltip('hide');
+		jQuery(this.refs.liveUpdate).tooltip()
+	}
+
+	componentWillUpdate() {
+		jQuery(this.refs.liveUpdate).tooltip('hide');
+	}
+
+	componentWillUnmount() {
+		jQuery(this.refs.liveUpdate).tooltip('hide');
 	}
 
 	installHooks () {
