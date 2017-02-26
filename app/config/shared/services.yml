@@ -28,3 +28,4 @@ services:
         arguments:
             - "@github.cached_client"
             - "%app.github.subscribed_events%"
+            - "@event_dispatcher"

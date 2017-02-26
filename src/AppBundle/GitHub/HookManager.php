@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace AppBundle\GitHub;
 
+use AppBundle\Event\Project\ProjectGithubWebhookCreatedEvent;
+use AppBundle\Event\Project\ProjectGithubWebhookDeletedEvent;
 use AppBundle\Model\GithubWebhookQuery;
 use AppBundle\Model\Project;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class HookManager
 {
@@ -15,10 +18,17 @@ class HookManager
 	/** @var string[] */
 	private $subscribedEvents;
 
-	public function __construct(ClientInterface $github, array $subscribedEvents)
-	{
+	/** @var EventDispatcherInterface */
+	private $eventDispatcher;
+
+	public function __construct(
+		ClientInterface $github,
+		array $subscribedEvents,
+		EventDispatcherInterface $eventDispatcher
+	) {
 		$this->github           = $github;
 		$this->subscribedEvents = $subscribedEvents;
+		$this->eventDispatcher  = $eventDispatcher;
 	}
 
 	public function installHooks(Project $project)
@@ -37,6 +47,9 @@ class HookManager
 		$webhook
 			->setEvents(array_merge($webhook->getEvents(), $this->subscribedEvents))
 			->save();
+
+		$event = new ProjectGithubWebhookCreatedEvent($project, $webhook);
+		$this->eventDispatcher->dispatch(ProjectGithubWebhookCreatedEvent::getEventName(), $event);
 	}
 
 	public function removeHooks(Project $project)
@@ -54,6 +67,9 @@ class HookManager
 			if ($deleted)
 			{
 				$githubWebhook->delete();
+
+				$event = new ProjectGithubWebhookDeletedEvent($project, $githubWebhook);
+				$this->eventDispatcher->dispatch(ProjectGithubWebhookDeletedEvent::getEventName(), $event);
 			}
 		}
 	}

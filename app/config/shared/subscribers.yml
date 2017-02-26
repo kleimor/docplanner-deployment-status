@@ -3,9 +3,12 @@ services:
         class: AppBundle\Subscriber\ProjectSubscriber
         arguments:
             - "@github.hook_manager"
+            - "@lopi_pusher.pusher"
         tags:
             - { name: kernel.event_listener, event: project.created, method: onProjectCreated }
             - { name: kernel.event_listener, event: project.deleting, method: onProjectDeleting }
+            - { name: kernel.event_listener, event: project.github_webhook.created, method: onGithubWebhookEvent, priority: -100 }
+            - { name: kernel.event_listener, event: project.github_webhook.deleted, method: onGithubWebhookEvent, priority: -100 }
 
     subscriber.cache:
         class: AppBundle\Subscriber\CacheSubscriber
@@ -23,7 +26,5 @@ services:
         class: AppBundle\Subscriber\GithubSubscriber
         arguments:
             - "@lopi_pusher.pusher"
-        tags:
+        tags: []
             # configured in ConnectGithubEventsToSubscriberPass
-            - { name: kernel.event_listener, event: project.created, method: onProjectEvent, priority: -100 }
-            - { name: kernel.event_listener, event: stage.created, method: onStageEvent, priority: -100 }

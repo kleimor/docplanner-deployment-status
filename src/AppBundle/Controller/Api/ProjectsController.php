@@ -8,6 +8,7 @@ use AppBundle\Event\Project\ProjectCreatedEvent;
 use AppBundle\Event\Project\ProjectCreatingEvent;
 use AppBundle\Event\Project\ProjectDeletedEvent;
 use AppBundle\Event\Project\ProjectDeletingEvent;
+use AppBundle\Model\GithubWebhookQuery;
 use AppBundle\Model\Project;
 use AppBundle\Model\ProjectQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -129,6 +130,71 @@ class ProjectsController extends Controller
 	public function clearCacheAction(Project $project): Response
 	{
 		$this->get('app.cache')->invalidateTags(["owner_{$project->getOwner()}_repo_{$project->getRepo()}"]);
+
+		return new Response(null, Response::HTTP_NO_CONTENT);
+	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Get Github hooks",
+	 *     views={"default","v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function listGithubHooksAction(Project $project): Response
+	{
+		$githubWebhooks = (new GithubWebhookQuery)
+			->filterByProject($project)
+			->innerJoinWith('Project')
+			->find();
+
+		$data = [];
+		foreach ($githubWebhooks as $githubWebhook)
+		{
+			$project = $githubWebhook->getProject();
+
+			$data[] = [
+				'github_webhook' => [
+					'github_id' => $githubWebhook->getGithubId(),
+					'events'    => $githubWebhook->getEvents(),
+				],
+				'project'        => [
+					'owner' => $project->getOwner(),
+					'repo'  => $project->getRepo(),
+				],
+			];
+		}
+
+		return new JsonResponse($data);
+	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Install Github hooks",
+	 *     views={"default","v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function installGithubHooksAction(Project $project): Response
+	{
+		$this->get('github.hook_manager')->installHooks($project);
+
+		return new Response(null, Response::HTTP_NO_CONTENT);
+	}
+
+	/**
+	 * @ApiDoc(
+	 *     description="Remove Github hooks",
+	 *     views={"default","v1"}
+	 * )
+	 *
+	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
+	 */
+	public function removeGithubHooksAction(Project $project): Response
+	{
+		$this->get('github.hook_manager')->removeHooks($project);
 
 		return new Response(null, Response::HTTP_NO_CONTENT);
 	}

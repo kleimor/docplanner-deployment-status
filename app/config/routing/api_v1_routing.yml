@@ -4,18 +4,6 @@ api_v1_github_callback:
     defaults:
         _controller: AppBundle:Api/Github:callback
 
-api_v1_github_install_hooks:
-    path: /github/hooks
-    methods: [POST]
-    defaults:
-        _controller: AppBundle:Api/Github:installHooks
-
-api_v1_github_remove_hooks:
-    path: /github/hooks
-    methods: [DELETE]
-    defaults:
-        _controller: AppBundle:Api/Github:removeHooks
-
 api_v1_list_projects:
     path: /projects
     methods: [GET]
@@ -45,6 +33,33 @@ api_v1_clear_project_cache:
     methods: [DELETE]
     defaults:
         _controller: AppBundle:Api/Projects:clearCache
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+
+api_v1_list_github_hooks:
+    path: /projects/{owner}/{repo}/github_hooks
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Api/Projects:listGithubHooks
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+
+api_v1_install_github_hooks:
+    path: /projects/{owner}/{repo}/github_hooks
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Api/Projects:installGithubHooks
+    requirements:
+        owner: "[a-zA-Z0-9_-]+"
+        repo: "[a-zA-Z0-9_-]+"
+
+api_v1_remove_github_hooks:
+    path: /projects/{owner}/{repo}/github_hooks
+    methods: [DELETE]
+    defaults:
+        _controller: AppBundle:Api/Projects:removeGithubHooks
     requirements:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"

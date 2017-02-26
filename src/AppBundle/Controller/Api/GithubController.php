@@ -83,43 +83,6 @@ class GithubController extends Controller
 		return new Response(null, Response::HTTP_NO_CONTENT);
 	}
 
-	/**
-	 * @ApiDoc(
-	 *     description="Install Github hooks",
-	 *     views={"default","v1"}
-	 * )
-	 */
-	public function installHooksAction(): Response
-	{
-		$projects = (new ProjectQuery)->find();
-
-		foreach ($projects as $project)
-		{
-			$this->get('github.hook_manager')->removeHooks($project);
-			$this->get('github.hook_manager')->installHooks($project);
-		}
-
-		return new Response(null, Response::HTTP_NO_CONTENT);
-	}
-
-	/**
-	 * @ApiDoc(
-	 *     description="Remove Github hooks",
-	 *     views={"default","v1"}
-	 * )
-	 */
-	public function removeHooksAction(): Response
-	{
-		$projects = (new ProjectQuery)->find();
-
-		foreach ($projects as $project)
-		{
-			$this->get('github.hook_manager')->removeHooks($project);
-		}
-
-		return new Response(null, Response::HTTP_NO_CONTENT);
-	}
-
 	protected function verifySignature(string $signature): bool
 	{
 		return true;
