@@ -142,27 +142,18 @@ class ProjectsController extends Controller
 	 *
 	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
 	 */
-	public function listGithubHooksAction(Project $project): Response
+	public function listHooksAction(Project $project): Response
 	{
 		$githubWebhooks = (new GithubWebhookQuery)
 			->filterByProject($project)
-			->innerJoinWith('Project')
 			->find();
 
 		$data = [];
 		foreach ($githubWebhooks as $githubWebhook)
 		{
-			$project = $githubWebhook->getProject();
-
 			$data[] = [
-				'github_webhook' => [
-					'github_id' => $githubWebhook->getGithubId(),
-					'events'    => $githubWebhook->getEvents(),
-				],
-				'project'        => [
-					'owner' => $project->getOwner(),
-					'repo'  => $project->getRepo(),
-				],
+				'github_id' => $githubWebhook->getGithubId(),
+				'events'    => $githubWebhook->getEvents(),
 			];
 		}
 
@@ -177,7 +168,7 @@ class ProjectsController extends Controller
 	 *
 	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
 	 */
-	public function installGithubHooksAction(Project $project): Response
+	public function installHooksAction(Project $project): Response
 	{
 		$this->get('github.hook_manager')->installHooks($project);
 
@@ -192,7 +183,7 @@ class ProjectsController extends Controller
 	 *
 	 * @ParamConverter("project", options={"mapping"={"owner":"owner", "repo":"repo"}})
 	 */
-	public function removeGithubHooksAction(Project $project): Response
+	public function removeHooksAction(Project $project): Response
 	{
 		$this->get('github.hook_manager')->removeHooks($project);
 

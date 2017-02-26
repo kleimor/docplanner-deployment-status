@@ -37,29 +37,29 @@ api_v1_clear_project_cache:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"
 
-api_v1_list_github_hooks:
-    path: /projects/{owner}/{repo}/github_hooks
+api_v1_list_hooks:
+    path: /projects/{owner}/{repo}/hooks
     methods: [GET]
     defaults:
-        _controller: AppBundle:Api/Projects:listGithubHooks
+        _controller: AppBundle:Api/Projects:listHooks
     requirements:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"
 
-api_v1_install_github_hooks:
-    path: /projects/{owner}/{repo}/github_hooks
+api_v1_install_hooks:
+    path: /projects/{owner}/{repo}/hooks
     methods: [POST]
     defaults:
-        _controller: AppBundle:Api/Projects:installGithubHooks
+        _controller: AppBundle:Api/Projects:installHooks
     requirements:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"
 
-api_v1_remove_github_hooks:
-    path: /projects/{owner}/{repo}/github_hooks
+api_v1_remove_hooks:
+    path: /projects/{owner}/{repo}/hooks
     methods: [DELETE]
     defaults:
-        _controller: AppBundle:Api/Projects:removeGithubHooks
+        _controller: AppBundle:Api/Projects:removeHooks
     requirements:
         owner: "[a-zA-Z0-9_-]+"
         repo: "[a-zA-Z0-9_-]+"
