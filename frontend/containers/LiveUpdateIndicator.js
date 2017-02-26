@@ -13,6 +13,8 @@ class LiveUpdateIndicator extends React.Component {
 
 	installHooks () {
 		const {project} = this.props;
+
+		jQuery(this.refs.starButton).tooltip('hide');
 		this.props.installHook(project.owner, project.repo);
 	}
 
