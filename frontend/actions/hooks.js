@@ -60,7 +60,7 @@ export const installHook = (owner, repo) => (dispatch) => {
 	dispatch(installHookStarted(owner, repo));
 
 	return axios
-		.get(`/api/1/projects/${owner}/${repo}/hooks`)
+		.post(`/api/1/projects/${owner}/${repo}/hooks`)
 		.then((response) => dispatch(installHookFinished(owner, repo)))
 		.catch((error) => dispatch(installHookFailed(owner, repo, error)));
 };
