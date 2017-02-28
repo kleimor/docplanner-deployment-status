@@ -93,6 +93,7 @@ class Stage extends React.Component {
 									failure: "md-icon text-danger",
 									pending: "md-icon rotating text-warning",
 									success: "md-icon text-success",
+									canceled: "md-icon text-muted"
 								}[latestStatus.state]}
 								data-toggle="tooltip"
 								data-placement="top"
@@ -103,6 +104,7 @@ class Stage extends React.Component {
 									failure: "error_outline",
 									pending: <span className="rotating font-weight-bold">sync</span>,
 									success: <span className="font-weight-bold">done</span>,
+									canceled: <span className="font-weight-bold">clear</span>,
 								}[latestStatus.state]}
 							</span>
 						</a>
