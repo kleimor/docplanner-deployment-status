@@ -1,5 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
+import classNames from 'classnames/dedupe';
 import RelativeTime from "../components/RelativeTime";
 
 class Stage extends React.Component {
@@ -33,18 +34,12 @@ class Stage extends React.Component {
 				const latestCommit = commits.commits[0];
 				let commitText = latestCommit.sha.substr(0, 6);
 
-				let commitClassNames = ["badge"];
-				if (commitsDiff && commitsDiff.diff) {
-					const aheadCount = parseInt(commitsDiff.diff.ahead_by);
-					if (aheadCount) {
-						commitText = `${commitText} (-${aheadCount})`;
-						commitClassNames.push("badge-warning");
-					} else {
-						commitClassNames.push("badge-success");
-					}
-				} else {
-					commitClassNames.push("badge-default");
-				}
+				const commitClassName = classNames({
+					"badge": true,
+					"badge-default": !(commitsDiff && commitsDiff.diff),
+					"badge-success": commitsDiff && commitsDiff.diff && parseInt(commitsDiff.diff.ahead_by) > 0,
+					"badge-warning": commitsDiff && commitsDiff.diff && !parseInt(commitsDiff.diff.ahead_by),
+				});
 
 				commitHtml = (
 					<a
@@ -62,7 +57,7 @@ class Stage extends React.Component {
 							</small>
 						`}
 					>
-						<span className={commitClassNames.join(" ")}>
+						<span className={commitClassName}>
 							{commitText}
 						</span>
 					</a>
@@ -128,7 +123,7 @@ class Stage extends React.Component {
 						case "error":
 							deploymentHtml = (
 								<span className="badge badge-danger">
-									<RelativeTime date={latestDeploymentStatus.updated_at} />
+									<RelativeTime date={latestDeploymentStatus.updated_at}/>
 								</span>
 							);
 							break;
@@ -144,7 +139,7 @@ class Stage extends React.Component {
 						case "success":
 							deploymentHtml = (
 								<span className="badge badge-success">
-									<RelativeTime date={latestDeploymentStatus.updated_at} />
+									<RelativeTime date={latestDeploymentStatus.updated_at}/>
 								</span>
 							);
 							break;
