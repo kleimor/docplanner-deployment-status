@@ -10,6 +10,8 @@ use Symfony\Component\Debug\Debug;
 // for more information
 //umask(0000);
 
+date_default_timezone_set('UTC');
+
 // This check prevents access to debug front controllers that are deployed by accident to production servers.
 // Feel free to remove this, extend it, or make something more sophisticated.
 if (isset($_SERVER['HTTP_CLIENT_IP'])
