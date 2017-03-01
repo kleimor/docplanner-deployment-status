@@ -19,6 +19,13 @@ abstract class AbstractGitHubEvent extends Event implements GitHubEventInterface
 	/** {@inheritdoc} */
 	public function getPayload(): array
 	{
-		return $this->payload;
+		return [
+			'repository' => [
+				'name'  => $this->payload['repository']['name'],
+				'owner' => [
+					'login' => $this->payload['repository']['owner']['login'],
+				],
+			],
+		];
 	}
 }
