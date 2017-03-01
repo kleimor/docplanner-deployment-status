@@ -38,12 +38,12 @@ class Stage extends React.Component {
 					const aheadCount = parseInt(commitsDiff.diff.ahead_by);
 					if (aheadCount) {
 						commitText = `${commitText} (-${aheadCount})`;
-						commitClassNames.push("badge-warning");
+						commitClassNames.push("text-warning");
 					} else {
-						commitClassNames.push("badge-success");
+						commitClassNames.push("text-success");
 					}
 				} else {
-					commitClassNames.push("badge-default");
+					commitClassNames.push("text-muted");
 				}
 
 				commitHtml = (
@@ -127,7 +127,7 @@ class Stage extends React.Component {
 						case "failure":
 						case "error":
 							deploymentHtml = (
-								<span className="badge badge-danger">
+								<span className="badge text-danger">
 									<RelativeTime date={latestDeploymentStatus.updated_at} />
 								</span>
 							);
@@ -143,7 +143,7 @@ class Stage extends React.Component {
 
 						case "success":
 							deploymentHtml = (
-								<span className="badge badge-success">
+								<span className="badge text-success">
 									<RelativeTime date={latestDeploymentStatus.updated_at} />
 								</span>
 							);
