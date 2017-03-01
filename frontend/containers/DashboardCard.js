@@ -21,11 +21,11 @@ class DashboardCard extends React.Component {
 	}
 
 	componentWillUpdate() {
-		jQuery(this.refs.starButton).tooltip('hide');
+		jQuery(this.refs.starButton).tooltip('dispose');
 	}
 
 	componentWillUnmount() {
-		jQuery(this.refs.starButton).tooltip('hide');
+		jQuery(this.refs.starButton).tooltip('dispose');
 	}
 
 	reloadProject () {

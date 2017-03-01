@@ -12,11 +12,11 @@ class LiveUpdateIndicator extends React.Component {
 	}
 
 	componentWillUpdate() {
-		jQuery(this.refs.liveUpdate).tooltip('hide');
+		jQuery(this.refs.liveUpdate).tooltip('dispose');
 	}
 
 	componentWillUnmount() {
-		jQuery(this.refs.liveUpdate).tooltip('hide');
+		jQuery(this.refs.liveUpdate).tooltip('dispose');
 	}
 
 	installHooks () {

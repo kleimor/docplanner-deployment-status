@@ -15,6 +15,18 @@ class Stage extends React.Component {
 		jQuery(this.refs.deploymentBadge).tooltip();
 	}
 
+	componentWillUpdate() {
+		jQuery(this.refs.commitBadge).tooltip('dispose');
+		jQuery(this.refs.statusBadge).tooltip('dispose');
+		jQuery(this.refs.deploymentBadge).tooltip('dispose');
+	}
+
+	componentWillUnmount() {
+		jQuery(this.refs.commitBadge).tooltip('dispose');
+		jQuery(this.refs.statusBadge).tooltip('dispose');
+		jQuery(this.refs.deploymentBadge).tooltip('dispose');
+	}
+
 	formatMessage (message) {
 		let formatterMessage = jQuery("<div>").text(message).html();
 		return formatterMessage.replace(/([^>\r\n]?)((?:\r\n|\n\r|\r|\n)+)/g, '$1<br ' + '/>$2');
