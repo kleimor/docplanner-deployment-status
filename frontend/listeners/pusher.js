@@ -15,21 +15,21 @@ const pusher = ((appConfig) => (
 const publicChannel = pusher.subscribe('public');
 
 publicChannel.bind('github.push', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["name"];
+	const owner = event["payload"]["repository"]["owner"]["login"];
 	const repo = event["payload"]["repository"]["name"];
 
 	reloadProjectData(owner, repo);
 });
 
 publicChannel.bind('github.status', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["name"];
+	const owner = event["payload"]["repository"]["owner"]["login"];
 	const repo = event["payload"]["repository"]["name"];
 
 	reloadProjectData(owner, repo);
 });
 
 publicChannel.bind('github.deployment', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["name"];
+	const owner = event["payload"]["repository"]["owner"]["login"];
 	const repo = event["payload"]["repository"]["name"];
 	const stage = event["payload"]["deployment"]["environment"];
 
