@@ -36,12 +36,11 @@ class CachedClient implements ClientInterface
 	public function getCommits(string $owner, string $repo, string $ref): array
 	{
 		return $this->getFromCache(
-			[__METHOD__, $owner, $repo, $ref],
+			'commits',
 			[
-				"owner/{$owner}",
-				"owner/{$owner}/commits",
-				"owner/{$owner}/repo/{$repo}",
-				"owner/{$owner}/repo/{$repo}/commits",
+				'owner' => $owner,
+				'repo'  => $repo,
+				'ref'   => $ref,
 			],
 			function () use ($owner, $repo, $ref)
 			{
@@ -54,12 +53,12 @@ class CachedClient implements ClientInterface
 	public function getCommitsDiff(string $owner, string $repo, string $baseRef, string $headRef): array
 	{
 		return $this->getFromCache(
-			[__METHOD__, $owner, $repo, $baseRef, $headRef],
+			'commits_diff',
 			[
-				"owner/{$owner}",
-				"owner/{$owner}/commits_diff",
-				"owner/{$owner}/repo/{$repo}",
-				"owner/{$owner}/repo/{$repo}/commits_diff",
+				'owner'   => $owner,
+				'repo'    => $repo,
+				'baseRef' => $baseRef,
+				'headRef' => $headRef,
 			],
 			function () use ($owner, $repo, $baseRef, $headRef)
 			{
@@ -72,12 +71,11 @@ class CachedClient implements ClientInterface
 	public function getStatuses(string $owner, string $repo, string $ref): array
 	{
 		return $this->getFromCache(
-			[__METHOD__, $owner, $repo, $ref],
+			'statuses',
 			[
-				"owner/{$owner}",
-				"owner/{$owner}/statuses",
-				"owner/{$owner}/repo/{$repo}",
-				"owner/{$owner}/repo/{$repo}/statuses",
+				'owner' => $owner,
+				'repo'  => $repo,
+				'ref'   => $ref,
 			],
 			function () use ($owner, $repo, $ref)
 			{
@@ -90,14 +88,11 @@ class CachedClient implements ClientInterface
 	public function getLatestDeployment(string $owner, string $repo, string $stage): array
 	{
 		return $this->getFromCache(
-			[__METHOD__, $owner, $repo, $stage],
+			'latest_deployment',
 			[
-				"owner/{$owner}",
-				"owner/{$owner}/latest_deployment",
-				"owner/{$owner}/repo/{$repo}",
-				"owner/{$owner}/repo/{$repo}/latest_deployment",
-				"owner/{$owner}/repo/{$repo}/stage/{$stage}",
-				"owner/{$owner}/repo/{$repo}/stage/{$stage}/latest_deployment",
+				'owner' => $owner,
+				'repo'  => $repo,
+				'stage' => $stage,
 			],
 			function () use ($owner, $repo, $stage)
 			{
@@ -110,12 +105,11 @@ class CachedClient implements ClientInterface
 	public function getDeploymentStatuses(string $owner, string $repo, int $deploymentId): array
 	{
 		return $this->getFromCache(
-			[__METHOD__, $owner, $repo, $deploymentId],
+			'deployment_statuses',
 			[
-				"owner/{$owner}",
-				"owner/{$owner}/deployment_statuses",
-				"owner/{$owner}/repo/{$repo}",
-				"owner/{$owner}/repo/{$repo}/deployment_statuses",
+				'owner'        => $owner,
+				'repo'         => $repo,
+				'deploymentId' => $deploymentId,
 			],
 			function () use ($owner, $repo, $deploymentId)
 			{
@@ -124,9 +118,10 @@ class CachedClient implements ClientInterface
 		);
 	}
 
-	protected function getFromCache(array $keyChunks, array $tags, callable $callback, int $ttl = 86400)
+	protected function getFromCache(string $keyName, array $keyChunks, callable $callback, int $ttl = 86400)
 	{
-		$key = $this->sanitize(implode('_', $keyChunks));
+		$key  = $this->sanitize(implode('_', $keyChunks));
+		$tags = iterator_to_array($this->createTags($keyName, $keyChunks));
 
 		$item = $this->cache->getItem($key);
 		if (!$item->isHit())
@@ -134,19 +129,26 @@ class CachedClient implements ClientInterface
 			$data = $callback();
 			$item->set($data);
 			$item->expiresAfter($ttl);
-			$item->tag(
-				array_map(
-					function (string $tag)
-					{
-						return $this->sanitize($tag);
-					},
-					$tags
-				)
-			);
+			$item->tag($tags);
 			$this->cache->save($item);
 		}
 
 		return $item->get();
+	}
+
+	protected function createTags(string $name, array $chunks): \Generator
+	{
+		yield $name;
+
+		$prefix = '';
+		foreach ($chunks as $key => $value)
+		{
+			$prefix .= "{$key}/{$value}/";
+
+			yield $this->sanitize(rtrim($prefix, '/'));
+			yield $this->sanitize("{$prefix}{$name}");
+
+		}
 	}
 
 	protected function sanitize(string $value): string
