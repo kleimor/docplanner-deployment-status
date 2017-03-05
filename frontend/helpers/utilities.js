@@ -13,8 +13,8 @@ export const reloadProjectData = (owner, repo) => {
 	clearProjectCache(owner, repo)
 		.then(() => {
 			state.projects.projects.forEach((project) => {
-				appStore.dispatch(fetchHooks(owner, repo));
 				if (project.owner === owner && project.repo === repo) {
+					appStore.dispatch(fetchHooks(owner, repo));
 					project.stages.forEach((stage) => reloadStageData(owner, repo, stage.name))
 				}
 			})
