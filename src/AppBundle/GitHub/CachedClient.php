@@ -120,8 +120,9 @@ class CachedClient implements ClientInterface
 
 	protected function getFromCache(string $keyName, array $keyChunks, callable $callback, int $ttl = 86400)
 	{
-		$key  = $this->sanitize(implode('_', $keyChunks));
-		$tags = iterator_to_array($this->createTags($keyName, $keyChunks));
+		$tags   = iterator_to_array($this->createTags($keyName, $keyChunks));
+		$key    = array_pop($tags);
+		$tags[] = $key;
 
 		$item = $this->cache->getItem($key);
 		if (!$item->isHit())
