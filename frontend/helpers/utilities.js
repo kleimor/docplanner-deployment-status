@@ -10,20 +10,28 @@ import {fetchHooks} from "../actions/hooks";
 export const reloadProjectData = (owner, repo) => {
 	const state = appStore.getState();
 
-	clearProjectCache(owner, repo)
-		.then(() => {
-			state.projects.projects.forEach((project) => {
-				if (project.owner === owner && project.repo === repo) {
-					appStore.dispatch(fetchHooks(owner, repo));
-					project.stages.forEach((stage) => reloadStageData(owner, repo, stage.name))
-				}
-			})
-		});
+	state.projects.projects.forEach((project) => {
+		if (project.owner === owner && project.repo === repo) {
+			clearProjectCache(owner, repo).then(() => {
+				appStore.dispatch(fetchHooks(owner, repo));
+				project.stages.forEach((stage) => reloadStageData(owner, repo, stage.name))
+			});
+		}
+	});
 };
 
 export const reloadStageData = (owner, repo, stage) => {
-	clearStageCache(owner, repo, stage)
-		.then(() => loadStageData(owner, repo, stage));
+	const state = appStore.getState();
+
+	state.projects.projects.forEach((project) => {
+		if (project.owner === owner && project.repo === repo) {
+			project.stages.forEach((stageObj) => {
+				if (stageObj.name === stage) {
+					clearStageCache(owner, repo, stage).then(() => loadStageData(owner, repo, stage));
+				}
+			})
+		}
+	});
 };
 
 export const loadProjectData = (owner, repo) => {
