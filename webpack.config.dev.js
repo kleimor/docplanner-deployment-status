@@ -18,6 +18,12 @@ const config = {
 		publicPath: "/app/",
 		filename: '[name].js'
 	},
+	// devServer: {
+	// 	contentBase: path.join(__dirname, "/web/app"),
+	// 	compress: true,
+	// 	port: 8808,
+	// 	hot: true,
+	// },
 	module: {
 		rules: [
 			{
