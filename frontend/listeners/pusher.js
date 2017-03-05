@@ -15,60 +15,41 @@ const pusher = ((appConfig) => (
 const publicChannel = pusher.subscribe('public');
 
 publicChannel.bind('github.push', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["login"];
-	const repo = event["payload"]["repository"]["name"];
-
+	const {project: {owner, repo}} = event;
 	reloadProjectData(owner, repo);
 });
 
 publicChannel.bind('github.status', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["login"];
-	const repo = event["payload"]["repository"]["name"];
-
+	const {project: {owner, repo}} = event;
 	reloadProjectData(owner, repo);
 });
 
 publicChannel.bind('github.deployment', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["login"];
-	const repo = event["payload"]["repository"]["name"];
-	const stage = event["payload"]["deployment"]["environment"];
-
+	const {project: {owner, repo}, stage: {name: stage}} = event;
 	reloadStageData(owner, repo, stage);
 });
 
 publicChannel.bind('github.deployment_status', (event) => {
-	const owner = event["payload"]["repository"]["owner"]["login"];
-	const repo = event["payload"]["repository"]["name"];
-	const stage = event["payload"]["deployment"]["environment"];
-
+	const {project: {owner, repo}, stage: {name: stage}} = event;
 	reloadStageData(owner, repo, stage);
 });
 
 publicChannel.bind('project.deleted', (event) => {
-	const owner = event["project"]["owner"];
-	const repo = event["project"]["repo"];
-
+	const {project: {owner, repo}} = event;
 	appStore.dispatch(removeProject(owner, repo));
 });
 
 publicChannel.bind('stage.deleted', (event) => {
-	const owner = event["project"]["owner"];
-	const repo = event["project"]["repo"];
-	const stageName = event["stage"]["name"];
-
-	appStore.dispatch(removeStage(owner, repo, stageName));
+	const {project: {owner, repo}, stage: {name: stage}} = event;
+	appStore.dispatch(removeStage(owner, repo, stage));
 });
 
 publicChannel.bind('project.github_webhook.created', (event) => {
-	const owner = event["project"]["owner"];
-	const repo = event["project"]["repo"];
-
+	const {project: {owner, repo}} = event;
 	reloadProjectData(owner, repo);
 });
 
 publicChannel.bind('project.github_webhook.deleted', (event) => {
-	const owner = event["project"]["owner"];
-	const repo = event["project"]["repo"];
-
+	const {project: {owner, repo}} = event;
 	reloadProjectData(owner, repo);
 });

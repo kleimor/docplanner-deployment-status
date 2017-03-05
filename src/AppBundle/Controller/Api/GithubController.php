@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Event\GitHub\GitHubEventFactory;
-use AppBundle\Model\ProjectQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;

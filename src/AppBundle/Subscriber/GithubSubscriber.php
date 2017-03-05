@@ -18,11 +18,6 @@ class GithubSubscriber
 
 	public function onGithubEvent(GitHubEventInterface $event)
 	{
-		$this->pusher->trigger(['public'], $event::getEventName(), [
-			'event'   => $event::getGitHubEventType(),
-			'payload' => $event->getPayload(),
-		]);
+		$this->pusher->trigger(['public'], $event::getEventName(), $event->getPayload());
 	}
-
-
 }

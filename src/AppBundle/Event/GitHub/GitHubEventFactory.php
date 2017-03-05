@@ -8,33 +8,33 @@ class GitHubEventFactory
 {
 	/**
 	 * @param string $githubEventType
-	 * @param array  $payload
+	 * @param array  $githubPayload
 	 *
-	 * @return GitHubEventInterface
+	 * @return GitHubEventInterface|DeploymentEvent|DeploymentStatusEvent|PushEvent|PingEvent|StatusEvent
 	 * @throws \InvalidArgumentException
 	 */
-	public static function createEvent(string $githubEventType, array $payload): GitHubEventInterface
+	public static function createEvent(string $githubEventType, array $githubPayload): GitHubEventInterface
 	{
 		switch ($githubEventType)
 		{
 			case DeploymentEvent::getGitHubEventType():
-				return new DeploymentEvent($payload);
+				return new DeploymentEvent($githubPayload);
 				break;
 
 			case DeploymentStatusEvent::getGitHubEventType():
-				return new DeploymentStatusEvent($payload);
+				return new DeploymentStatusEvent($githubPayload);
 				break;
 
 			case PushEvent::getGitHubEventType():
-				return new PushEvent($payload);
+				return new PushEvent($githubPayload);
 				break;
 
 			case PingEvent::getGitHubEventType():
-				return new PingEvent($payload);
+				return new PingEvent($githubPayload);
 				break;
 
 			case StatusEvent::getGitHubEventType():
-				return new StatusEvent($payload);
+				return new StatusEvent($githubPayload);
 				break;
 		}
 

@@ -9,23 +9,49 @@ use Symfony\Component\EventDispatcher\Event;
 abstract class AbstractGitHubEvent extends Event implements GitHubEventInterface
 {
 	/** @var array */
-	protected $payload;
+	protected $githubPayload;
 
-	public function __construct(array $payload)
+	public function __construct(array $githubPayload)
 	{
-		$this->payload = $payload;
+		$this->githubPayload = $githubPayload;
 	}
 
 	/** {@inheritdoc} */
 	public function getPayload(): array
 	{
-		return [
-			'repository' => [
-				'name'  => $this->payload['repository']['name'],
-				'owner' => [
-					'login' => $this->payload['repository']['owner']['login'],
-				],
+		$payload = [
+			'project' => [
+				'owner' => $this->getOwner(),
+				'repo'  => $this->getRepo(),
 			],
 		];
+
+		if ($this instanceof StageAwareInterface)
+		{
+			$payload['stage'] = [
+				'name' => $this->getStage(),
+			];
+		}
+
+		if ($this instanceof BranchAwareInterface)
+		{
+			$payload['branch'] = [
+				'name' => $this->getBranch(),
+			];
+		}
+
+		return $payload;
+	}
+
+	/** {@inheritdoc} */
+	public function getOwner(): string
+	{
+		return $this->githubPayload['repository']['owner']['login'];
+	}
+
+	/** {@inheritdoc} */
+	public function getRepo(): string
+	{
+		return $this->githubPayload['repository']['name'];
 	}
 }
